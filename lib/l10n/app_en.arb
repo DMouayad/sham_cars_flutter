@@ -1,0 +1,492 @@
+{
+    "@@locale": "en",
+    "appName": "Healing Guide",
+    "@appName": {
+        "description": "The name of our app"
+    },
+    "loadingBarrierDefaultText": "Please wait...",
+    "@loadingBarrierDefaultText": {
+        "description": "A default message displayed over the loading barrier"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "`cancel` English word"
+    },
+    "ok": "Ok",
+    "@ok": {
+        "description": "`ok` English word"
+    },
+    "or": "Or",
+    "@or": {
+        "description": "`or` English word"
+    },
+    "sec": "sec",
+    "@sec": {
+        "description": "`sec` English word"
+    },
+    "min": "min",
+    "@min": {
+        "description": "`min` English word"
+    },
+    "pasteBtnLabel": "Paste",
+    "@pasteBtnLabel": {
+        "description": "The label of the paste button in a form"
+    },
+    "continueBtnLabel": "Continue",
+    "@continueBtnLabel": {
+        "description": "The label of the continue button in a form"
+    },
+    "viewAllBtnLabel": "view all",
+    "@viewAllBtnLabel": {},
+    "homeGreeting": "Welcome back! we hope you are well",
+    "@homeGreeting": {},
+    "homeSearchBarHint": "search for a doctor, hospital or any medical care facility",
+    "@homeSearchBarHint": {},
+    "homeSpecialtiesSectionTitle": "Medical specialties",
+    "@homeSpecialtiesSectionTitle": {},
+    "homeFacilitiesSectionTitle": "Facilities near you",
+    "@homeFacilitiesSectionTitle": {},
+    "drawerProfileIBtnLabel": "My profile",
+    "@drawerProfileIBtnLabel": {},
+    "signedInAs": "You're signed in as",
+    "signedInWith": "You're signed in with",
+    "logoutBtnLabel": "Logout",
+    "@logoutBtnLabel": {},
+    "drawerDarkModeSwitchTitle": "Dark mode",
+    "enableDarkModeBtnLabel": "Enable dark mode",
+    "disableDarkModeBtnLabel": "Disable dark mode",
+    "changeLanguageBtnLabel": "Change language",
+    "drawerLanguageBtnLabel": "Language",
+    "supportBtnLabel": "Need help?",
+    "fAQTileLabel": "FAQ",
+    "contactUsTileLabel": "Contact Us",
+    "termsTileLabel": "Terms and Conditions",
+    "userProfileScreenTitle": "Profile",
+    "accountSettingsTileLabel": "Account Settings",
+    "deleteAccountBtnLabel": "Delete my account",
+    "changePasswordBtnLabel": "Change password",
+    "logoutFailureDialogTitle": "Logout Failed!",
+    "publicProfileSettingsTileLabel": "Personal Info",
+    "drawerAboutTheAppTile": "About the app",
+    "searchScreenTitle": "Search in Healing Guide",
+    "doctorSearchFilter": "Doctors",
+    "facilitySearchFilter": "Medical Facilities",
+    "allSearchFilter": "All",
+    "searchFiltersSectionTitle": "Filters",
+    "citySearchFilterPopupLabel": "City",
+    "specialtySearchFilterPopupLabel": "Medical specialty",
+    "categorySearchFilterPopupLabel": "Category",
+    "editFiltersBtnLabel": "Edit",
+    "applyFiltersBtnLabel": "Apply",
+    "applyFilters": "Apply",
+    "removeFilters": "Remove all",
+    "aboutDoctorSectionTitle": "About the doctor",
+    "aboutFacilitySectionTitle": "About the facility",
+    "locationOnMap": "Location on map",
+    "loginFailureDialogTitle": "Login Failed!",
+    "@loginFailureDialogTitle": {
+        "description": "The title of the `ErrorDialog` shown after a failed login attempt"
+    },
+    "loginBtnLabel": "Login",
+    "@loginBtnLabel": {
+        "description": "The label of a login button"
+    },
+    "registerBtnLabel": "Register",
+    "@registerBtnLabel": {
+        "description": "The label of a registration button"
+    },
+    "emailOrPhoneIsRequired": "Please enter your email or phone number",
+    "@emailOrPhoneIsRequired": {
+        "description": "An error message displayed if an email or phone number field was left empty"
+    },
+    "emailOrPhoneIsInvalid": "Please enter a valid email or phone number",
+    "@emailOrPhoneIsInvalid": {
+        "description": "An error message displayed if the value of an email or phone number field is not a valid email or phone number"
+    },
+    "emailOrPhoneFieldLabel": "Email or phone",
+    "@emailOrPhoneFieldLabel": {
+        "description": "The label of the email or phone form field"
+    },
+    "emailOrPhoneFieldHint": "johnDoe@example.com or 0912345678",
+    "@emailOrPhoneFieldHint": {
+        "description": "The hint of the email or phone form field"
+    },
+    "usernameIsRequired": "Please enter your full name",
+    "@usernameIsRequired": {
+        "description": "An error message displayed if a username field was left empty"
+    },
+    "passwordIsRequired": "Please enter your password",
+    "@passwordIsRequired": {
+        "description": "An error message displayed if a password field was left empty"
+    },
+    "passwordValidationError": "Password must be, at lease, 8 characters and have one or more non-alphanumeric character and one or more uppercase letter",
+    "@passwordValidationError": {},
+    "passwordConfirmationIsRequired": "Please confirm your password",
+    "@passwordConfirmationIsRequired": {
+        "description": "An error message displayed if a password field was left empty"
+    },
+    "passwordConfirmationMismatch": "The two passwords don't match!",
+    "@passwordConfirmationMismatch": {
+        "description": "An error message displayed if the password confirmation doesn't match the original one."
+    },
+    "passwordRuleLength": "Have 8 characters at least",
+    "@passwordRuleLength": {},
+    "passwordRuleUppercase": "Have an uppercase letter",
+    "@passwordRuleUppercase": {},
+    "passwordRuleLowercase": "Have a lowercase letter",
+    "@passwordRuleLowercase": {},
+    "passwordRuleNumber": "Have a number",
+    "@passwordRuleNumber": {},
+    "passwordRuleSpecialChar": "Have one or more special characters",
+    "@passwordRuleSpecialChar": {},
+    "phoneNumberIsRequired": "Please enter your phone number",
+    "@phoneNumberIsRequired": {
+        "description": "An error message displayed if a phoneNumber field was left empty"
+    },
+    "phoneNumberIsInvalid": "Please enter a valid phone number",
+    "@phoneNumberIsInvalid": {
+        "description": "An error message displayed if the value of a phoneNumber field is not valid"
+    },
+    "createPasswordMessage": "Create your password",
+    "emailIsRequired": "Please enter your email address",
+    "@emailIsRequired": {
+        "description": "An error message displayed if an email field was left empty"
+    },
+    "emailIsInvalid": "Please enter a valid email address",
+    "@emailIsInvalid": {
+        "description": "An error message displayed if the value of an email field is not a valid email address"
+    },
+    "emailFieldLabel": "Email",
+    "@emailFieldLabel": {
+        "description": "The label of the email form field"
+    },
+    "emailFieldHint": "johnDoe@example.com",
+    "@emailFieldHint": {
+        "description": "The hint of the email form field"
+    },
+    "passwordFieldLabel": "Password",
+    "@passwordFieldLabel": {
+        "description": "The label of the password form field"
+    },
+    "passwordConfirmationFieldLabel": "Password confirmation",
+    "@passwordConfirmationFieldLabel": {
+        "description": "The label of the password-confirmation form field"
+    },
+    "passwordConfirmationFieldHint": "Enter the same password as in the previous field",
+    "@passwordConfirmationFieldHint": {
+        "description": "The hint of the password-confirmation form field"
+    },
+    "phoneNumberFieldLabel": "Phone number",
+    "@phoneNumberFieldLabel": {
+        "description": "The label of the phone number text field"
+    },
+    "phoneNumberFieldHint": "start with 09",
+    "@phoneNumberFieldHint": {
+        "description": "A message shown inside the phone number text field when it's empty"
+    },
+    "usernameFieldLabel": "Full name",
+    "@usernameFieldLabel": {
+        "description": "The label of the username text field"
+    },
+    "usernameFieldHint": "First and last name",
+    "@usernameFieldHint": {
+        "description": "A message shown inside the username text field when it's empty"
+    },
+    "loginInProgress": "Login in progress...",
+    "@loginInProgress": {
+        "description": "The text to be displayed when a login attempt is in progress"
+    },
+    "appGreeting": "Welcome to Healing Guide",
+    "@appGreeting": {
+        "description": "A message to display as a greeting to the user"
+    },
+    "loginScreenSubtitle": "Login to your account",
+    "@loginScreenSubtitle": {
+        "description": "The text to be displayed under the title"
+    },
+    "noAccountQuestion": "Don't have an account?",
+    "@noAccountQuestion": {
+        "description": "The text to ask the user if he want to create an account",
+        "context": "LoginScreen"
+    },
+    "alreadyHaveAnAccountQuestion": "Already have an account?",
+    "@alreadyHaveAnAccountQuestion": {
+        "description": "The text to ask the user if he want to login to an existing account",
+        "context": "RegisterScreen"
+    },
+    "createDoctorAccountBtnLabel": "Create a doctor account",
+    "@createDoctorAccountBtnLabel": {
+        "description": "The text of registering as a doctor",
+        "context": "LoginScreen"
+    },
+    "createPatientAccountBtnLabel": "Create a Patient account",
+    "@createPatientAccountBtnLabel": {
+        "description": "The text of registering as a Patient",
+        "context": "LoginScreen"
+    },
+    "maleGender": "male",
+    "@maleGender": {
+        "description": ""
+    },
+    "femaleGender": "female",
+    "@femaleGender": {
+        "description": ""
+    },
+    "genderInputTitle": "Your gender",
+    "@genderInputTitle": {
+        "description": ""
+    },
+    "phoneVerificationScreenTitle": "Please verify your phone number",
+    "@phoneVerificationScreenTitle": {
+        "description": "The main title in the screen"
+    },
+    "phoneVerificationErrorDialogTitle": "Failed to verify your phone",
+    "@phoneVerificationErrorDialogTitle": {},
+    "phoneVerificationScreenSubtitle": "This help us confirm your identity & protect your account",
+    "@phoneVerificationScreenSubtitle": {
+        "description": "The main title in the screen"
+    },
+    "phoneVerificationCodeWasSent": "Please enter the verification code sent to ",
+    "@phoneVerificationCodeWasSent": {},
+    "didNotReceiveCode": "Did not receive a code?",
+    "@didNotReceiveCode": {},
+    "resendVerificationCodeIn": "You can request a new code in",
+    "@resendVerificationCodeIn": {},
+    "resendVerificationCodeBtnLabel": "send me a new code",
+    "@resendVerificationCodeBtnLabel": {},
+    "verifyBtnLabel": "Verify",
+    "@verifyBtnLabel": {},
+    "wrongNumberToVerify": "Wrong number?",
+    "@wrongNumberToVerify": {
+        "description": "",
+        "context": "PhoneVerificationScreen"
+    },
+    "changeNumberToVerify": "go back to change it",
+    "@changeNumberToVerify": {
+        "description": "The label of a text button for changing the phone number in verification screen",
+        "context": "PhoneVerificationScreen"
+    },
+    "noInternetConnection": "You are not connected! Please check your internet connection and try again.",
+    "@noInternetConnection": {
+        "description": "The message of `AppError.noInternetConnection`"
+    },
+    "cannotConnectToServer": "Cannot connect to server, please try again later.",
+    "@cannotConnectToServer": {
+        "description": "The message of `AppError.cannotConnectToServer`"
+    },
+    "unauthorized": "You are unauthorized to proceed.",
+    "@unauthorized": {
+        "description": "The message of `AppError.unauthorized`"
+    },
+    "unauthenticated": "Please login before to preform this action.",
+    "@unauthenticated": {
+        "description": "The message of `AppError.unauthenticated`"
+    },
+    "accountAlreadyExist": "An account with your credentials already exists",
+    "@accountAlreadyExist": {
+        "description": "The message of `AppError.accountAlreadyExist`"
+    },
+    "invalidLoginCredential": "Incorrect email and\\or password.",
+    "@invalidLoginCredential": {
+        "description": "The message of `AppError.invalidLoginCredential`"
+    },
+    "undefinedException": "An error occurred, please try again.",
+    "@undefinedException": {
+        "description": "The message of `AppError.undefined`"
+    },
+    "serverError": "Unexpected error!\nIn case of receiving this error repeatedly, please wait some time until we fix the issue.",
+    "@serverError": {
+        "description": "The message of `AppError.serverError`"
+    },
+    "notFound": "The requested resource was not found.",
+    "@notFound": {
+        "description": "The message of `AppError.notFound`"
+    },
+    "decodingJsonFailed": "Failed to decode the JSON response.",
+    "@decodingJsonFailed": {
+        "description": "The message of `AppError.decodingJsonFailed`"
+    },
+    "badRequest": "The request was invalid. Please check your input and try again.",
+    "@badRequest": {
+        "description": "The message of `AppError.badRequest`"
+    },
+    "routeNotFound": "The requested route was not found.",
+    "@routeNotFound": {
+        "description": "The message of `AppError.routeNotFound`"
+    },
+    "emptyRequestBody": "The request body was empty. Please check your input and try again.",
+    "@emptyRequestBody": {
+        "description": "The message of `AppError.emptyRequestBody`"
+    },
+    "invalidContentType": "The content type of the request was invalid. Please check your input and try again.",
+    "@invalidContentType": {
+        "description": "The message of `AppError.invalidContentType`"
+    },
+    "wrongLoginCreds": "The email and password combination is incorrect. Please check your credentials and try again.",
+    "@wrongLoginCreds": {
+        "description": "The message of `AppError.wrongLoginCreds`"
+    },
+    "locationServiceDisabled": "Location services are disabled. Please enable them in your device settings to view nearby medical facilities.",
+    "@locationServiceDisabled": {
+        "description": "The message of `AppError.locationServiceDisabled`"
+    },
+    "locationPermissionDenied": "Location permission is denied. Please grant the app permission to access your location to find nearby doctors and hospitals.",
+    "@locationPermissionDenied": {
+        "description": "The message of `AppError.locationPermissionDenied`"
+    },
+    "locationPermissionDeniedPermanently": "Location permission is permanently denied. Please go to your device settings and grant the app permission to access your location.",
+    "@locationPermissionDeniedPermanently": {
+        "description": "The message of `AppError.locationPermissionDeniedPermanently`"
+    },
+    "validation": "The request was invalid. Please check your input and try again.",
+    "@validation": {
+        "description": "The message of `AppError.validation`"
+    },
+    "accountAlreadyExists": "An account with your credentials already exists, please login or reset your password",
+    "@accountAlreadyExists": {
+        "description": "The message of `AppError.accountAlreadyExists`"
+    },
+    "forgotPasswordBtnLabel": "Forgot password?",
+    "@forgotPasswordBtnLabel": {
+        "description": "The label of the forgot password button"
+    },
+    "exitSignupProcessBtnLabel": "Exit",
+    "@exitSignupProcessBtnLabel": {
+        "description": "The label of the exit button in the signup process"
+    },
+    "continueSignupBtnLabel": "Continue signing up",
+    "confirmExitingSignupDialogTitle": "Are you sure you want to exit the signup process?",
+    "confirmExitingSignupDialogMessage": "The entered information will be lost",
+    "@continueSignupBtnLabel": {
+        "description": "The label of the continue button in the signup process"
+    },
+    "signupFailed": "Signup failed. Please try again.",
+    "@signupFailed": {
+        "description": "The message of `AppError.signupFailed`"
+    },
+    "invalidOTP": "The OTP is invalid. Please make sure you have entered the correct code.",
+    "@invalidOTP": {
+        "description": "The message of `AppError.invalidOTP`"
+    },
+    "expiredOTP": "The OTP has expired. Please request a new one.",
+    "@expiredOTP": {
+        "description": "The message of `AppError.expiredOTP`"
+    },
+    "confirmIdentity": "Please confirm your identity.",
+    "@confirmIdentity": {
+        "description": "The message of `AppError.confirmIdentity`"
+    },
+    "emailAlreadyVerified": "The email address has already been verified.",
+    "@emailAlreadyVerified": {
+        "description": "The message of `AppError.emailAlreadyVerified`"
+    },
+    "phoneAlreadyVerified": "The phone number has already been verified.",
+    "@phoneAlreadyVerified": {
+        "description": "The message of `AppError.phoneAlreadyVerified`"
+    },
+    "forbidden": "The request is forbidden. You are not authorized to access this resource.",
+    "@forbidden": {
+        "description": "The message of `AppError.forbidden`"
+    },
+    "resourceAlreadyExists": "The resource already exists.",
+    "@resourceAlreadyExists": {
+        "description": "The message of `AppError.resourceAlreadyExists`"
+    },
+    "rateLimitExceeded": "You have sent too many requests. Please wait a while before trying again.",
+    "@rateLimitExceeded": {
+        "description": "The message of `AppError.rateLimitExceeded`"
+    },
+    "completeSignupBtnLabel": "Complete registration",
+    "@completeSignupBtnLabel": {
+        "description": "The label of the complete signup button"
+    },
+    "signupBtnLabel": "Create my account",
+    "@signupBtnLabel": {
+        "description": "The label of the signup action button in a form"
+    },
+    "signupAsDoctorScreenTitle": "Registering as a doctor",
+    "@signupAsDoctorScreenTitle": {},
+    "signupAsPatientScreenTitle": "Registering as a doctor",
+    "@signupAsPatientScreenTitle": {},
+    "completeSignupFormSubtitle": "Please fill your information",
+    "completeSignupFormTitle": "Verification Success",
+    "signupInProgress": "Creating your account, please wait...",
+    "@signupInProgress": {
+        "description": "The text to be displayed when a signup attempt is in progress"
+    },
+    "sendingSignupCodeInProgress": "Sending signup code, please wait...",
+    "@sendingSignupCodeInProgress": {
+        "description": "The text to be displayed when a signup attempt is in progress"
+    },
+    "signupFailureDialogTitle": "Signup failure",
+    "@signupFailureDialogTitle": {
+        "description": "The title of an `ErrorDialog` displayed after a failed signup attempt"
+    },
+    "sheetDragUpHint": "Swap up to view full information",
+    "ophthalmology": "Ophthalmology",
+    "neurology": "Neurology",
+    "dentistry": "Dentistry",
+    "cardiology": "Cardiology",
+    "familyMedicine": "Family Medicine",
+    "prosthetics": "Prosthetics",
+    "chooseSignupMethodMessage": "Please choose how you would like to create your account",
+    "@chooseSignupMethodMessage": {
+        "description": "Message shown on signup method selection screen"
+    },
+    "signupWithEmailMessage": "We will send a verification code to your email address:",
+    "@signupWithEmailMessage": {
+        "description": "Message shown on signup method selection screen"
+    },
+    "signupWithPhoneMessage": "We will send a verification code to your phone number:",
+    "@signupWithPhoneMessage": {
+        "description": "Message shown on signup method selection screen"
+    },
+    "signupWithEmail": "I want to receive the code via email",
+    "@signupWithEmail": {
+        "description": "Label for email signup button"
+    },
+    "signupWithPhone": "I want to receive the code via SMS",
+    "@signupWithPhone": {
+        "description": "Label for phone signup button"
+    },
+    "signupCodeIsRequired": "Please enter the confirmation code you recieved",
+    "@signupCodeIsRequired": {
+        "description": "Error message shown when signup confirmation code field is empty"
+    },
+    "signupCodeSentToEmail": "We have sent a signup code to your email address:",
+    "@signupCodeSentToEmail": {
+        "description": "Message shown when a signup code is sent to an email address"
+    },
+    "signupCodeSentToPhone": "We have sent a signup code to your phone number:",
+    "@signupCodeSentToPhone": {
+        "description": "Message shown when a signup code is sent to a phone number"
+    },
+    "signupCodeLengthIsInvalid": "Signup code must be {length} characters long",
+    "@signupCodeLengthIsInvalid": {
+        "description": "Error message shown when the signup code is not the correct length"
+    },
+    "signupCodeFieldLabel": "Signup code",
+    "@signupCodeFieldLabel": {
+        "description": "The label of the signup code field"
+    },
+    "signupCodeFieldHint": "Enter the code you received via email or phone",
+    "@signupCodeFieldHint": {
+        "description": "The hint of the signup code field"
+    },
+    "popConfirmationDialogTitle": "Are you sure you want to go back?",
+    "@popConfirmationDialogTitle": {
+        "description": "The title of the confirmation dialog"
+    },
+    "stayOnPageBtnLabel": "Stay on page",
+    "@stayOnPageBtnLabel": {
+        "description": "The label of the stay on page button"
+    },
+    "goBackBtnLabel": "Go back",
+    "@goBackBtnLabel": {
+        "description": "The label of the go back button"
+    },
+    "openProfileBtnLabel": "Open profile",
+    "@openProfileBtnLabel": {
+        "description": "The label of the open profile button"
+    }
+}

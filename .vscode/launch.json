@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "sham_cars (debug mode)",
+            "request": "launch",
+            "flutterMode": "debug",
+            "type": "dart",
+            "toolArgs": [
+                "--enable-experiment=macros"
+            ],
+        },
+        {
+            "name": "sham_cars (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--enable-experiment=macros"
+            ],
+        },
+        {
+            "name": "sham_cars (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--enable-experiment=macros"
+            ],
+        }
+    ]
+}
