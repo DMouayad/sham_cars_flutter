@@ -54,14 +54,18 @@ class MainAppView extends StatelessWidget {
                     ? AppTheme.lightThemeData.textTheme.apply(
                         fontFamily: 'almarai',
                       )
-                    : GoogleFonts.poppinsTextTheme(),
+                    : GoogleFonts.poppinsTextTheme(
+                        AppTheme.lightThemeData.textTheme,
+                      ),
               ),
               darkTheme: AppTheme.darkThemeData.copyWith(
                 textTheme: localeState.isArabic
                     ? AppTheme.darkThemeData.textTheme.apply(
                         fontFamily: 'almarai',
                       )
-                    : GoogleFonts.poppinsTextTheme(),
+                    : GoogleFonts.poppinsTextTheme(
+                        AppTheme.darkThemeData.textTheme,
+                      ),
               ),
               debugShowCheckedModeBanner: false,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
