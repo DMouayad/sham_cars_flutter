@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sham_cars/features/theme/app_theme.dart';
+
 import 'package:sham_cars/utils/utils.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -82,15 +81,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
       return ExcludeFocus(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: IconButton(
+          child: TextButton(
             onPressed: () =>
                 setState(() => obscuredTextIsShown = !obscuredTextIsShown),
-            icon: Icon(
-              obscuredTextIsShown
-                  ? CupertinoIcons.eye_slash_fill
-                  : CupertinoIcons.eye,
-              color: context.colorScheme.onSurface,
-              size: 20,
+            child: Text(
+              obscuredTextIsShown ? context.l10n.hide : context.l10n.show,
             ),
           ),
         ),
@@ -101,13 +96,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final kOutlinedBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(4),
-      borderSide: const BorderSide(
-        width: 1.1,
-        color: AppTheme.textFieldBorderColor,
-      ),
-    );
+    final baseBorder = context.theme.inputDecorationTheme.enabledBorder
+        ?.copyWith(borderSide: BorderSide(color: context.colorScheme.outline));
     return TextFormField(
       textCapitalization: widget.textCapitalization,
       enabled: widget.enabled,
@@ -151,20 +141,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
           size: 20,
         ),
         hintText: widget.hintText,
-        enabledBorder: kOutlinedBorder,
-        focusedBorder: kOutlinedBorder.copyWith(
+        enabledBorder: baseBorder,
+        focusedBorder: baseBorder?.copyWith(
           borderSide: BorderSide(
             width: 1.5,
             color: context.colorScheme.primary,
           ),
         ),
-        disabledBorder: kOutlinedBorder.copyWith(
-          borderSide: const BorderSide(color: AppTheme.textFieldBorderColor),
-        ),
-        errorBorder: kOutlinedBorder.copyWith(
+        disabledBorder: baseBorder,
+        errorBorder: baseBorder?.copyWith(
           borderSide: BorderSide(color: context.colorScheme.error),
         ),
-        focusedErrorBorder: kOutlinedBorder.copyWith(
+        focusedErrorBorder: baseBorder?.copyWith(
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
         errorStyle: context.textTheme.bodyMedium?.copyWith(

@@ -18,8 +18,9 @@ sealed class PhoneVerificationState extends Equatable {
   }
 
   bool canRequestNewCode() {
-    return DateTime.now()
-        .isAfter(lastRequestedCodeAt.add(kVerificationCodeRequestInterval));
+    return DateTime.now().isAfter(
+      lastRequestedCodeAt.add(kVerificationCodeRequestInterval),
+    );
   }
 
   @override
@@ -32,20 +33,22 @@ sealed class PhoneVerificationState extends Equatable {
 }
 
 final class PhoneVerificationUserInputState extends PhoneVerificationState {
-  const PhoneVerificationUserInputState(
-      {required super.digits, required super.lastRequestedCodeAt})
-      : super(isBusy: false);
+  const PhoneVerificationUserInputState({
+    required super.digits,
+    required super.lastRequestedCodeAt,
+  }) : super(isBusy: false);
 }
 
 final class PhoneVerificationInProgressState extends PhoneVerificationState {
-  const PhoneVerificationInProgressState(
-      {required super.digits, required super.lastRequestedCodeAt})
-      : super(isBusy: true);
+  const PhoneVerificationInProgressState({
+    required super.digits,
+    required super.lastRequestedCodeAt,
+  }) : super(isBusy: true);
 }
 
 final class PhoneVerificationSuccessState extends PhoneVerificationState {
   const PhoneVerificationSuccessState({required super.lastRequestedCodeAt})
-      : super(isBusy: true, digits: const {});
+    : super(isBusy: true, digits: const {});
 }
 
 final class PhoneVerificationFailureState extends PhoneVerificationState {

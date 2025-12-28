@@ -4,65 +4,68 @@ final class FakeSearchRepository extends SearchRepository {
   @override
   List<SearchResult> _decodeResponseBody(JsonObject json) {
     List<SearchResult> results = [];
-    if (json
-        case {
-          "facilities": List<JsonObject> facilitiesJson,
-          "physicians": List<JsonObject> physiciansJson,
-        }) {
+    if (json case {
+      "facilities": List<JsonObject> facilitiesJson,
+      "physicians": List<JsonObject> physiciansJson,
+    }) {
       for (var physicianJson in physiciansJson) {
-        if (physicianJson
-            case {
-              'id': String id,
-              'name': String name,
-              'location': String location,
-              'biography': String biography,
-              'dateOfBirth': String dateOfBirth,
-              'isMale': bool isMale,
-              'languages': Iterable<String> languages,
-              'specialties': List<String> specialties,
-              'phoneNumber': String phoneNumber,
-              'mobilePhoneNumber': String mobilePhoneNumber,
-              'rating': double rating
-            }) {
+        if (physicianJson case {
+          'id': String id,
+          'name': String name,
+          'location': String location,
+          'biography': String biography,
+          'dateOfBirth': String dateOfBirth,
+          'isMale': bool isMale,
+          'languages': Iterable<String> languages,
+          'specialties': List<String> specialties,
+          'phoneNumber': String phoneNumber,
+          'mobilePhoneNumber': String mobilePhoneNumber,
+          'rating': double rating,
+        }) {
           results.add(
-            SearchResult.physician(Physician(
-              id: id,
-              name: name,
-              mobilePhoneNumber: mobilePhoneNumber,
-              phoneNumber: phoneNumber,
-              biography: biography,
-              specialties: specialties,
-              location: location,
-              isMale: isMale,
-              dateOfBirth: DateTime.tryParse(dateOfBirth),
-              languages: languages.toList(),
-              rating: rating,
-            )),
+            SearchResult.physician(
+              Physician(
+                id: id,
+                name: name,
+                mobilePhoneNumber: mobilePhoneNumber,
+                phoneNumber: phoneNumber,
+                biography: biography,
+                specialties: specialties,
+                location: location,
+                isMale: isMale,
+                dateOfBirth: DateTime.tryParse(dateOfBirth),
+                languages: languages.toList(),
+                rating: rating,
+              ),
+            ),
           );
         }
       }
       for (var facilityJson in facilitiesJson) {
-        if (facilityJson
-            case {
-              'id': String id,
-              'name': String name,
-              'location': String location,
-              'emergencyPhoneNumber': String emergencyPhoneNumber,
-              'mobilePhoneNumber': String mobilePhoneNumber,
-              'phoneNumber': String phoneNumber,
-              'description': String description,
-              'rating': double rating
-            }) {
-          results.add(SearchResult.facility(MedicalFacility(
-            id: id,
-            name: name,
-            description: description,
-            emergencyPhoneNumber: emergencyPhoneNumber,
-            mobilePhoneNumber: mobilePhoneNumber,
-            phoneNumber: phoneNumber,
-            location: location,
-            rating: rating,
-          )));
+        if (facilityJson case {
+          'id': String id,
+          'name': String name,
+          'location': String location,
+          'emergencyPhoneNumber': String emergencyPhoneNumber,
+          'mobilePhoneNumber': String mobilePhoneNumber,
+          'phoneNumber': String phoneNumber,
+          'description': String description,
+          'rating': double rating,
+        }) {
+          results.add(
+            SearchResult.facility(
+              MedicalFacility(
+                id: id,
+                name: name,
+                description: description,
+                emergencyPhoneNumber: emergencyPhoneNumber,
+                mobilePhoneNumber: mobilePhoneNumber,
+                phoneNumber: phoneNumber,
+                location: location,
+                rating: rating,
+              ),
+            ),
+          );
         }
       }
     }
@@ -106,7 +109,7 @@ final class FakeSearchRepository extends SearchRepository {
       'مستشفى الحياة',
       'مركز الدواء',
       'عيادة الأسرة',
-      'مجمع النور الطبي'
+      'مجمع النور الطبي',
     ];
     final cities = [
       'دمشق',
@@ -115,14 +118,14 @@ final class FakeSearchRepository extends SearchRepository {
       'ادلب',
       'الرقة',
       'دير الزور',
-      'الحسكة'
+      'الحسكة',
     ];
     final addresses = [
       'شارع المستقبل',
       'حي النور',
       'شارع الحمراء',
       'شارع بغداد',
-      'حي الزهور'
+      'حي الزهور',
     ];
 
     return List.generate(count, (index) {
@@ -152,29 +155,22 @@ final class FakeSearchRepository extends SearchRepository {
       'خالد',
       'سعيد',
       'يوسف',
-      'زايد'
+      'زايد',
     ];
-    final cities = [
-      'دمشق',
-      'حلب',
-      'حمص',
-      'طرطوس',
-      'اللاذقية',
-      'ريف دمشق',
-    ];
+    final cities = ['دمشق', 'حلب', 'حمص', 'طرطوس', 'اللاذقية', 'ريف دمشق'];
     final languages = [
       ['العربية', 'الإنجليزية'],
       ['العربية', 'الفرنسية'],
       ['العربية', 'الألمانية'],
       ['العربية', 'الإسبانية'],
-      ['العربية', 'التركية']
+      ['العربية', 'التركية'],
     ];
     final specialties = [
       'جراحة عامة',
       'أمراض قلب',
       'طب أطفال',
       'طب الأسرة',
-      'أمراض جلدية'
+      'أمراض جلدية',
     ];
 
     final qualifications = [
@@ -182,7 +178,7 @@ final class FakeSearchRepository extends SearchRepository {
       'ماجستير في الجراحة العامة',
       'دكتوراه في أمراض القلب',
       'زمالة في طب الأطفال',
-      'دبلوم في الطب الأسري'
+      'دبلوم في الطب الأسري',
     ];
 
     return List.generate(count, (index) {
@@ -190,9 +186,11 @@ final class FakeSearchRepository extends SearchRepository {
         'id': '${index + 1}',
         'name': names[random.nextInt(names.length)],
         'location': cities[random.nextInt(cities.length)],
-        'dateOfBirth': DateTime(random.nextInt(100) + 1923,
-                random.nextInt(12) + 1, random.nextInt(28) + 1)
-            .toString(),
+        'dateOfBirth': DateTime(
+          random.nextInt(100) + 1923,
+          random.nextInt(12) + 1,
+          random.nextInt(28) + 1,
+        ).toString(),
         'isMale': random.nextBool(),
         'rating': random.nextDouble() * 5,
         'phoneNumber': '0${random.nextInt(999999999)}',

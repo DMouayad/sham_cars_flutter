@@ -4,19 +4,18 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sham_cars/api/requests/auth_requests.dart';
+import 'package:sham_cars/features/common/base_cubit.dart';
 
 import 'package:sham_cars/utils/src/app_error.dart';
 import 'package:sham_cars/features/auth/repositories.dart';
 import 'package:sham_cars/features/signup/models/signup_form_helper.dart';
-import 'package:sham_cars/features/signup/models/signup_method.dart';
 import 'package:sham_cars/features/user/models.dart';
 import 'package:sham_cars/utils/src/bloc_helpers.dart';
 import 'package:http/http.dart' as http;
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'signup_state.dart';
 
-class SignupCubit extends Cubit<SignupState> {
+class SignupCubit extends BaseCubit<SignupState> {
   late final SignupFormHelper formHelper;
   late final BlocHelpers _helpers;
   late final ValueNotifier<Duration> durationToRequestNewCode;
@@ -25,8 +24,7 @@ class SignupCubit extends Cubit<SignupState> {
 
   IAuthRepository get _authRepo => GetIt.I.get();
 
-  SignupCubit({required Role signupAs, required SignupMethod method})
-    : super(SignupState.initial(signupAs, method)) {
+  SignupCubit() : super(SignupState.initial()) {
     formHelper = SignupFormHelper();
     _helpers = BlocHelpers(
       onError: (err) {
@@ -66,102 +64,71 @@ class SignupCubit extends Cubit<SignupState> {
     }
   }
 
-  Future<void> onStartSignup() async {
+  Future<void> signup() async {
     if (!formHelper.validateInput(validateSignupCode: false) || state.isBusy) {
       return;
     }
-    switch (state.method) {
-      case SignupMethod.email:
-        await _onStartSignupWithEmail();
-        break;
-      case SignupMethod.phone:
-        await _onStartSignupWithPhone();
-        break;
-    }
+    await _signupWithEmail();
   }
 
-  Future<void> _onStartSignupWithEmail() async {
-    final StartSignupWithEmailRequest req = (
-      role: state.role,
+  Future<void> _signupWithEmail() async {
+    final SignupRequest req = (
       email: formHelper.emailValue,
-    );
-
-    _helpers.handleFuture(
-      _authRepo.signupWithEmail(req),
-      onSuccess: (_) {
-        _startTimer(const Duration(seconds: 30));
-
-        emit(state.copyAsPendingConfirmation());
-      },
-    );
-  }
-
-  Future<void> _onStartSignupWithPhone() async {
-    final StartSignupWithPhoneRequest req = (
-      role: state.role,
-      phoneNumber: formHelper.phoneNoValue,
-    );
-
-    _helpers.handleFuture(
-      _authRepo.signupWithPhone(req),
-      onSuccess: (_) {
-        _startTimer(const Duration(seconds: 30));
-        emit(state.copyAsPendingConfirmation());
-      },
-    );
-  }
-
-  Future<void> onConfirmSignup() async {
-    if (!formHelper.validateInput(validateSignupCode: true) || state.isBusy) {
-      return;
-    }
-    switch (state.method) {
-      case SignupMethod.email:
-        await _onConfirmSignupWithEmail();
-        break;
-      case SignupMethod.phone:
-        await _onConfirmSignupWithPhone();
-        break;
-    }
-  }
-
-  Future<void> _onConfirmSignupWithEmail() async {
-    final ConfirmSignupWithEmailRequest req = (
-      signupCode: formHelper.signupCodeValue,
-      role: state.role,
-      email: formHelper.emailValue,
+      name: formHelper.emailValue,
+      phone: formHelper.phoneNoValue,
       password: formHelper.passwordValue,
     );
+
     _helpers.handleFuture(
-      _authRepo.confirmSignupWithEmail(req),
-      onSuccess: (value) {
-        Timer(const Duration(seconds: 2), () => emit(state.copyAsSuccess()));
+      _authRepo.signup(req),
+      onSuccess: (_) {
+        emit(state.copyAsPendingVerification());
       },
     );
   }
 
-  Future<void> _onConfirmSignupWithPhone() async {
-    final ConfirmSignupWithPhoneRequest req = (
-      signupCode: formHelper.signupCodeValue,
-      role: state.role,
-      phoneNumber: formHelper.phoneNoValue,
-      password: formHelper.passwordValue,
-    );
-    _helpers.handleFuture(
-      _authRepo.confirmSignupWithPhone(req),
-      onSuccess: (value) => {emit(state.copyAsSuccess())},
-    );
-  }
+  // Future<void> _onStartSignupWithPhone() async {
+  //   final StartSignupWithPhoneRequest req = (
+  //     role: state.role,
+  //     phoneNumber: formHelper.phoneNoValue,
+  //   );
 
-  void switchSignupMethod(SignupMethod method) {
-    emit(state.copyWith(method: method));
-  }
+  //   _helpers.handleFuture(
+  //     _authRepo.signupWithPhone(req),
+  //     onSuccess: (_) {
+  //       _startTimer(const Duration(seconds: 30));
+  //       emit(state.copyAsPendingConfirmation());
+  //     },
+  //   );
+  // }
 
-  void onNewCodeRequested() {
-    if (formHelper.phoneNoValue.isNotEmpty) {
-      _onStartSignupWithPhone();
-    } else if (formHelper.emailValue.isNotEmpty) {
-      _onStartSignupWithEmail();
-    }
-  }
+  // Future<void> _onConfirmSignupWithEmail() async {
+  //   final ConfirmSignupWithEmailRequest req = (
+  //     signupCode: formHelper.signupCodeValue,
+  //     role: state.role,
+  //     email: formHelper.emailValue,
+  //     password: formHelper.passwordValue,
+  //   );
+  //   _helpers.handleFuture(
+  //     _authRepo.confirmSignupWithEmail(req),
+  //     onSuccess: (value) {
+  //       Timer(const Duration(seconds: 2), () => emit(state.copyAsSuccess()));
+  //     },
+  //   );
+  // }
+
+  // Future<void> _onConfirmSignupWithPhone() async {
+  //   final ConfirmSignupWithPhoneRequest req = (
+  //     signupCode: formHelper.signupCodeValue,
+  //     role: state.role,
+  //     phoneNumber: formHelper.phoneNoValue,
+  //     password: formHelper.passwordValue,
+  //   );
+  //   _helpers.handleFuture(
+  //     _authRepo.confirmSignupWithPhone(req),
+  //     onSuccess: (value) => {emit(state.copyAsSuccess())},
+  //   );
+  // }
+
+  void onNewCodeRequested() {}
 }

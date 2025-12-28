@@ -2,27 +2,25 @@ part of 'user_profile_cubit.dart';
 
 class UserProfileState extends Equatable {
   final bool isBusy;
-  const UserProfileState({required this.isBusy});
+  final User? user;
+  const UserProfileState({required this.isBusy, this.user});
 
   @override
   List<Object?> get props => [isBusy];
 }
 
-final class UserProfileIdleState extends UserProfileState {
-  const UserProfileIdleState() : super(isBusy: false);
-}
-
 class UserProfileBusyState extends UserProfileState {
-  const UserProfileBusyState() : super(isBusy: true);
+  const UserProfileBusyState({required super.user}) : super(isBusy: true);
 }
 
 class UserProfileFailureState extends UserProfileState {
   final BaseAppError appErr;
-  const UserProfileFailureState(this.appErr) : super(isBusy: false);
+  const UserProfileFailureState({required super.user, required this.appErr})
+    : super(isBusy: false);
   @override
   List<Object?> get props => [appErr, ...super.props];
 }
 
 class LogoutFailureState extends UserProfileFailureState {
-  const LogoutFailureState(super.appErr);
+  const LogoutFailureState({required super.user, required super.appErr});
 }

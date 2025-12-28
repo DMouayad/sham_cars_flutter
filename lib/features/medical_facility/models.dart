@@ -22,13 +22,13 @@ class MedicalFacility extends Equatable {
   });
   @override
   List<Object?> get props => [
-        id,
-        name,
-        description,
-        location,
-        rating,
-        phoneNumber,
-        emergencyPhoneNumber,
-        mobilePhoneNumber
-      ];
+    id,
+    name,
+    description,
+    location,
+    rating,
+    phoneNumber,
+    emergencyPhoneNumber,
+    mobilePhoneNumber,
+  ];
 }

@@ -1,6 +1,5 @@
 part of 'phone_verification_screen.dart';
 
-
 class _ResendCodeSection extends StatelessWidget {
   const _ResendCodeSection();
 
@@ -76,11 +75,12 @@ class _ChangeNumberSection extends StatelessWidget {
               context.pop(true);
             } else {
               pLogger.w(
-                  '`SignupScreenRoute` is not present in the stack before `PhoneVerificationScreeRoute`');
+                '`SignupScreenRoute` is not present in the stack before `PhoneVerificationScreeRoute`',
+              );
             }
           },
           child: Text(context.l10n.changeNumberToVerify),
-        )
+        ),
       ],
     );
   }
@@ -92,8 +92,13 @@ class _PhoneVerificationScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PhoneVerificationCubit, PhoneVerificationState>(
+    return BlocListener<PhoneVerificationCubit, PhoneVerificationState>(
       listener: (context, state) {
+        if (state.isBusy || state is PhoneVerificationInProgressState) {
+          context.showLoader();
+        } else {
+          context.hideLoader();
+        }
         switch (state) {
           case PhoneVerificationSuccessState():
             // context.read<SignupCubit>().proceedToSecondStep();
@@ -110,13 +115,7 @@ class _PhoneVerificationScaffold extends StatelessWidget {
             break;
         }
       },
-      builder: (context, state) => CustomScaffold(
-        showBackButton: false,
-        showLoadingBarrier: state is PhoneVerificationInProgressState ||
-            state is PhoneVerificationSuccessState,
-        bodyPadding: EdgeInsets.zero,
-        body: child,
-      ),
+      child: child,
     );
   }
 }

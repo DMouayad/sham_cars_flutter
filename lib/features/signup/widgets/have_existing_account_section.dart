@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sham_cars/routes/routes.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 
 class HaveExistingAccountSection extends StatelessWidget {
@@ -15,7 +15,7 @@ class HaveExistingAccountSection extends StatelessWidget {
           style: context.textTheme.bodySmall,
         ),
         TextButton(
-          onPressed: () => const LoginScreenRoute().pushReplacement(context),
+          onPressed: () => const LoginRoute().pushReplacement(context),
           child: Text(context.l10n.loginBtnLabel),
         ),
       ],

@@ -2,20 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sham_cars/features/auth/cubit/auth_state_cubit.dart';
-import 'package:sham_cars/features/auth/models/auth_state.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+
 import 'package:sham_cars/features/home/components/home_section.dart';
 import 'package:sham_cars/features/home/components/nearby_facilities_section.dart';
 import 'package:sham_cars/features/search/cubit/search_cubit.dart';
 import 'package:sham_cars/features/search/models/search_result.dart';
 import 'package:sham_cars/features/search/widgets/search_filters_section.dart';
 import 'package:sham_cars/features/theme/app_theme.dart';
-import 'package:sham_cars/routes/routes.dart';
+import 'package:sham_cars/features/search/widgets/search_card_wrapper.dart';
 import 'package:sham_cars/utils/utils.dart';
-import 'package:sham_cars/widgets/custom_scaffold.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-
-import '../search/widgets/search_card_wrapper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -82,92 +78,59 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SearchCubit(),
-      lazy: false,
-      child: Builder(
-        builder: (context) {
-          return CustomScaffold(
-            title: context.l10n.appName,
-            showLoadingBarrier: false,
-            appBarActions: [
-              BlocBuilder<AuthStateCubit, AuthState>(
-                builder: (context, state) {
-                  return state.hasUser()
-                      ? IconButton(
-                          icon: const Icon(Icons.person_outline),
-                          tooltip: context.l10n.drawerProfileIBtnLabel,
-                          onPressed: () =>
-                              const UserProfileScreenRoute().push(context),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.person),
-                          tooltip: context.l10n.loginBtnLabel,
-                          // color: context.colorScheme.onPrimary,
-                          onPressed: () =>
-                              const LoginScreenRoute().push(context),
-                        );
-                },
-              ),
-            ],
-            showOptionsActionBtn: true,
-            body: CustomScrollView(
-              slivers: [
-                PinnedHeaderSliver(
-                  child: Container(
-                    color: context.colorScheme.surface,
-                    child: _PinnedSearchSec(context.read()),
-                  ),
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    BlocBuilder<SearchCubit, SearchState>(
-                      builder: (context, state) {
-                        if (state.isBusy || state.hasResults) {
-                          return ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 12,
-                            ),
-                            itemBuilder: (context, i) {
-                              return AnimatedSwitcher(
-                                key: Key('search-result-card-$i'),
-                                duration: Duration(milliseconds: 300 * i),
-                                child: state.isBusy
-                                    ? const _CardSkeleton()
-                                    : SearchCardWrapper(
-                                        result: state.results[i],
-                                        onTap: () {
-                                          FocusScope.of(context).unfocus();
-                                          showSheet(state.results[i]);
-                                        },
-                                      ),
-                              );
-                            },
-                            separatorBuilder: (context, _) {
-                              return const Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                              );
-                            },
-                            itemCount: state.isBusy ? 4 : state.results.length,
-                          );
-                        }
-                        return const SizedBox(height: 22);
-                      },
+    return CustomScrollView(
+      slivers: [
+        PinnedHeaderSliver(
+          child: Container(
+            color: context.colorScheme.surface,
+            child: _PinnedSearchSec(context.read()),
+          ),
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate([
+            BlocBuilder<SearchCubit, SearchState>(
+              builder: (context, state) {
+                if (state.isBusy || state.hasResults) {
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 12,
                     ),
-                    HomeScreenSection(
-                      title: context.l10n.homeFacilitiesSectionTitle,
-                      content: const NearbyFacilitiesSection(),
-                    ),
-                  ]),
-                ),
-              ],
+                    itemBuilder: (context, i) {
+                      return AnimatedSwitcher(
+                        key: Key('search-result-card-$i'),
+                        duration: Duration(milliseconds: 300 * i),
+                        child: state.isBusy
+                            ? const _CardSkeleton()
+                            : SearchCardWrapper(
+                                result: state.results[i],
+                                onTap: () {
+                                  FocusScope.of(context).unfocus();
+                                  showSheet(state.results[i]);
+                                },
+                              ),
+                      );
+                    },
+                    separatorBuilder: (context, _) {
+                      return const Padding(
+                        padding: EdgeInsets.only(bottom: 10),
+                      );
+                    },
+                    itemCount: state.isBusy ? 4 : state.results.length,
+                  );
+                }
+                return const SizedBox(height: 22);
+              },
             ),
-          );
-        },
-      ),
+            HomeScreenSection(
+              title: context.l10n.homeFacilitiesSectionTitle,
+              content: const NearbyFacilitiesSection(),
+            ),
+          ]),
+        ),
+      ],
     );
   }
 }
@@ -292,7 +255,7 @@ class _SearchBar extends StatelessWidget {
         if (states.contains(WidgetState.focused)) {
           return BorderSide(color: context.colorScheme.primary);
         }
-        return const BorderSide(color: AppTheme.textFieldBorderColor);
+        return BorderSide(color: context.colorScheme.outline);
       }),
       elevation: const WidgetStatePropertyAll(0),
     );

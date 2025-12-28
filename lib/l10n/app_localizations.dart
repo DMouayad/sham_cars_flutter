@@ -63,7 +63,7 @@ import 'app_localizations_en.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -86,22 +86,22 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('en')
+    Locale('en'),
   ];
 
   /// The name of our app
   ///
   /// In en, this message translates to:
-  /// **'Healing Guide'**
+  /// **'Sham Cars'**
   String get appName;
 
   /// A default message displayed over the loading barrier
@@ -182,12 +182,6 @@ abstract class AppLocalizations {
   /// **'Facilities near you'**
   String get homeFacilitiesSectionTitle;
 
-  /// No description provided for @drawerProfileIBtnLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'My profile'**
-  String get drawerProfileIBtnLabel;
-
   /// No description provided for @signedInAs.
   ///
   /// In en, this message translates to:
@@ -206,11 +200,11 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logoutBtnLabel;
 
-  /// No description provided for @drawerDarkModeSwitchTitle.
+  /// No description provided for @drawerThemeModeSwitchTitle.
   ///
   /// In en, this message translates to:
-  /// **'Dark mode'**
-  String get drawerDarkModeSwitchTitle;
+  /// **'Color mode'**
+  String get drawerThemeModeSwitchTitle;
 
   /// No description provided for @enableDarkModeBtnLabel.
   ///
@@ -224,11 +218,23 @@ abstract class AppLocalizations {
   /// **'Disable dark mode'**
   String get disableDarkModeBtnLabel;
 
-  /// No description provided for @changeLanguageBtnLabel.
+  /// No description provided for @darkThemeMode.
   ///
   /// In en, this message translates to:
-  /// **'Change language'**
-  String get changeLanguageBtnLabel;
+  /// **'Dark'**
+  String get darkThemeMode;
+
+  /// No description provided for @lightThemeMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightThemeMode;
+
+  /// No description provided for @systemThemeMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get systemThemeMode;
 
   /// No description provided for @drawerLanguageBtnLabel.
   ///
@@ -305,7 +311,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchScreenTitle.
   ///
   /// In en, this message translates to:
-  /// **'Search in Healing Guide'**
+  /// **'Search in Sham Cars'**
   String get searchScreenTitle;
 
   /// No description provided for @doctorSearchFilter.
@@ -587,7 +593,7 @@ abstract class AppLocalizations {
   /// A message to display as a greeting to the user
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Healing Guide'**
+  /// **'Welcome to Sham Cars'**
   String get appGreeting;
 
   /// The text to be displayed under the title
@@ -608,17 +614,11 @@ abstract class AppLocalizations {
   /// **'Already have an account?'**
   String get alreadyHaveAnAccountQuestion;
 
-  /// The text of registering as a doctor
+  /// The label of the button to create an account
   ///
   /// In en, this message translates to:
-  /// **'Create a doctor account'**
-  String get createDoctorAccountBtnLabel;
-
-  /// The text of registering as a Patient
-  ///
-  /// In en, this message translates to:
-  /// **'Create a Patient account'**
-  String get createPatientAccountBtnLabel;
+  /// **'Create an account'**
+  String get createAccountBtnLabel;
 
   ///
   ///
@@ -914,17 +914,11 @@ abstract class AppLocalizations {
   /// **'Create my account'**
   String get signupBtnLabel;
 
-  /// No description provided for @signupAsDoctorScreenTitle.
+  /// No description provided for @signupScreenTitle.
   ///
   /// In en, this message translates to:
-  /// **'Registering as a doctor'**
-  String get signupAsDoctorScreenTitle;
-
-  /// No description provided for @signupAsPatientScreenTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Registering as a doctor'**
-  String get signupAsPatientScreenTitle;
+  /// **'Registering'**
+  String get signupScreenTitle;
 
   /// No description provided for @completeSignupFormSubtitle.
   ///
@@ -961,6 +955,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Swap up to view full information'**
   String get sheetDragUpHint;
+
+  /// No description provided for @show.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get show;
+
+  /// No description provided for @hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get hide;
 
   /// No description provided for @ophthalmology.
   ///
@@ -1116,8 +1122,9 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

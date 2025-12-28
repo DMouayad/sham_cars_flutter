@@ -6,8 +6,7 @@ abstract base class SearchRepository {
       SearchCategoryFilter.all => _searchAll(searchTerm, filters),
       SearchCategoryFilter.doctors => _searchDoctors(searchTerm, filters),
       SearchCategoryFilter.facilities => _searchFacilities(searchTerm, filters),
-    })
-        .then(_decodeResponseBody);
+    }).then(_decodeResponseBody);
   }
 
   // _handleError(Object error, StackTrace trace) {

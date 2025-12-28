@@ -5,7 +5,7 @@ class Location {
   final double? long;
 
   const Location({required this.id, this.description, this.lat, this.long})
-      : assert((lat != null && long != null) || description != null);
+    : assert((lat != null && long != null) || description != null);
 }
 
 class LocationDescription {

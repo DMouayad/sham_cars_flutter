@@ -10,14 +10,22 @@ final class ApiSearchRepository extends SearchRepository {
   @override
   Future<JsonObject> _searchDoctors(String searchTerm, SearchFilters filters) {
     return _requestUrl(
-        searchTerm, 'ApiRoutes.searchPhysiciansEndpoint', filters);
+      searchTerm,
+      'ApiRoutes.searchPhysiciansEndpoint',
+      filters,
+    );
   }
 
   @override
   Future<JsonObject> _searchFacilities(
-      String searchTerm, SearchFilters filters) async {
+    String searchTerm,
+    SearchFilters filters,
+  ) async {
     return await _requestUrl(
-        searchTerm, 'ApiRoutes.searchFacilitiesEndpoint', filters);
+      searchTerm,
+      'ApiRoutes.searchFacilitiesEndpoint',
+      filters,
+    );
   }
 
   Future<JsonObject> _requestUrl(
@@ -60,14 +68,13 @@ final class ApiSearchRepository extends SearchRepository {
   }
 
   MedicalFacility? _medialFacilityFromJson(dynamic json) {
-    if (json
-        case {
-          "\$id": String id,
-          "name": String name,
-          "phoneNumber": String phoneNumber,
-          "emergencyNumber": String emergencyNumber,
-          "rating": int rating,
-        }) {
+    if (json case {
+      "\$id": String id,
+      "name": String name,
+      "phoneNumber": String phoneNumber,
+      "emergencyNumber": String emergencyNumber,
+      "rating": int rating,
+    }) {
       return MedicalFacility(
         id: id,
         name: name,
@@ -83,18 +90,17 @@ final class ApiSearchRepository extends SearchRepository {
   }
 
   Physician? _physicianFromJson(dynamic json) {
-    if (json
-        case {
-          "\$id": String id,
-          "name": String name,
-          "languages": String languages,
-          "city": String location,
-          "rating": int rating,
-          "biography": String biography,
-          "isMale": bool isMale,
-          "dateOfBirth": String dateOfBirth,
-          "specialties": JsonObject specialties,
-        }) {
+    if (json case {
+      "\$id": String id,
+      "name": String name,
+      "languages": String languages,
+      "city": String location,
+      "rating": int rating,
+      "biography": String biography,
+      "isMale": bool isMale,
+      "dateOfBirth": String dateOfBirth,
+      "specialties": JsonObject specialties,
+    }) {
       return Physician(
         id: id,
         name: name,

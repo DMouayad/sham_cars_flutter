@@ -8,7 +8,7 @@ class ApiPhoneVerificationRepository {
     return RestClient.instance
         .request(
           HttpMethod.post,
-          ApiRoutes.userRoutes.verifyPhone,
+          ApiRoutes.authRoutes.verifyAccount,
           body: {"code": _code, "phoneNumber": phoneNumber},
         )
         .then((_) {});

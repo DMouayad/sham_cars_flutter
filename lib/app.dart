@@ -1,34 +1,39 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:sham_cars/l10n/app_localizations.dart';
-import 'package:sham_cars/routes/router.dart';
+import 'package:sham_cars/features/auth/auth_notifier.dart';
+import 'package:sham_cars/features/search/cubit/search_cubit.dart';
 import 'package:sham_cars/features/theme/app_theme.dart';
-import 'package:sham_cars/routes/routes.dart';
-
-import 'features/auth/cubit/auth_state_cubit.dart';
-import 'features/auth/models/auth_state.dart';
-import 'features/localization/cubit/localization_cubit.dart';
-import 'features/theme/theme_cubit.dart';
+import 'package:sham_cars/features/localization/cubit/localization_cubit.dart';
+import 'package:sham_cars/features/theme/theme_cubit.dart';
+import 'package:sham_cars/l10n/app_localizations.dart';
+import 'package:sham_cars/router/redirect_helper.dart';
+import 'package:sham_cars/router/routes.dart';
+import 'package:sham_cars/widgets/page_loader.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(lazy: false, create: (_) => ThemeCubit()),
-        BlocProvider(lazy: false, create: (_) => LocalizationCubit()),
-        BlocProvider(lazy: false, create: (_) => AuthStateCubit()),
-      ],
-      child: BlocListener<AuthStateCubit, AuthState>(
-        // This listener is added to redirect user to home screen when
-        // `AuthState` is at an unventilated state
-        listener: (context, state) =>
-            router.go(const HomeScreenRoute().location),
-        listenWhen: (prev, current) => current.isUnauthenticated(),
+    return RepositoryProvider(
+      create: (context) => GoRouter(
+        routes: $appRoutes,
+        initialLocation: const HomeRoute().location,
+        debugLogDiagnostics: true,
+        refreshListenable: GetIt.I.get<AuthNotifier>(),
+        redirect: redirectHelper,
+      ),
+      lazy: false,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(lazy: false, create: (_) => ThemeCubit()),
+          BlocProvider(lazy: false, create: (_) => LocalizationCubit()),
+          BlocProvider(create: (_) => SearchCubit()),
+        ],
         child: const MainAppView(),
       ),
     );
@@ -45,31 +50,45 @@ class MainAppView extends StatelessWidget {
         return BlocBuilder<LocalizationCubit, LocalizationState>(
           builder: (context, localeState) {
             return MaterialApp.router(
-              title: 'Healing Guide',
-              routerConfig: router,
+              title: 'Sham Cars',
+              routerConfig: context.read<GoRouter>(),
               themeMode: themeMode,
               locale: localeState.locale,
               theme: AppTheme.lightThemeData.copyWith(
                 textTheme: localeState.isArabic
-                    ? AppTheme.lightThemeData.textTheme.apply(
-                        fontFamily: 'almarai',
+                    ? AppTheme.applyLetterSpacing(
+                        AppTheme.lightThemeData.textTheme.apply(
+                          fontFamily: 'almarai',
+                        ),
+                        0.0,
                       )
-                    : GoogleFonts.poppinsTextTheme(
-                        AppTheme.lightThemeData.textTheme,
+                    : AppTheme.lightThemeData.textTheme.apply(
+                        fontFamily: 'inter',
                       ),
               ),
               darkTheme: AppTheme.darkThemeData.copyWith(
                 textTheme: localeState.isArabic
-                    ? AppTheme.darkThemeData.textTheme.apply(
-                        fontFamily: 'almarai',
+                    ? AppTheme.applyLetterSpacing(
+                        AppTheme.darkThemeData.textTheme.apply(
+                          fontFamily: 'almarai',
+                        ),
+                        0.0,
                       )
-                    : GoogleFonts.poppinsTextTheme(
-                        AppTheme.darkThemeData.textTheme,
+                    : AppTheme.darkThemeData.textTheme.apply(
+                        fontFamily: 'inter',
                       ),
               ),
               debugShowCheckedModeBanner: false,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
+              builder: (context, child) {
+                return Directionality(
+                  textDirection: localeState.isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  child: PageLoader(child: child!),
+                );
+              },
             );
           },
         );

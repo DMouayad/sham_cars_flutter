@@ -3,20 +3,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sham_cars/api/config.dart';
-import 'package:sham_cars/features/signup/models/signup_method.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'package:sham_cars/features/user/models/role.dart';
-import 'package:sham_cars/routes/routes.dart';
+import 'package:sham_cars/widgets/page_loader.dart';
+import 'package:sham_cars/api/config.dart';
+import 'package:sham_cars/features/login/cubit/login_cubit.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/dialogs/error_dialog.dart';
-import 'package:sham_cars/widgets/form/email_or_phone_text_field.dart';
+import 'package:sham_cars/widgets/form/email_text_field.dart';
 import 'package:sham_cars/widgets/form/password_text_field.dart';
-import 'package:sham_cars/widgets/custom_scaffold.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'cubit/login_cubit.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({required this.redirectTo, super.key});
@@ -26,8 +23,14 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => LoginCubit(),
-      child: BlocConsumer<LoginCubit, LoginState>(
+      child: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
+          final pageLoader = PageLoader.of(context);
+          if (state.isBusy) {
+            pageLoader.show(message: context.l10n.loginInProgress);
+          } else {
+            pageLoader.hide();
+          }
           switch (state) {
             case LoginSuccessState():
               context.pushReplacement(redirectTo);
@@ -43,15 +46,7 @@ class LoginScreen extends StatelessWidget {
               break;
           }
         },
-        buildWhen: (previous, current) => previous.isBusy != current.isBusy,
-        builder: (context, state) {
-          return CustomScaffold(
-            title: context.l10n.loginScreenSubtitle,
-            body: const LoginForm(),
-            showOptionsActionBtn: true,
-            showLoadingBarrier: state.isBusy || state is LoginSuccessState,
-          );
-        },
+        child: const LoginForm(),
       ),
     );
   }
@@ -77,24 +72,26 @@ class LoginForm extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Center(child: SvgPicture.asset('assets/images/logo.svg')),
-                ...[
-                  const SizedBox(height: 48),
-                  EmailOrPhoneTextField(
-                    controller: formHelper.emailOrPhoneController,
-                    validator: formHelper.emailOrPhoneValidator,
+                Center(
+                  child: Text(
+                    context.l10n.loginScreenSubtitle,
+                    style: context.textTheme.titleLarge?.copyWith(
+                      color: context.colorScheme.secondary,
+                    ),
                   ),
-                  const Padding(padding: EdgeInsets.all(12)),
-                  PasswordTextField(
-                    formHelper: formHelper,
-                    textInputAction: TextInputAction.done,
-                  ),
-                  const ForgotPasswordButton(),
-                  const Padding(padding: EdgeInsets.all(12)),
-                  const _LoginButton(),
-                  const SizedBox(height: 48),
-                  const _CreateNewAccountSection(),
-                ],
+                ),
+                const SizedBox(height: 48),
+                EmailTextField(formHelper: formHelper),
+                const Padding(padding: EdgeInsets.all(8)),
+                PasswordTextField(
+                  formHelper: formHelper,
+                  textInputAction: TextInputAction.done,
+                ),
+                const ForgotPasswordButton(),
+                const Padding(padding: EdgeInsets.all(12)),
+                const _LoginButton(),
+                const SizedBox(height: 48),
+                const _CreateNewAccountSection(),
               ],
             ),
           ),
@@ -133,21 +130,8 @@ class _CreateNewAccountSection extends StatelessWidget {
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: () => const SignupScreenRoute(
-                    method: SignupMethod.phone,
-                    role: Role.physician,
-                  ).pushReplacement(context),
-                  child: Text(context.l10n.createDoctorAccountBtnLabel),
-                ),
-              ),
-              const Expanded(flex: 0, child: Text('|')),
-              Expanded(
-                child: TextButton(
-                  onPressed: () => const SignupScreenRoute(
-                    method: SignupMethod.phone,
-                    role: Role.patient,
-                  ).pushReplacement(context),
-                  child: Text(context.l10n.createPatientAccountBtnLabel),
+                  onPressed: () => const SignupRoute().pushReplacement(context),
+                  child: Text(context.l10n.createAccountBtnLabel),
                 ),
               ),
             ],

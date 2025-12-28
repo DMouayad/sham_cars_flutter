@@ -10,7 +10,8 @@
             "flutterMode": "debug",
             "type": "dart",
             "toolArgs": [
-                "--enable-experiment=macros"
+                "--enable-experiment=macros",
+                "--dart-define=cronetHttpNoPlay=true"
             ],
         },
         {

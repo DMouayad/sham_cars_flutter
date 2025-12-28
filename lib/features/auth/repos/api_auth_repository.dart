@@ -1,128 +1,88 @@
 part of '../repositories.dart';
 
 final class AuthRepository extends IAuthRepository {
-  AuthRepository();
-  ITokensRepository get _tokensRepository => GetIt.I.get();
+  AuthRepository(this._tokensRepository, this._localUserRepository);
+  final LocalUserRepository _localUserRepository;
+  final ITokensRepository _tokensRepository;
 
   @override
-  Future<void> logIn(LoginRequest req) async {
-    final (user, token) = await RestClient.instance
-        .request(HttpMethod.post, ApiRoutes.authRoutes.login, body: {
-      'emailOrPhoneNo': req.emailOrPhone,
-      'password': req.password,
-    }).then(decodeAuthorizedUserResponse);
-    _updateState(user);
-    _tokensRepository.store(token);
+  Future<User> logIn(LoginRequest req) async {
+    final (username, token) = await RestClient.instance
+        .request(
+          HttpMethod.post,
+          ApiRoutes.authRoutes.login,
+          body: {'email': req.emailOrPhone, 'password': req.password},
+        )
+        .then(_decodeLoginResponse);
+    final user = await _localUserRepository.getUser(username);
+    if (user == null) {
+      throw AppError.unauthenticated;
+    }
+    await _tokensRepository.store(token);
+    return user;
   }
 
   @override
   Future<void> logOut() async {
     final accessToken = await _tokensRepository.get();
     if (accessToken == null) {
-      return _updateState(null);
+      return;
     }
     return RestClient.instance
         .request(
-      HttpMethod.post,
-      ApiRoutes.authRoutes.logout,
-      accessToken: accessToken,
-    )
-        .catchError((err, st) async {
-      if (err case ApiError apiError
-          when apiError.appErr == AppError.invalidPat) {
-        await _tokensRepository.store(null).then((_) => _updateState(null));
-        return Future<JsonObject>.value({});
-      } else {
-        return Future<JsonObject>.error(err, st);
-      }
-    }).then((_) {
-      return _tokensRepository.store(null).then((_) => _updateState(null));
-    });
-  }
-
-  @override
-  Future<void> confirmSignupWithEmail(ConfirmSignupWithEmailRequest req) async {
-    final reqBody = {
-      'signupConfirmationMethod': "EMAIL",
-      'email': req.email,
-      'role': req.role.name,
-      'signupCode': req.signupCode,
-      'password': req.password,
-    };
-    final (user, token) = await RestClient.instance
-        .request(
           HttpMethod.post,
-          ApiRoutes.authRoutes.signup,
-          body: reqBody,
+          ApiRoutes.authRoutes.logout,
+          accessToken: accessToken,
         )
-        .then(decodeAuthorizedUserResponse);
-    return _tokensRepository.store(token).then((_) => _updateState(user));
+        .catchError((err, st) async {
+          if (err case ApiError apiError
+              when apiError.appErr == AppError.invalidPat) {
+            await _tokensRepository.store(null);
+            return Future<JsonObject>.value({});
+          } else {
+            return Future<JsonObject>.error(err, st);
+          }
+        })
+        .then((_) {});
   }
 
   @override
-  Future<void> confirmIdentity(ConfirmIdentityRequest req) {
-    // TODO: implement confirmIdentity
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> signupWithEmail(StartSignupWithEmailRequest req) async {
+  Future<void> signup(SignupRequest req) async {
     final reqBody = {
-      'receiveVia': "MAIL",
+      'name': req.name,
       'email': req.email,
-      'role': req.role.name,
-    };
-    await RestClient.instance.request(
-      HttpMethod.post,
-      ApiRoutes.authRoutes.requestSignupCode,
-      body: reqBody,
-    );
-  }
-
-  @override
-  Future<void> signupWithPhone(StartSignupWithPhoneRequest req) async {
-    final reqBody = {
-      'receiveVia': "SMS",
-      'phoneNumber': req.phoneNumber,
-      'role': req.role.name,
-    };
-    await RestClient.instance.request(
-      HttpMethod.post,
-      ApiRoutes.authRoutes.requestSignupCode,
-      body: reqBody,
-    );
-  }
-
-  (User user, String accessToken) decodeAuthorizedUserResponse(
-    JsonObject json,
-  ) {
-    if (json case {'token': String token, 'user': JsonObject userJson}) {
-      if (User.fromJsonObj(userJson) case User user) {
-        return (user, token);
-      }
-    }
-    pLogger.w(
-      "Decoding Signup response failed,",
-    );
-    throw AppError.decodingJsonFailed;
-  }
-
-  @override
-  Future<void> confirmSignupWithPhone(ConfirmSignupWithPhoneRequest req) async {
-    final reqBody = {
-      'signupConfirmationMethod': "PHONE",
-      'phoneNumber': req.phoneNumber,
-      'role': req.role.name,
-      'signupCode': req.signupCode,
+      'phone': req.phone,
       'password': req.password,
+      'c_password': req.password,
     };
-    final res = await RestClient.instance.request(
+
+    await RestClient.instance.request(
       HttpMethod.post,
       ApiRoutes.authRoutes.signup,
       body: reqBody,
     );
-    final (user, token) = decodeAuthorizedUserResponse(res);
+  }
+
+  @override
+  Future<void> verifyAccount(VerifyAccountRequest req) async {
+    final reqBody = {'email': req.email, 'email_otp': req.code};
+    return RestClient.instance
+        .request(
+          HttpMethod.post,
+          ApiRoutes.authRoutes.verifyAccount,
+          body: reqBody,
+        )
+        .then((res) {});
+    // .then(decodeAuthorizedUserResponse);
     // securely store the token
-    return _tokensRepository.store(token).then((_) => _updateState(user));
+    // return _tokensRepository.store(token).then((_) => _updateState(user));
+  }
+
+  (String username, String token) _decodeLoginResponse(JsonObject value) {
+    if (value['data'] case {'token': String token, 'name': String username}) {
+      return (username, token);
+    }
+    sLogger.e('Invalid login response: $value');
+    throw AppError.serverError;
   }
 }

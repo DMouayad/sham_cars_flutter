@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:sham_cars/features/phone_verification/cubit/phone_verification_cubit.dart';
 import 'package:sham_cars/features/signup/cubit/signup_cubit.dart';
 import 'package:sham_cars/utils/utils.dart';
-import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:sham_cars/widgets/dialogs/error_dialog.dart';
 import 'package:sham_cars/widgets/no_pop_wrapper.dart';
 import 'package:sham_cars/widgets/otp_fields.dart';
+import 'package:sham_cars/widgets/page_loader.dart';
 part './components.dart';
 
 class PhoneVerificationScreen extends StatelessWidget {

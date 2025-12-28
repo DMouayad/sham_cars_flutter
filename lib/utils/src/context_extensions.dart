@@ -64,6 +64,14 @@ extension ContextThemeExtension on BuildContext {
 
   BorderRadius get platformBorderRadius =>
       BorderRadius.circular(isAndroid ? 20 : 8);
+
+  String getThemeModeName(ThemeMode themeMode) {
+    return switch (themeMode) {
+      ThemeMode.light => l10n.lightThemeMode,
+      ThemeMode.dark => l10n.darkThemeMode,
+      ThemeMode.system => l10n.systemThemeMode,
+    };
+  }
 }
 
 extension ContextPlatformExtension on BuildContext {
@@ -108,7 +116,7 @@ extension ContextLocaleExtension on BuildContext {
     return switch (languageCode) {
       'en' => 'English',
       'ar' => 'العربية',
-      _ => ''
+      _ => '',
     };
   }
 }

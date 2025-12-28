@@ -1,0 +1,13 @@
+<svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- The Lightning "S" (Your specific path) -->
+  <path d="M63.3334 15L32.5 54.1667H55.8334L36.6667 85L67.5 45.8333H44.1667L63.3334 15Z" 
+        fill="#FF6F00"/>
+        
+  <!-- The rest of the text: "hamCars" -->
+  <!-- Using standard system fonts so it renders correctly everywhere -->
+  <text x="75" y="72" 
+        fill="currentcolor" 
+        font-family="inter, sans-serif" 
+        font-size="60" 
+        letter-spacing="-1">hamCars</text>
+</svg>

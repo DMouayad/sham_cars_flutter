@@ -7,13 +7,13 @@ class User extends Equatable {
   final String? id;
   final Role role;
   final bool activated;
-  final String? email;
-  final String? phoneNumber;
-  final String? fullName;
+  final String email;
+  final String phoneNumber;
+  final String fullName;
   final DateTime? emailVerifiedAt;
   final DateTime? phoneNumberVerifiedAt;
   final DateTime? identityConfirmedAt;
-  final DateTime? createdAt;
+  final DateTime createdAt;
 
   const User({
     this.id,
@@ -30,9 +30,10 @@ class User extends Equatable {
   static User? fromJsonObj(JsonObject json) {
     if (json case {
       'activated': bool activated,
-      'email': String? email,
+      'email': String email,
+      'fullName': String fullName,
       'emailVerifiedAt': String? emailVerifiedAt,
-      'phoneNumber': String? phoneNumber,
+      'phoneNumber': String phoneNumber,
       'phoneNumberVerifiedAt': String? phoneNumberVerifiedAt,
       'identityConfirmedAt': String? identityConfirmedAt,
       'createdAt': String createdAt,
@@ -43,8 +44,8 @@ class User extends Equatable {
         role: Role.byNameOrThrow(role),
         email: email,
         phoneNumber: phoneNumber,
-        fullName: null,
-        createdAt: DateTime.tryParse(createdAt),
+        fullName: fullName,
+        createdAt: DateTime.parse(createdAt),
         emailVerifiedAt: DateTime.tryParse(emailVerifiedAt ?? ''),
         phoneNumberVerifiedAt: DateTime.tryParse(phoneNumberVerifiedAt ?? ''),
         identityConfirmedAt: DateTime.tryParse(identityConfirmedAt ?? ''),
@@ -76,6 +77,6 @@ class User extends Equatable {
     'emailVerifiedAt': emailVerifiedAt?.toIso8601String(),
     'phoneNumberVerifiedAt': phoneNumberVerifiedAt?.toIso8601String(),
     'identityConfirmedAt': identityConfirmedAt?.toIso8601String(),
-    'createdAt': createdAt?.toIso8601String(),
+    'createdAt': createdAt.toIso8601String(),
   };
 }

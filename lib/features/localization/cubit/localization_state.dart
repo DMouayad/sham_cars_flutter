@@ -7,7 +7,6 @@ class LocalizationState {
   bool get isArabic => locale.languageCode == 'ar';
 
   @override
-
   bool operator ==(Object other) {
     return other is LocalizationState &&
         locale.languageCode == other.locale.languageCode;

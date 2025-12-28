@@ -51,9 +51,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeFacilitiesSectionTitle => 'منشآت طبية قريبة منك';
 
   @override
-  String get drawerProfileIBtnLabel => 'حسابي الشخصي';
-
-  @override
   String get signedInAs => 'أنت مسجل كـ';
 
   @override
@@ -63,16 +60,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logoutBtnLabel => 'تسجيل الخروج';
 
   @override
-  String get drawerDarkModeSwitchTitle => 'الوضع الليلي';
+  String get drawerThemeModeSwitchTitle => 'نمط الألوان';
 
   @override
-  String get enableDarkModeBtnLabel => 'تفعيل الوضع الليلي';
+  String get enableDarkModeBtnLabel => 'Enable dark mode';
 
   @override
-  String get disableDarkModeBtnLabel => 'تعطيل الوضع الليلي';
+  String get disableDarkModeBtnLabel => 'Disable dark mode';
 
   @override
-  String get changeLanguageBtnLabel => 'تغيير اللغة';
+  String get darkThemeMode => 'داكن';
+
+  @override
+  String get lightThemeMode => 'فاتح';
+
+  @override
+  String get systemThemeMode => 'مطابق للجهاز';
 
   @override
   String get drawerLanguageBtnLabel => 'لغة التطبيق';
@@ -269,10 +272,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alreadyHaveAnAccountQuestion => 'لديك حساب؟';
 
   @override
-  String get createDoctorAccountBtnLabel => 'إنشاء حساب كطبيب';
-
-  @override
-  String get createPatientAccountBtnLabel => 'إنشاء حساب كمريض';
+  String get createAccountBtnLabel => 'إنشاء حساب';
 
   @override
   String get maleGender => 'ذكر';
@@ -443,10 +443,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupBtnLabel => 'إنشاء حسابي';
 
   @override
-  String get signupAsDoctorScreenTitle => 'إنشاء حساب طبيب';
-
-  @override
-  String get signupAsPatientScreenTitle => 'إنشاء حساب مريض';
+  String get signupScreenTitle => 'إنشاء حساب';
 
   @override
   String get completeSignupFormSubtitle => 'يرجى إكمال معلوماتك الشخصية';
@@ -466,6 +463,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sheetDragUpHint => 'اسحب للأعلى لاستعراض كافة المعلومات';
+
+  @override
+  String get show => 'عرض';
+
+  @override
+  String get hide => 'إخفاء';
 
   @override
   String get ophthalmology => 'العينية';

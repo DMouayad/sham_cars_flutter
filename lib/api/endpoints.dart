@@ -1,27 +1,15 @@
-import 'config.dart';
-
 class ApiRoutes {
-  static String get baseApiUrl =>
-      '${ApiConfig.baseUrl}/api/${ApiConfig.apiVersion}';
-
   // Auth Routes
   static const authRoutes = (
-    signup: '/auth/signup',
-    login: '/auth/login',
-    logout: '/auth/logout',
-    confirmIdentity: '/auth/confirm-identity',
-    requestSignupCode: '/auth/signup-codes',
+    signup: '/register',
+    login: '/login',
+    logout: '/logout',
+    requestVerificationCode: '/request_otp',
+    verifyAccount: '/verify_otp',
   );
 
   // User Routes
-  static const userRoutes = (
-    index: '',
-    currentUser: '/me',
-    verifyEmail: '/me/email-verification',
-    sendEmailVerification: '/me/email-verification/send',
-    verifyPhone: '/me/phone-verification',
-    sendPhoneVerification: '/me/phone-verification/send',
-  );
+  static const userRoutes = (index: '', currentUser: '/me');
 
   // Medical Entities Routes
   static const conditionsRoute = '/medical-conditions';

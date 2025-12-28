@@ -1,6 +1,6 @@
 {
     "@@locale": "en",
-    "appName": "Healing Guide",
+    "appName": "Sham Cars",
     "@appName": {
         "description": "The name of our app"
     },
@@ -46,16 +46,16 @@
     "@homeSpecialtiesSectionTitle": {},
     "homeFacilitiesSectionTitle": "Facilities near you",
     "@homeFacilitiesSectionTitle": {},
-    "drawerProfileIBtnLabel": "My profile",
-    "@drawerProfileIBtnLabel": {},
     "signedInAs": "You're signed in as",
     "signedInWith": "You're signed in with",
     "logoutBtnLabel": "Logout",
     "@logoutBtnLabel": {},
-    "drawerDarkModeSwitchTitle": "Dark mode",
+    "drawerThemeModeSwitchTitle": "Color mode",
     "enableDarkModeBtnLabel": "Enable dark mode",
     "disableDarkModeBtnLabel": "Disable dark mode",
-    "changeLanguageBtnLabel": "Change language",
+    "darkThemeMode": "Dark",
+    "lightThemeMode": "Light",
+    "systemThemeMode": "Device",
     "drawerLanguageBtnLabel": "Language",
     "supportBtnLabel": "Need help?",
     "fAQTileLabel": "FAQ",
@@ -68,7 +68,7 @@
     "logoutFailureDialogTitle": "Logout Failed!",
     "publicProfileSettingsTileLabel": "Personal Info",
     "drawerAboutTheAppTile": "About the app",
-    "searchScreenTitle": "Search in Healing Guide",
+    "searchScreenTitle": "Search in Sham Cars",
     "doctorSearchFilter": "Doctors",
     "facilitySearchFilter": "Medical Facilities",
     "allSearchFilter": "All",
@@ -196,7 +196,7 @@
     "@loginInProgress": {
         "description": "The text to be displayed when a login attempt is in progress"
     },
-    "appGreeting": "Welcome to Healing Guide",
+    "appGreeting": "Welcome to Sham Cars",
     "@appGreeting": {
         "description": "A message to display as a greeting to the user"
     },
@@ -214,16 +214,12 @@
         "description": "The text to ask the user if he want to login to an existing account",
         "context": "RegisterScreen"
     },
-    "createDoctorAccountBtnLabel": "Create a doctor account",
-    "@createDoctorAccountBtnLabel": {
-        "description": "The text of registering as a doctor",
+    "createAccountBtnLabel": "Create an account",
+    "@createAccountBtnLabel": {
+        "description": "The label of the button to create an account",
         "context": "LoginScreen"
     },
-    "createPatientAccountBtnLabel": "Create a Patient account",
-    "@createPatientAccountBtnLabel": {
-        "description": "The text of registering as a Patient",
-        "context": "LoginScreen"
-    },
+   
     "maleGender": "male",
     "@maleGender": {
         "description": ""
@@ -404,10 +400,8 @@
     "@signupBtnLabel": {
         "description": "The label of the signup action button in a form"
     },
-    "signupAsDoctorScreenTitle": "Registering as a doctor",
-    "@signupAsDoctorScreenTitle": {},
-    "signupAsPatientScreenTitle": "Registering as a doctor",
-    "@signupAsPatientScreenTitle": {},
+    "signupScreenTitle": "Registering",
+    "@signupScreenTitle": {},
     "completeSignupFormSubtitle": "Please fill your information",
     "completeSignupFormTitle": "Verification Success",
     "signupInProgress": "Creating your account, please wait...",
@@ -423,6 +417,8 @@
         "description": "The title of an `ErrorDialog` displayed after a failed signup attempt"
     },
     "sheetDragUpHint": "Swap up to view full information",
+    "show": "Show",
+    "hide": "Hide",
     "ophthalmology": "Ophthalmology",
     "neurology": "Neurology",
     "dentistry": "Dentistry",

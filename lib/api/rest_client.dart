@@ -3,10 +3,10 @@ import "dart:convert";
 import "dart:developer";
 import "dart:io";
 
+import "package:sham_cars/api/config.dart";
 import "package:sham_cars/utils/utils.dart";
 import "package:http/http.dart" as http;
 
-import "package:sham_cars/api/endpoints.dart";
 import "package:sham_cars/utils/src/http_utils.dart";
 
 import "../utils/src/app_error.dart";
@@ -37,7 +37,7 @@ class RestClient {
         ? joinPath(pathOrParts)
         : pathOrParts.toString();
 
-    final uri = Uri.parse("${ApiRoutes.baseApiUrl}$path");
+    final uri = Uri.parse("${ApiConfig.baseUrl}$path");
 
     final request = http.Request(method.name, uri);
 

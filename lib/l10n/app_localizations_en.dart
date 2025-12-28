@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Healing Guide';
+  String get appName => 'Sham Cars';
 
   @override
   String get loadingBarrierDefaultText => 'Please wait...';
@@ -52,9 +52,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeFacilitiesSectionTitle => 'Facilities near you';
 
   @override
-  String get drawerProfileIBtnLabel => 'My profile';
-
-  @override
   String get signedInAs => 'You\'re signed in as';
 
   @override
@@ -64,7 +61,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutBtnLabel => 'Logout';
 
   @override
-  String get drawerDarkModeSwitchTitle => 'Dark mode';
+  String get drawerThemeModeSwitchTitle => 'Color mode';
 
   @override
   String get enableDarkModeBtnLabel => 'Enable dark mode';
@@ -73,7 +70,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get disableDarkModeBtnLabel => 'Disable dark mode';
 
   @override
-  String get changeLanguageBtnLabel => 'Change language';
+  String get darkThemeMode => 'Dark';
+
+  @override
+  String get lightThemeMode => 'Light';
+
+  @override
+  String get systemThemeMode => 'Device';
 
   @override
   String get drawerLanguageBtnLabel => 'Language';
@@ -112,7 +115,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawerAboutTheAppTile => 'About the app';
 
   @override
-  String get searchScreenTitle => 'Search in Healing Guide';
+  String get searchScreenTitle => 'Search in Sham Cars';
 
   @override
   String get doctorSearchFilter => 'Doctors';
@@ -257,7 +260,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginInProgress => 'Login in progress...';
 
   @override
-  String get appGreeting => 'Welcome to Healing Guide';
+  String get appGreeting => 'Welcome to Sham Cars';
 
   @override
   String get loginScreenSubtitle => 'Login to your account';
@@ -269,10 +272,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alreadyHaveAnAccountQuestion => 'Already have an account?';
 
   @override
-  String get createDoctorAccountBtnLabel => 'Create a doctor account';
-
-  @override
-  String get createPatientAccountBtnLabel => 'Create a Patient account';
+  String get createAccountBtnLabel => 'Create an account';
 
   @override
   String get maleGender => 'male';
@@ -444,10 +444,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupBtnLabel => 'Create my account';
 
   @override
-  String get signupAsDoctorScreenTitle => 'Registering as a doctor';
-
-  @override
-  String get signupAsPatientScreenTitle => 'Registering as a doctor';
+  String get signupScreenTitle => 'Registering';
 
   @override
   String get completeSignupFormSubtitle => 'Please fill your information';
@@ -467,6 +464,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sheetDragUpHint => 'Swap up to view full information';
+
+  @override
+  String get show => 'Show';
+
+  @override
+  String get hide => 'Hide';
 
   @override
   String get ophthalmology => 'Ophthalmology';

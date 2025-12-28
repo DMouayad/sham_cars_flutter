@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get_it/get_it.dart';
-import 'package:sham_cars/api/rest_client.dart';
-import 'package:sham_cars/features/medical_entities/repositories.dart';
-import 'package:sham_cars/features/phone_verification/repositories.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'package:sham_cars/api/rest_client.dart';
+import 'package:sham_cars/features/auth/auth_notifier.dart';
+import 'package:sham_cars/features/phone_verification/repositories.dart';
+import 'package:sham_cars/features/user/local_user_repository.dart';
 
 import 'features/auth/repositories.dart';
 import 'features/search/repositories.dart';
@@ -19,23 +21,24 @@ import 'api/http_client_factory.dart'
     as http_factory;
 
 /// Bootstrap our app with required dependencies
-
-Future<void> _bootstrap() async {
-  GetIt.I.registerSingleton<IAuthRepository>(AuthRepository());
-  GetIt.I.registerSingleton<IMedicalEntitiesRepository>(
-    ApiMedicalEntitiesRepository(),
+void _bootstrap() {
+  GetIt.I.registerSingleton<LocalUserRepository>(LocalUserRepository());
+  GetIt.I.registerSingleton<ITokensRepository>(TokensRepository());
+  GetIt.I.registerSingleton<IAuthRepository>(
+    AuthRepository(
+      GetIt.I.get<ITokensRepository>(),
+      GetIt.I.get<LocalUserRepository>(),
+    ),
   );
+  GetIt.I.registerSingleton(AuthNotifier(GetIt.I.get<IAuthRepository>()));
   GetIt.I.registerSingleton<SearchRepository>(ApiSearchRepository());
   GetIt.I.registerLazySingleton(() => ApiPhoneVerificationRepository());
-  GetIt.I.registerSingleton<ITokensRepository>(TokensRepository());
 
   RestClient.init(http_factory.httpClient());
-  await GetIt.I.allReady();
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // setup `HydratedBloc` storage
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: kIsWeb
@@ -48,6 +51,6 @@ Future<void> main() async {
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
-  await _bootstrap();
+  _bootstrap();
   runApp(const MainApp());
 }

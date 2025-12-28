@@ -8,25 +8,16 @@ class SignupButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<SignupCubit>();
     return FilledButton(
       key: const Key('signup_raisedButton'),
       onPressed: () {
         FocusScope.of(context).unfocus();
-        if (cubit.state.isPendingConfirmation) {
-          context.read<SignupCubit>().onConfirmSignup();
-        } else {
-          context.read<SignupCubit>().onStartSignup();
-        }
+        context.read<SignupCubit>().signup();
       },
       style: const ButtonStyle(
         minimumSize: WidgetStatePropertyAll(Size.fromHeight(48)),
       ),
-      child: Text(
-        cubit.state.isPendingConfirmation
-            ? context.l10n.completeSignupBtnLabel
-            : context.l10n.continueBtnLabel,
-      ),
+      child: Text(context.l10n.signupBtnLabel),
     );
   }
 }

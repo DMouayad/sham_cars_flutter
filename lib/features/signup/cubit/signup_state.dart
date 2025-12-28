@@ -2,7 +2,7 @@ part of 'signup_cubit.dart';
 
 enum SignupStatus {
   success,
-  pendingConfirmation,
+  pendingVerification,
   initial;
 
   static SignupStatus? byNameOrNull(String name) {
@@ -14,28 +14,21 @@ enum SignupStatus {
   }
 }
 
-class SignupState extends Equatable {
-  const SignupState({
-    required this.status,
-    required this.role,
-    required this.method,
-    this.isBusy = false,
-    this.appErr,
-  });
+class SignupState extends Equatable implements BaseState<SignupState> {
+  const SignupState({required this.status, this.isBusy = false, this.appErr});
 
   final SignupStatus status;
-
-  final Role role;
-  final SignupMethod method;
+  @override
   final BaseAppError? appErr;
+  @override
   final bool isBusy;
 
   bool get isSuccess => status == SignupStatus.success;
   bool get hasException => appErr != null;
-  bool get isPendingConfirmation => status == SignupStatus.pendingConfirmation;
+  bool get isPendingVerification => status == SignupStatus.pendingVerification;
 
   @override
-  List<Object?> get props => [status, appErr, role, method, isBusy];
+  List<Object?> get props => [status, appErr, isBusy];
 
   Map<String, dynamic> toJson() {
     final AppError? err = switch (appErr) {
@@ -43,41 +36,31 @@ class SignupState extends Equatable {
       AppError() => appErr as AppError,
       _ => null,
     };
-    return {
-      "status": status.name,
-      "appErr": err?.name,
-      "role": role.name,
-      "method": method.name,
-      "isBusy": isBusy,
-    };
+    return {"status": status.name, "appErr": err?.name, "isBusy": isBusy};
   }
 
-  // static SignupState? fromJson(Map<String, dynamic> json) {
-  //   try {
-  //     return SignupState(
-  //       status: SignupStatus.byNameOrNull(json["status"]),
-  //       appErr: AppError.byNameOrNull(json["appErr"]),
-  //       role: Role.byNameOrNull(json["role"]),
-  //       method: SignupMethod.byNameOrNull(json["method"]),
-  //       isBusy: json["isBusy"],
-  //     );
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+  static SignupState? fromJson(Map<String, dynamic> json) {
+    try {
+      return SignupState(
+        status:
+            SignupStatus.byNameOrNull(json["status"]) ?? SignupStatus.initial,
+        appErr: AppError.byNameOrNull(json["appErr"]),
+        isBusy: json["isBusy"],
+      );
+    } catch (e) {
+      return null;
+    }
+  }
 
   SignupState copyWith({
     SignupStatus? status,
     BaseAppError? appErr,
     Role? role,
-    SignupMethod? method,
     bool? isBusy,
   }) {
     return SignupState(
       status: status ?? this.status,
       appErr: appErr,
-      role: role ?? this.role,
-      method: method ?? this.method,
       isBusy: isBusy ?? this.isBusy,
     );
   }
@@ -94,10 +77,9 @@ class SignupState extends Equatable {
     return copyWith(status: SignupStatus.success);
   }
 
-  SignupState copyAsPendingConfirmation() {
-    return copyWith(isBusy: false, status: SignupStatus.pendingConfirmation);
+  SignupState copyAsPendingVerification() {
+    return copyWith(isBusy: false, status: SignupStatus.pendingVerification);
   }
 
-  factory SignupState.initial(Role role, SignupMethod method) =>
-      SignupState(status: SignupStatus.initial, role: role, method: method);
+  factory SignupState.initial() => SignupState(status: SignupStatus.initial);
 }
