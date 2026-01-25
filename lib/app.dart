@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/search/cubit/search_cubit.dart';
@@ -12,6 +13,7 @@ import 'package:sham_cars/features/theme/theme_cubit.dart';
 import 'package:sham_cars/l10n/app_localizations.dart';
 import 'package:sham_cars/router/redirect_helper.dart';
 import 'package:sham_cars/router/routes.dart';
+import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/page_loader.dart';
 
 class MainApp extends StatelessWidget {
@@ -54,39 +56,22 @@ class MainAppView extends StatelessWidget {
               routerConfig: context.read<GoRouter>(),
               themeMode: themeMode,
               locale: localeState.locale,
-              theme: AppTheme.lightThemeData.copyWith(
-                textTheme: localeState.isArabic
-                    ? AppTheme.applyLetterSpacing(
-                        AppTheme.lightThemeData.textTheme.apply(
-                          fontFamily: 'almarai',
-                        ),
-                        0.0,
-                      )
-                    : AppTheme.lightThemeData.textTheme.apply(
-                        fontFamily: 'inter',
-                      ),
-              ),
-              darkTheme: AppTheme.darkThemeData.copyWith(
-                textTheme: localeState.isArabic
-                    ? AppTheme.applyLetterSpacing(
-                        AppTheme.darkThemeData.textTheme.apply(
-                          fontFamily: 'almarai',
-                        ),
-                        0.0,
-                      )
-                    : AppTheme.darkThemeData.textTheme.apply(
-                        fontFamily: 'inter',
-                      ),
-              ),
+              theme: AppTheme.lightThemeData,
+              darkTheme: AppTheme.darkThemeData,
               debugShowCheckedModeBanner: false,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               builder: (context, child) {
-                return Directionality(
-                  textDirection: localeState.isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                  child: PageLoader(child: child!),
+                return Theme(
+                  data: context.theme.copyWith(
+                    textTheme: _getTextTheme(context),
+                  ),
+                  child: Directionality(
+                    textDirection: localeState.isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    child: PageLoader(child: child!),
+                  ),
                 );
               },
             );
@@ -94,5 +79,14 @@ class MainAppView extends StatelessWidget {
         );
       },
     );
+  }
+
+  TextTheme _getTextTheme(BuildContext context) {
+    return context.isArabicLocale
+        ? AppTheme.applyLetterSpacing(
+            GoogleFonts.tajawalTextTheme(AppTheme.lightThemeData.textTheme),
+            0.0,
+          )
+        : GoogleFonts.spaceGroteskTextTheme();
   }
 }

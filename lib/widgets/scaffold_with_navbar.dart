@@ -24,7 +24,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
       Scaffold.of(context).openEndDrawer();
     } else {
       // Navigate to the selected branch
-      // GoRouter ensures the correct navigation state is restored
       navigationShell.goBranch(
         index,
         // Display the initial location when navigating to a new branch
@@ -41,11 +40,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
         surfaceTintColor: context.colorScheme.surface,
         automaticallyImplyLeading: false,
         automaticallyImplyActions: false,
-        title: const SizedBox(width: 110, child: AppName()),
+        title: const SizedBox(width: 140, child: AppName()),
         centerTitle: true,
       ),
       body: navigationShell, // The current active branch's content
-      // drawer: context.isRTL ? const CustomDrawer() : null,
       endDrawer: const CustomDrawer(),
       bottomNavigationBar: Builder(
         // use a `Builder` to be able to call [Scaffold.of(context)]

@@ -75,8 +75,9 @@ class LoginForm extends StatelessWidget {
                 Center(
                   child: Text(
                     context.l10n.loginScreenSubtitle,
-                    style: context.textTheme.titleLarge?.copyWith(
+                    style: context.textTheme.titleMedium?.copyWith(
                       color: context.colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
