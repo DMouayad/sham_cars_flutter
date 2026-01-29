@@ -5,32 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "sham_cars (debug mode)",
+            "name": "sham_cars",
             "request": "launch",
-            "flutterMode": "debug",
             "type": "dart",
-            "toolArgs": [
-                "--enable-experiment=macros",
-                "--dart-define=cronetHttpNoPlay=true"
-            ],
+            "args": ["--dart-define=cronetHttpNoPlay=true"]
         },
         {
             "name": "sham_cars (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "toolArgs": [
-                "--enable-experiment=macros"
-            ],
+            "args": ["--dart-define=cronetHttpNoPlay=true"]
         },
         {
             "name": "sham_cars (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "toolArgs": [
-                "--enable-experiment=macros"
-            ],
+            "args": ["--dart-define=cronetHttpNoPlay=true"]
         }
     ]
 }
