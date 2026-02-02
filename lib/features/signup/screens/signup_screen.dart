@@ -36,7 +36,10 @@ class SignupScreen extends StatelessWidget {
               errMessage: state.appErr?.getMessage(context),
             );
           } else if (state.isSuccess) {
-            AccountVerificationRoute(context.read()).pushReplacement(context);
+            final cubit = context.read<SignupCubit>();
+            AccountVerificationRoute(
+              cubit.formHelper.emailValue,
+            ).pushReplacement(context);
           }
         },
         child: const _SignupScreenContent(),

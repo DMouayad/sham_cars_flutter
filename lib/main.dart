@@ -9,7 +9,6 @@ import 'package:sham_cars/api/cache.dart';
 
 import 'package:sham_cars/api/rest_client.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
-import 'package:sham_cars/features/phone_verification/repositories.dart';
 import 'package:sham_cars/features/user/api_user_repository.dart';
 import 'package:sham_cars/features/user/local_user_repository.dart';
 
@@ -36,9 +35,6 @@ void _bootstrap(RestClient restClient) {
     ),
   );
   GetIt.I.registerSingleton(AuthNotifier(GetIt.I.get<IAuthRepository>()));
-  GetIt.I.registerLazySingleton(
-    () => ApiPhoneVerificationRepository(restClient),
-  );
 }
 
 Future<void> main() async {

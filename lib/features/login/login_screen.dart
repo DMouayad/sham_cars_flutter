@@ -33,7 +33,11 @@ class LoginScreen extends StatelessWidget {
           }
           switch (state) {
             case final LoginSuccessState state:
-              context.pushReplacement(state.redirectTo ?? redirectTo);
+              final cubit = context.read<LoginCubit>();
+              context.pushReplacement(
+                state.redirectTo ?? redirectTo,
+                extra: cubit.formHelper.emailValue,
+              );
               break;
             case final LoginFailureState state:
               showErrorDialog(

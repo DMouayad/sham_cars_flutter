@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sham_cars/features/home/models.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/features/vehicle/models.dart';
 
 class CommunityQuestionCard extends StatelessWidget {
   const CommunityQuestionCard({
@@ -162,19 +163,22 @@ class CommunityQuestionCard extends StatelessWidget {
   }
 }
 
+// In community_screen.dart, update _CommunityReviewCard:
+
 class CommunityReviewCard extends StatelessWidget {
-  const CommunityReviewCard({super.key, required this.review, this.onTap});
+  const CommunityReviewCard({required this.review, this.onTap});
 
   final HomeReview review;
-  final VoidCallback? onTap;
+  final void Function(CarTrimSummary)? onTap;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final trim = review.trimSummary;
 
     return InkWell(
-      onTap: onTap,
+      onTap: trim != null && onTap != null ? () => onTap!(trim) : null,
       borderRadius: ThemeConstants.cardRadius,
       child: Ink(
         padding: const EdgeInsets.all(ThemeConstants.pSm),
@@ -189,33 +193,11 @@ class CommunityReviewCard extends StatelessWidget {
             // Type badge + Rating
             Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: cs.secondaryContainer,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.rate_review_outlined,
-                        size: 14,
-                        color: cs.onSecondaryContainer,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'تجربة',
-                        style: tt.labelSmall?.copyWith(
-                          color: cs.onSecondaryContainer,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                _TypeBadge(
+                  icon: Icons.rate_review_outlined,
+                  text: 'تجربة',
+                  color: cs.secondaryContainer,
+                  onColor: cs.onSecondaryContainer,
                 ),
                 const SizedBox(width: 8),
                 _RatingStars(rating: review.rating),
@@ -228,48 +210,9 @@ class CommunityReviewCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Vehicle info
-            if (review.vehicle case final v?) ...[
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
-                      width: 48,
-                      height: 48,
-                      child: v.imageUrl.isNotEmpty
-                          ? Image.network(v.imageUrl, fit: BoxFit.cover)
-                          : Container(
-                              color: cs.surfaceContainerHighest,
-                              child: Icon(
-                                Icons.directions_car,
-                                color: cs.outline,
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          v.brandName,
-                          style: tt.labelSmall?.copyWith(color: cs.primary),
-                        ),
-                        Text(
-                          v.name,
-                          style: tt.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            // Trim info (if available)
+            if (trim != null && trim.hasBasicInfo) ...[
+              _TrimRow(trim: trim),
               const SizedBox(height: 12),
             ],
 
@@ -305,12 +248,16 @@ class CommunityReviewCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  review.userName,
-                  style: tt.labelMedium?.copyWith(fontWeight: FontWeight.w500),
+                Expanded(
+                  child: Text(
+                    review.userName,
+                    style: tt.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                if (review.cityCode case final city?) ...[
-                  const SizedBox(width: 8),
+                if (review.cityCode case final city?)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 6,
@@ -327,7 +274,6 @@ class CommunityReviewCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
               ],
             ),
           ],
@@ -356,6 +302,123 @@ class CommunityReviewCard extends StatelessWidget {
     'tartus' => 'طرطوس',
     _ => code,
   };
+}
+
+class _TrimRow extends StatelessWidget {
+  const _TrimRow({required this.trim});
+  final CarTrimSummary trim;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: trim.imageUrl != null && trim.imageUrl!.isNotEmpty
+                ? Image.network(
+                    trim.imageUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _ImagePlaceholder(),
+                  )
+                : _ImagePlaceholder(),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                trim.makeName.toUpperCase(),
+                style: tt.labelSmall?.copyWith(
+                  color: cs.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                trim.displayName,
+                style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+        if (trim.range.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.route, size: 12, color: Colors.green),
+                const SizedBox(width: 4),
+                Text(trim.range.display, style: tt.labelSmall),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _ImagePlaceholder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      color: cs.surfaceContainerHighest,
+      child: Icon(Icons.directions_car, size: 20, color: cs.outline),
+    );
+  }
+}
+
+class _TypeBadge extends StatelessWidget {
+  const _TypeBadge({
+    required this.icon,
+    required this.text,
+    required this.color,
+    required this.onColor,
+  });
+
+  final IconData icon;
+  final String text;
+  final Color color;
+  final Color onColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: onColor),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: onColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _RatingStars extends StatelessWidget {

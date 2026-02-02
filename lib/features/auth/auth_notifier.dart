@@ -31,7 +31,7 @@ class AuthNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCurrentUser(User user) {
+  void updateCurrentUser(User? user) {
     currentUser = user;
     notifyListeners();
   }

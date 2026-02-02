@@ -72,7 +72,7 @@ class SignupState extends Equatable implements BaseState<SignupState> {
   }
 
   SignupState copyAsSuccess() {
-    return copyWith(status: SignupStatus.success);
+    return copyWith(status: SignupStatus.success, isBusy: false);
   }
 
   factory SignupState.initial() => SignupState(status: SignupStatus.initial);

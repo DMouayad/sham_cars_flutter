@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/community/widgets/filters.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/utils/utils.dart';
 
 import 'community_cubit.dart';
@@ -20,7 +21,7 @@ class CommunityScreen extends StatefulWidget {
   });
 
   final void Function(int id) onOpenQuestion;
-  final void Function(int id) onOpenVehicle;
+  final void Function(CarTrimSummary summary) onOpenVehicle;
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -186,9 +187,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
       ),
       ReviewItem(:final review) => CommunityReviewCard(
         review: review,
-        onTap: review.vehicle != null
-            ? () => widget.onOpenVehicle(review.vehicle!.id)
-            : null,
+        // onTap: review.vehicle != null
+        //     ? () => widget.onOpenVehicle(review.vehicle!)
+        //     : null,
       ),
     };
   }

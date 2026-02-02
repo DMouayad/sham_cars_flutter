@@ -32,6 +32,30 @@ class CarDataRepository {
     return data.map(CarModel.fromJson).toList();
   }
 
+  /// Get list of trims with optional filters
+  Future<List<CarTrimSummary>> getTrims([TrimFilters? filters]) async {
+    final data = await _client.requestList(
+      HttpMethod.get,
+      '/car-data/trims',
+      query: filters?.toQueryParams() ?? {},
+    );
+    return data.map(CarTrimSummary.fromJson).toList();
+  }
+
+  /// Get featured trims for home screen
+  Future<List<CarTrimSummary>> getFeaturedTrims({int limit = 10}) async {
+    return getTrims(TrimFilters(take: limit));
+  }
+
+  /// Search trims
+  Future<List<CarTrimSummary>> searchTrims(
+    String query, {
+    int limit = 20,
+  }) async {
+    return getTrims(TrimFilters(search: query, take: limit));
+  }
+
+  /// Get single trim detail
   Future<CarTrim> getTrim(int id) async {
     final data = await _client.request(HttpMethod.get, '/car-data/trims/$id');
     return CarTrim.fromJson(data);

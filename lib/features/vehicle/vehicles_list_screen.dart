@@ -1,16 +1,17 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/features/vehicle/widgets/trim_card.dart';
 import 'package:sham_cars/utils/utils.dart';
 
 import 'cubits/vehicles_list_cubit.dart';
 import 'models.dart';
-import 'widgets/vehicle_card.dart';
 
 class VehiclesScreen extends StatefulWidget {
-  const VehiclesScreen({super.key, required this.onOpenModel});
+  const VehiclesScreen({super.key, required this.onOpenTrim});
 
-  final void Function(int modelId) onOpenModel;
+  final void Function(CarTrimSummary summary) onOpenTrim;
 
   @override
   State<VehiclesScreen> createState() => _VehiclesScreenState();
@@ -18,18 +19,35 @@ class VehiclesScreen extends StatefulWidget {
 
 class _VehiclesScreenState extends State<VehiclesScreen> {
   final _searchController = TextEditingController();
+  final _scrollController = ScrollController();
+  final _debouncer = _Debouncer(milliseconds: 400);
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
+    _debouncer.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<VehiclesListCubit>().loadMore();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<VehiclesListCubit, VehiclesListState>(
       builder: (context, state) {
-        if (state.error != null && state.models.isEmpty) {
+        if (state.error != null && state.trims.isEmpty) {
           return _ErrorView(
             error: state.error!,
             onRetry: () => context.read<VehiclesListCubit>().init(),
@@ -39,6 +57,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
         return RefreshIndicator(
           onRefresh: () => context.read<VehiclesListCubit>().refresh(),
           child: CustomScrollView(
+            controller: _scrollController,
             slivers: [
               // Search
               PinnedHeaderSliver(
@@ -46,13 +65,16 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                   color: context.colorScheme.surface,
                   padding: const EdgeInsets.all(ThemeConstants.p),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 5,
+                    spacing: 8,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TextField(
                         controller: _searchController,
-                        onChanged: (q) =>
-                            context.read<VehiclesListCubit>().search(q),
+                        onChanged: (q) {
+                          _debouncer.run(() {
+                            context.read<VehiclesListCubit>().search(q);
+                          });
+                        },
                         decoration: InputDecoration(
                           hintText: 'ابحث عن سيارة...',
                           prefixIcon: const Icon(Icons.search),
@@ -61,9 +83,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                                   icon: const Icon(Icons.close),
                                   onPressed: () {
                                     _searchController.clear();
-                                    context
-                                        .read<VehiclesListCubit>()
-                                        .clearSearch();
+                                    context.read<VehiclesListCubit>().search(
+                                      '',
+                                    );
                                   },
                                 )
                               : null,
@@ -75,31 +97,42 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                           filled: true,
                         ),
                       ),
-
-                      Row(
-                        children: [
-                          _FiltersRow(
-                            state: state,
-                            onFilterTap: () =>
-                                _showFiltersSheet(context, state),
-                          ),
-                          const Spacer(),
-                          Icon(
-                            Icons.directions_car,
-                            size: 18,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${state.filteredModels.length} سيارة',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _FilterChipsRow(
+                              state: state,
+                              onFilterTap: () =>
+                                  _showFiltersSheet(context, state),
+                            ),
+                            Icon(
+                              Icons.directions_car,
+                              size: 18,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${state.trims.length} سيارة',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                            if (state.isLoading) ...[
+                              const SizedBox(width: 8),
+                              const SizedBox(
+                                width: 12,
+                                height: 12,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
                                 ),
-                          ),
-                        ],
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -107,17 +140,10 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
               ),
 
               // Grid
-              if (state.isLoading && state.models.isEmpty)
-                const SliverToBoxAdapter(
-                  child: Center(
-                    child: SizedBox.square(
-                      dimension: 25,
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                )
-              else if (state.filteredModels.isEmpty)
+              if (state.trims.isEmpty)
                 const SliverFillRemaining(child: _EmptyView())
+              else if (state.isLoading && state.trims.isEmpty)
+                const Center(child: CircularProgressIndicator())
               else
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(
@@ -129,15 +155,23 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                           crossAxisCount: 2,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
-                          childAspectRatio: 0.75,
-                          mainAxisExtent: 250,
+                          childAspectRatio: 0.7,
                         ),
-                    itemCount: state.filteredModels.length,
+                    itemCount:
+                        state.trims.length + (state.isLoadingMore ? 1 : 0),
                     itemBuilder: (_, i) {
-                      final model = state.filteredModels[i];
-                      return EnrichedModelCard(
-                        model: model,
-                        onTap: () => widget.onOpenModel(model.id),
+                      if (i >= state.trims.length) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      final trim = state.trims[i];
+                      return TrimCard(
+                        trim: trim,
+                        onTap: () => widget.onOpenTrim(trim),
                       );
                     },
                   ),
@@ -159,13 +193,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
       builder: (_) => _FiltersSheet(
         bodyTypes: state.bodyTypes,
         makes: state.makes,
-        selectedBodyTypeId: state.selectedBodyTypeId,
-        selectedMakeId: state.selectedMakeId,
-        onApply: (bodyTypeId, makeId) {
-          context.read<VehiclesListCubit>().applyFilters(
-            bodyTypeId: bodyTypeId,
-            makeId: makeId,
-          );
+        filters: state.filters,
+        onApply: (filters) {
+          context.read<VehiclesListCubit>().applyFilters(filters);
           Navigator.pop(context);
         },
       ),
@@ -173,14 +203,16 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
   }
 }
 
-class _FiltersRow extends StatelessWidget {
-  const _FiltersRow({required this.state, required this.onFilterTap});
+class _FilterChipsRow extends StatelessWidget {
+  const _FilterChipsRow({required this.state, required this.onFilterTap});
 
   final VehiclesListState state;
   final VoidCallback onFilterTap;
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
@@ -188,37 +220,58 @@ class _FiltersRow extends StatelessWidget {
         children: [
           // Filter button
           ActionChip(
-            avatar: const Icon(Icons.tune, size: 18),
+            avatar: Badge(
+              isLabelVisible: state.filters.hasFilters,
+              smallSize: 8,
+              child: const Icon(Icons.tune, size: 18),
+            ),
             label: const Text('الفلاتر'),
             onPressed: onFilterTap,
           ),
           const SizedBox(width: 8),
 
-          // Active filters as chips
+          // Active filter chips
           if (state.selectedMake case final make?)
             Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: RawChip(
-                onPressed: onFilterTap,
+              child: Chip(
                 label: Text(make.name),
                 deleteIcon: const Icon(Icons.close, size: 16),
-                onDeleted: () => context.read<VehiclesListCubit>().applyFilters(
-                  bodyTypeId: state.selectedBodyTypeId,
-                ),
+                onDeleted: () =>
+                    context.read<VehiclesListCubit>().setMake(null),
               ),
             ),
 
-          if (state.selectedBodyType case final bodyType?)
+          if (state.selectedBodyType case final bt?)
             Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: RawChip(
-                onPressed: onFilterTap,
-                avatar: bodyType.icon.isEmpty ? null : Text(bodyType.icon),
-                label: Text(bodyType.name),
+              child: Chip(
+                avatar: Text(bt.icon),
+                label: Text(bt.name),
                 deleteIcon: const Icon(Icons.close, size: 16),
-                onDeleted: () => context.read<VehiclesListCubit>().applyFilters(
-                  makeId: state.selectedMakeId,
-                ),
+                onDeleted: () =>
+                    context.read<VehiclesListCubit>().setBodyType(null),
+              ),
+            ),
+
+          if (state.filters.minRangeKm case final range?)
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Chip(
+                label: Text('$range+ كم'),
+                deleteIcon: const Icon(Icons.close, size: 16),
+                onDeleted: () =>
+                    context.read<VehiclesListCubit>().setMinRange(null),
+              ),
+            ),
+          if (state.filters.seats case final seats?)
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Chip(
+                label: Text('$seats+ مقاعد'),
+                deleteIcon: const Icon(Icons.close, size: 16),
+                onDeleted: () =>
+                    context.read<VehiclesListCubit>().setSeats(null),
               ),
             ),
         ],
@@ -231,40 +284,37 @@ class _FiltersSheet extends StatefulWidget {
   const _FiltersSheet({
     required this.bodyTypes,
     required this.makes,
-    required this.selectedBodyTypeId,
-    required this.selectedMakeId,
+    required this.filters,
     required this.onApply,
   });
 
   final List<BodyType> bodyTypes;
   final List<CarMake> makes;
-  final int? selectedBodyTypeId;
-  final int? selectedMakeId;
-  final void Function(int? bodyTypeId, int? makeId) onApply;
+  final TrimFilters filters;
+  final void Function(TrimFilters) onApply;
 
   @override
   State<_FiltersSheet> createState() => _FiltersSheetState();
 }
 
 class _FiltersSheetState extends State<_FiltersSheet> {
-  int? _bodyTypeId;
-  int? _makeId;
+  late TrimFilters _filters;
 
   @override
   void initState() {
     super.initState();
-    _bodyTypeId = widget.selectedBodyTypeId;
-    _makeId = widget.selectedMakeId;
+    _filters = widget.filters;
   }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+
     return DraggableScrollableSheet(
-      initialChildSize: 0.7,
+      initialChildSize: 0.75,
       minChildSize: 0.5,
-      maxChildSize: 0.9,
+      maxChildSize: 0.95,
       expand: false,
       builder: (_, scrollController) => Column(
         children: [
@@ -290,10 +340,7 @@ class _FiltersSheetState extends State<_FiltersSheet> {
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: () => setState(() {
-                    _bodyTypeId = null;
-                    _makeId = null;
-                  }),
+                  onPressed: () => setState(() => _filters = _filters.clear()),
                   child: const Text('مسح الكل'),
                 ),
               ],
@@ -309,46 +356,92 @@ class _FiltersSheetState extends State<_FiltersSheet> {
               padding: const EdgeInsets.all(ThemeConstants.p),
               children: [
                 // Makes
-                Text(
-                  'العلامة التجارية',
-                  style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                _FilterSection(
+                  title: 'العلامة التجارية',
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: widget.makes.map((make) {
+                      final selected = _filters.makeId == make.id;
+                      return ChoiceChip(
+                        label: Text(make.name),
+                        selected: selected,
+                        onSelected: (s) => setState(() {
+                          _filters = _filters.copyWith(
+                            makeId: s ? make.id : null,
+                            clearMake: !s,
+                          );
+                        }),
+                      );
+                    }).toList(),
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: widget.makes.map((make) {
-                    final selected = _makeId == make.id;
-                    return ChoiceChip(
-                      label: Text(make.name),
-                      selected: selected,
-                      onSelected: (s) =>
-                          setState(() => _makeId = s ? make.id : null),
-                    );
-                  }).toList(),
-                ),
-
-                const SizedBox(height: 24),
 
                 // Body Types
-                Text(
-                  'نوع الهيكل',
-                  style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                _FilterSection(
+                  title: 'نوع الهيكل',
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: widget.bodyTypes.map((bt) {
+                      final selected = _filters.bodyTypeId == bt.id;
+                      return ChoiceChip(
+                        avatar: Text(bt.icon),
+                        label: Text(bt.name),
+                        selected: selected,
+                        onSelected: (s) => setState(() {
+                          _filters = _filters.copyWith(
+                            bodyTypeId: s ? bt.id : null,
+                            clearBodyType: !s,
+                          );
+                        }),
+                      );
+                    }).toList(),
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: widget.bodyTypes.map((bt) {
-                    final selected = _bodyTypeId == bt.id;
-                    return ChoiceChip(
-                      avatar: Text(bt.icon),
-                      label: Text(bt.name),
-                      selected: selected,
-                      onSelected: (s) =>
-                          setState(() => _bodyTypeId = s ? bt.id : null),
-                    );
-                  }).toList(),
+
+                // Range
+                _FilterSection(
+                  title: 'المدى الأدنى',
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [200, 300, 400, 500, 600].map((range) {
+                      final selected = _filters.minRangeKm == range;
+                      return ChoiceChip(
+                        label: Text('$range+ كم'),
+                        selected: selected,
+                        onSelected: (s) => setState(() {
+                          _filters = _filters.copyWith(
+                            minRangeKm: s ? range : null,
+                            clearRange: !s,
+                          );
+                        }),
+                      );
+                    }).toList(),
+                  ),
+                ),
+
+                // Seats
+                _FilterSection(
+                  title: 'عدد المقاعد',
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [2, 4, 5, 7].map((seats) {
+                      final selected = _filters.seats == seats;
+                      return ChoiceChip(
+                        label: Text('$seats+'),
+                        selected: selected,
+                        onSelected: (s) => setState(() {
+                          _filters = _filters.copyWith(
+                            seats: s ? seats : null,
+                            clearSeats: !s,
+                          );
+                        }),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ],
             ),
@@ -364,11 +457,38 @@ class _FiltersSheetState extends State<_FiltersSheet> {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () => widget.onApply(_bodyTypeId, _makeId),
+                onPressed: () => widget.onApply(_filters),
                 child: const Text('تطبيق'),
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterSection extends StatelessWidget {
+  const _FilterSection({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          child,
         ],
       ),
     );
@@ -435,5 +555,21 @@ class _ErrorView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _Debouncer {
+  final int milliseconds;
+  Timer? _timer;
+
+  _Debouncer({required this.milliseconds});
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+
+  void dispose() {
+    _timer?.cancel();
   }
 }

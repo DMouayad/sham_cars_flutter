@@ -1,70 +1,89 @@
+import 'dart:async';
+
 import 'package:sham_cars/api/cache.dart';
 import 'package:sham_cars/api/rest_client.dart';
+import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
+import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
 
 import 'models.dart';
 
 class HomeRepository {
-  final RestClient _client;
   final ResponseCache _cache;
+  final CarDataRepository _carDataRepo;
+  final CommunityRepository _communityRepo;
+  Completer<HomeData>? _completer;
 
   static const _cacheKeyHome = 'home_data';
 
-  HomeRepository(this._client, this._cache);
+  HomeRepository(this._cache, this._carDataRepo, this._communityRepo);
 
   Future<HomeData> getHomeData({bool forceRefresh = false}) async {
-    // Check cache first
-    if (!forceRefresh) {
-      if (_cache.get<HomeData>(_cacheKeyHome) case final cached?) {
-        return cached;
+    if (_completer != null && !forceRefresh) {
+      return _completer!.future;
+    }
+    _completer = Completer<HomeData>();
+    final completer = _completer!;
+
+    // When the future completes, reset the completer.
+    completer.future.whenComplete(() {
+      if (identical(completer, _completer)) {
+        _completer = null;
+      }
+    });
+
+    try {
+      if (!forceRefresh) {
+        if (_cache.get<HomeData>(_cacheKeyHome) case final cached?) {
+          completer.complete(cached);
+          return completer.future;
+        }
+      }
+
+      final data = await RestClient.runCached(() async {
+        final results = await Future.wait([
+          _carDataRepo.getFeaturedTrims(limit: 10),
+          _carDataRepo.getBodyTypes(),
+          _carDataRepo.getMakes(),
+          _communityRepo.getQuestions(),
+          // _fetchReviews(),
+        ]);
+
+        final homeData = HomeData(
+          featuredTrims: results[0] as List<CarTrimSummary>,
+          bodyTypes: results[1] as List<BodyType>,
+          makes: results[2] as List<CarMake>,
+          latestQuestions: results[3] as List<Question>,
+          // latestReviews: results[4] as List<HomeReview>,
+          latestReviews: [], // empty for now
+        );
+
+        _cache.set(_cacheKeyHome, homeData, ttl: const Duration(minutes: 5));
+        return homeData;
+      });
+      completer.complete(data);
+    } catch (e, s) {
+      if (!completer.isCompleted) {
+        completer.completeError(e, s);
       }
     }
 
-    return RestClient.runCached(() async {
-      final results = await Future.wait([
-        _client.requestList(HttpMethod.get, '/car-data/models'),
-        _client.requestList(HttpMethod.get, '/car-data/body-types'),
-        _client.requestList(HttpMethod.get, '/car-data/makes'),
-        _client.requestList(HttpMethod.get, '/community/questions'),
-        _fetchReviews(),
-      ]);
-
-      final data = HomeData(
-        discoverModels: (results[0] as List)
-            .map((e) => CarModel.fromJson(e))
-            .toList(),
-        bodyTypes: (results[1] as List)
-            .map((e) => BodyType.fromJson(e))
-            .toList(),
-        makes: (results[2] as List).map((e) => CarMake.fromJson(e)).toList(),
-        latestQuestions: (results[3] as List)
-            .map((e) => Question.fromJson(e))
-            .toList(),
-        latestReviews: (results[4] as List)
-            .map((e) => HomeReview.fromJson(e))
-            .toList(),
-      );
-
-      // Cache for 5 minutes
-      _cache.set(_cacheKeyHome, data, ttl: const Duration(minutes: 5));
-
-      return data;
-    });
+    return completer.future;
   }
 
-  Future<List<Map<String, dynamic>>> _fetchReviews() async {
+  Future<List<HomeReview>> _fetchReviews() async {
     try {
-      // Try fetching latest reviews (if backend supports it)
-      return await _client.requestList(
-        HttpMethod.get,
-        '/community/reviews',
-        query: {'limit': '10'},
-      );
+      return await _communityRepo.getLatestReviews(limit: 10);
     } catch (_) {
-      // If not supported, return empty list
       return [];
     }
+  }
+
+  /// Search across trims
+  Future<List<CarTrimSummary>> search(String query) async {
+    if (query.trim().isEmpty) return [];
+    return _carDataRepo.searchTrims(query);
   }
 
   void invalidateCache() {

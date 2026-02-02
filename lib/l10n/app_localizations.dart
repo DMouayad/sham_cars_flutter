@@ -641,26 +641,26 @@ abstract class AppLocalizations {
   /// The main title in the screen
   ///
   /// In en, this message translates to:
-  /// **'Please verify your phone number'**
-  String get phoneVerificationScreenTitle;
+  /// **'Please verify your email address'**
+  String get emailVerificationScreenTitle;
 
-  /// No description provided for @phoneVerificationErrorDialogTitle.
+  /// No description provided for @emailVerificationErrorDialogTitle.
   ///
   /// In en, this message translates to:
-  /// **'Failed to verify your phone'**
-  String get phoneVerificationErrorDialogTitle;
+  /// **'Failed to verify your email'**
+  String get emailVerificationErrorDialogTitle;
 
   /// The main title in the screen
   ///
   /// In en, this message translates to:
   /// **'This help us confirm your identity & protect your account'**
-  String get phoneVerificationScreenSubtitle;
+  String get emailVerificationScreenSubtitle;
 
-  /// No description provided for @phoneVerificationCodeWasSent.
+  /// No description provided for @emailVerificationCodeWasSent.
   ///
   /// In en, this message translates to:
   /// **'Please enter the verification code sent to '**
-  String get phoneVerificationCodeWasSent;
+  String get emailVerificationCodeWasSent;
 
   /// No description provided for @didNotReceiveCode.
   ///
@@ -689,14 +689,14 @@ abstract class AppLocalizations {
   ///
   ///
   /// In en, this message translates to:
-  /// **'Wrong number?'**
-  String get wrongNumberToVerify;
+  /// **'Wrong email?'**
+  String get wrongEmailToVerify;
 
   /// The label of a text button for changing the phone number in verification screen
   ///
   /// In en, this message translates to:
   /// **'go back to change it'**
-  String get changeNumberToVerify;
+  String get changeEmailToVerify;
 
   /// The message of `AppError.noInternetConnection`
   ///

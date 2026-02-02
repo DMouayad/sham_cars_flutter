@@ -133,7 +133,7 @@ mixin $VehiclesRoute on GoRouteData {
 
 mixin $VehicleDetailsRoute on GoRouteData {
   static VehicleDetailsRoute _fromState(GoRouterState state) =>
-      VehicleDetailsRoute(int.parse(state.pathParameters['id']!));
+      VehicleDetailsRoute(state.extra as CarTrimSummary);
 
   VehicleDetailsRoute get _self => this as VehicleDetailsRoute;
 
@@ -143,17 +143,19 @@ mixin $VehicleDetailsRoute on GoRouteData {
   );
 
   @override
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 mixin $CommunityRoute on GoRouteData {
@@ -272,7 +274,7 @@ mixin $SignupRoute on GoRouteData {
 
 mixin $AccountVerificationRoute on GoRouteData {
   static AccountVerificationRoute _fromState(GoRouterState state) =>
-      AccountVerificationRoute(state.extra as SignupCubit);
+      AccountVerificationRoute(state.extra as String);
 
   AccountVerificationRoute get _self => this as AccountVerificationRoute;
 

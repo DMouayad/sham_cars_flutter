@@ -284,18 +284,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get genderInputTitle => 'الجنس';
 
   @override
-  String get phoneVerificationScreenTitle => 'التحقق من رقم الهاتف';
+  String get emailVerificationScreenTitle => 'التحقق من البريد الإلكتروني';
 
   @override
-  String get phoneVerificationErrorDialogTitle => 'فشل التحقق من رقم هاتفك';
+  String get emailVerificationErrorDialogTitle =>
+      'فشل التحقق من بريدك الإلكتروني';
 
   @override
-  String get phoneVerificationScreenSubtitle =>
+  String get emailVerificationScreenSubtitle =>
       'تساعدنا هذه الخطوة في التأكد من هويتك وحماية بياناتك';
 
   @override
-  String get phoneVerificationCodeWasSent =>
-      'أدخل رمز التحقق المرسل على الرقم ';
+  String get emailVerificationCodeWasSent =>
+      'أدخل رمز التحقق المرسل على البريد الإلكتروني ';
 
   @override
   String get didNotReceiveCode => 'لم يصلك الرمز؟ ';
@@ -310,10 +311,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get verifyBtnLabel => 'تحقق';
 
   @override
-  String get wrongNumberToVerify => 'الرقم ليس صحيحاً؟';
+  String get wrongEmailToVerify => 'البريد الإلكتروني ليس صحيحاً؟';
 
   @override
-  String get changeNumberToVerify => 'العودة لتعديله';
+  String get changeEmailToVerify => 'العودة لتعديله';
 
   @override
   String get noInternetConnection =>

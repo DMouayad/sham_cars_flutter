@@ -1,10 +1,10 @@
-part of 'phone_verification_cubit.dart';
+part of 'email_verification_cubit.dart';
 
-sealed class PhoneVerificationState extends Equatable {
-  const PhoneVerificationState({
+sealed class EmailVerificationState extends Equatable {
+  const EmailVerificationState({
     required this.digits,
-    required this.isBusy,
     required this.lastRequestedCodeAt,
+    this.isBusy = false,
   });
 
   final DateTime lastRequestedCodeAt;
@@ -32,31 +32,31 @@ sealed class PhoneVerificationState extends Equatable {
   List<Object?> get props => [isBusy, digits, lastRequestedCodeAt];
 }
 
-final class PhoneVerificationUserInputState extends PhoneVerificationState {
-  const PhoneVerificationUserInputState({
+final class EmailVerificationUserInputState extends EmailVerificationState {
+  const EmailVerificationUserInputState({
     required super.digits,
     required super.lastRequestedCodeAt,
   }) : super(isBusy: false);
 }
 
-final class PhoneVerificationInProgressState extends PhoneVerificationState {
-  const PhoneVerificationInProgressState({
+final class EmailVerificationInProgressState extends EmailVerificationState {
+  const EmailVerificationInProgressState({
     required super.digits,
     required super.lastRequestedCodeAt,
   }) : super(isBusy: true);
 }
 
-final class PhoneVerificationSuccessState extends PhoneVerificationState {
-  const PhoneVerificationSuccessState({required super.lastRequestedCodeAt})
-    : super(isBusy: true, digits: const {});
+final class EmailVerificationSuccessState extends EmailVerificationState {
+  const EmailVerificationSuccessState({required super.lastRequestedCodeAt})
+    : super(isBusy: false, digits: const {});
 }
 
-final class PhoneVerificationFailureState extends PhoneVerificationState {
-  const PhoneVerificationFailureState({
+final class EmailVerificationFailureState extends EmailVerificationState {
+  const EmailVerificationFailureState({
     required this.appException,
     required super.digits,
     required super.lastRequestedCodeAt,
-  }) : super(isBusy: true);
+  }) : super(isBusy: false);
 
   final BaseAppError appException;
 

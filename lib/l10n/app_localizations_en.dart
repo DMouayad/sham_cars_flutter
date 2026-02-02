@@ -284,17 +284,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get genderInputTitle => 'Your gender';
 
   @override
-  String get phoneVerificationScreenTitle => 'Please verify your phone number';
+  String get emailVerificationScreenTitle => 'Please verify your email address';
 
   @override
-  String get phoneVerificationErrorDialogTitle => 'Failed to verify your phone';
+  String get emailVerificationErrorDialogTitle => 'Failed to verify your email';
 
   @override
-  String get phoneVerificationScreenSubtitle =>
+  String get emailVerificationScreenSubtitle =>
       'This help us confirm your identity & protect your account';
 
   @override
-  String get phoneVerificationCodeWasSent =>
+  String get emailVerificationCodeWasSent =>
       'Please enter the verification code sent to ';
 
   @override
@@ -310,10 +310,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifyBtnLabel => 'Verify';
 
   @override
-  String get wrongNumberToVerify => 'Wrong number?';
+  String get wrongEmailToVerify => 'Wrong email?';
 
   @override
-  String get changeNumberToVerify => 'go back to change it';
+  String get changeEmailToVerify => 'go back to change it';
 
   @override
   String get noInternetConnection =>

@@ -232,18 +232,18 @@
     "@genderInputTitle": {
         "description": ""
     },
-    "phoneVerificationScreenTitle": "Please verify your phone number",
-    "@phoneVerificationScreenTitle": {
+    "emailVerificationScreenTitle": "Please verify your email address",
+    "@emailVerificationScreenTitle": {
         "description": "The main title in the screen"
     },
-    "phoneVerificationErrorDialogTitle": "Failed to verify your phone",
-    "@phoneVerificationErrorDialogTitle": {},
-    "phoneVerificationScreenSubtitle": "This help us confirm your identity & protect your account",
-    "@phoneVerificationScreenSubtitle": {
+    "emailVerificationErrorDialogTitle": "Failed to verify your email",
+    "@emailVerificationErrorDialogTitle": {},
+    "emailVerificationScreenSubtitle": "This help us confirm your identity & protect your account",
+    "@emailVerificationScreenSubtitle": {
         "description": "The main title in the screen"
     },
-    "phoneVerificationCodeWasSent": "Please enter the verification code sent to ",
-    "@phoneVerificationCodeWasSent": {},
+    "emailVerificationCodeWasSent": "Please enter the verification code sent to ",
+    "@emailVerificationCodeWasSent": {},
     "didNotReceiveCode": "Did not receive a code?",
     "@didNotReceiveCode": {},
     "resendVerificationCodeIn": "You can request a new code in",
@@ -252,13 +252,13 @@
     "@resendVerificationCodeBtnLabel": {},
     "verifyBtnLabel": "Verify",
     "@verifyBtnLabel": {},
-    "wrongNumberToVerify": "Wrong number?",
-    "@wrongNumberToVerify": {
+    "wrongEmailToVerify": "Wrong email?",
+    "@wrongEmailToVerify": {
         "description": "",
         "context": "PhoneVerificationScreen"
     },
-    "changeNumberToVerify": "go back to change it",
-    "@changeNumberToVerify": {
+    "changeEmailToVerify": "go back to change it",
+    "@changeEmailToVerify": {
         "description": "The label of a text button for changing the phone number in verification screen",
         "context": "PhoneVerificationScreen"
     },

@@ -71,7 +71,7 @@ class CommunityState {
       return item.title.toLowerCase().contains(q) ||
           item.body.toLowerCase().contains(q) ||
           item.userName.toLowerCase().contains(q) ||
-          (item.vehicle?.name.toLowerCase().contains(q) ?? false);
+          (item.trimSummary?.name.toLowerCase().contains(q) ?? false);
     }).toList();
   }
 
@@ -91,15 +91,16 @@ class CommunityCubit extends Cubit<CommunityState> {
       await RestClient.runCached(() async {
         final results = await Future.wait([
           _communityRepo.getQuestions(),
-          _fetchReviews(),
+          // _fetchReviews(),
           _carDataRepo.getModels(),
         ]);
 
         emit(
           state.copyWith(
             questions: results[0] as List<Question>,
-            reviews: results[1] as List<HomeReview>,
-            carModels: results[2] as List<CarModel>,
+            // reviews: results[1] as List<HomeReview>,
+            reviews: [],
+            carModels: results[1] as List<CarModel>,
             isLoading: false,
           ),
         );
@@ -128,7 +129,7 @@ class CommunityCubit extends Cubit<CommunityState> {
   }) async {
     emit(state.copyWith(isSubmitting: true, clearErrors: true));
     try {
-      final accessToken = await GetIt.I.get<TokensRepository>().get();
+      final accessToken = await GetIt.I.get<ITokensRepository>().get();
       if (accessToken == null) {
         throw AppError.unauthenticated;
       }

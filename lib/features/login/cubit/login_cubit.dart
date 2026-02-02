@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/src/app_error.dart';
 import 'package:sham_cars/features/auth/repositories.dart';
 import 'package:sham_cars/features/login/login_form_helper.dart';
@@ -36,8 +37,11 @@ class LoginCubit extends Cubit<LoginState> {
       onError: (exception) {
         if (exception == AppError.unauthenticated) {
           emit(const LoginFailureState(AppError.invalidLoginCredential));
-        } else if (exception == AppError.unauthorized) {
-          emit(const LoginSuccessState());
+        } else if (exception case ApiError apiErr
+            when apiErr.statusCode == 403) {
+          emit(
+            const LoginSuccessState(redirectTo: RoutePath.emailVerification),
+          );
         } else {
           _helpers.onError(exception);
         }

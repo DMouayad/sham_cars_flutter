@@ -44,12 +44,13 @@ class MainApp extends StatelessWidget {
           BlocProvider(lazy: false, create: (_) => ThemeCubit()),
           BlocProvider(lazy: false, create: (_) => LocalizationCubit()),
           RepositoryProvider(
-            create: (_) => HomeRepository(restClient, responseCache),
-          ),
-          RepositoryProvider(
             create: (_) => CommunityRepository(restClient, responseCache),
           ),
           RepositoryProvider(create: (_) => CarDataRepository(restClient)),
+          RepositoryProvider(
+            create: (context) =>
+                HomeRepository(responseCache, context.read(), context.read()),
+          ),
         ],
         child: const MainAppView(),
       ),

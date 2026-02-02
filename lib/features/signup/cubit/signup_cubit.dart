@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sham_cars/api/requests/auth_requests.dart';
+import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/common/base_cubit.dart';
 
 import 'package:sham_cars/utils/src/app_error.dart';
@@ -81,7 +82,8 @@ class SignupCubit extends BaseCubit<SignupState> {
 
     _helpers.handleFuture(
       _authRepo.signup(req),
-      onSuccess: (_) {
+      onSuccess: (user) {
+        GetIt.I.get<AuthNotifier>().updateCurrentUser(user);
         emit(state.copyAsSuccess());
       },
     );

@@ -99,7 +99,7 @@ final class AuthRepository extends IAuthRepository {
       body: reqBody,
     );
     final token = data['token'];
-    if (token! is String) {
+    if (token is! String) {
       throw AppError.signupFailed;
     }
     await _tokensRepository.store(token);
@@ -112,6 +112,16 @@ final class AuthRepository extends IAuthRepository {
     }
 
     return user!;
+  }
+
+  @override
+  Future<void> resendVerificationCode(String email) async {
+    final reqBody = {'email': email};
+    await _client.request(
+      HttpMethod.post,
+      ApiRoutes.authRoutes.requestVerificationCode,
+      body: reqBody,
+    );
   }
 
   (String username, String token) _decodeLoginResponse(JsonObject value) {
