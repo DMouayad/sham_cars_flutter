@@ -25,31 +25,12 @@ on:
             - "v*"
 
 concurrency:
-    group: "pages"
+    group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
 jobs:
-    get-version-info:
-        runs-on: ubuntu-latest
-        outputs:
-            version: ${{ steps.version.outputs.version }}
-            build_number: ${{ steps.version.outputs.build_number }}
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Get version from tag
-              id: version
-              run: |
-                  version=${GITHUB_REF#refs/tags/}
-                  echo "version=$version" >> $GITHUB_OUTPUT
-                  echo "Release version: $version"
-                  BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/.*+//')
-                  BUILD_NUMBER=$((BUILD_NUMBER * 10 + 3))
-                  echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
-    build:
-        name: Build Release APKs
-        needs: [get-version-info]
+    build_and_release_apks:
+        name: Build & Release APKs
         runs-on: ubuntu-latest
 
         steps:
@@ -68,26 +49,20 @@ jobs:
                   channel: "stable"
                   flutter-version-file: pubspec.yaml
                   cache: true
-
-            - name: Flutter Doctor
-              id: flutter_doctor
-              run: |
-                  flutter doctor -v
-
+            
             - name: Get Dependencies
               run: flutter pub get
 
-            # --- BUILD APKs ---
             - name: Build Split APKs
               run: flutter build apk --release --split-per-abi
 
-            # --- PUBLISH ---
             - name: Create Release
               uses: ncipollo/release-action@v1
               with:
-                  tag: ${{ github.event.inputs.tag_name }}
-                  prerelease: ${{ github.event.inputs.prerelease }}
-                  draft: ${{ github.event.inputs.draft }}
+                  # Prioritize workflow_dispatch input, fallback to git ref for tag push
+                  tag: ${{ github.event.inputs.tag_name || github.ref }}
+                  prerelease: ${{ github.event.inputs.prerelease || false }}
+                  draft: ${{ github.event.inputs.draft || false }}
                   artifacts: "build/app/outputs/apk/release/*.apk"
                   token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -113,7 +88,7 @@ jobs:
               uses: actions/configure-pages@v4
 
             - name: Build Web App
-              run: flutter build web --pwa-strategy=offline-first --base-href "${{ steps.pages.outputs.base_path }}/"
+              run: flutter build web --release --pwa-strategy=offline-first --base-href "${{ steps.pages.outputs.base_path }}/"
 
             - name: Upload GitHub Pages artifact
               uses: actions/upload-pages-artifact@v3
