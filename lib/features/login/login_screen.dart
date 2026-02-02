@@ -32,10 +32,10 @@ class LoginScreen extends StatelessWidget {
             pageLoader.hide();
           }
           switch (state) {
-            case LoginSuccessState():
-              context.pushReplacement(redirectTo);
+            case final LoginSuccessState state:
+              context.pushReplacement(state.redirectTo ?? redirectTo);
               break;
-            case LoginFailureState state:
+            case final LoginFailureState state:
               showErrorDialog(
                 context,
                 title: context.l10n.loginFailureDialogTitle,

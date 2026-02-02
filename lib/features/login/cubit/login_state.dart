@@ -16,7 +16,11 @@ final class LoginBusyState extends LoginState {
 }
 
 final class LoginSuccessState extends LoginState {
-  const LoginSuccessState() : super(isBusy: false);
+  const LoginSuccessState({this.redirectTo}) : super(isBusy: false);
+  final String? redirectTo;
+
+  @override
+  List<Object?> get props => [...super.props, redirectTo];
 }
 
 final class LoginFailureState extends LoginState {

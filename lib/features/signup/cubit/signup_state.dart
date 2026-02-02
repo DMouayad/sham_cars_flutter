@@ -2,7 +2,6 @@ part of 'signup_cubit.dart';
 
 enum SignupStatus {
   success,
-  pendingVerification,
   initial;
 
   static SignupStatus? byNameOrNull(String name) {
@@ -25,7 +24,6 @@ class SignupState extends Equatable implements BaseState<SignupState> {
 
   bool get isSuccess => status == SignupStatus.success;
   bool get hasException => appErr != null;
-  bool get isPendingVerification => status == SignupStatus.pendingVerification;
 
   @override
   List<Object?> get props => [status, appErr, isBusy];
@@ -75,10 +73,6 @@ class SignupState extends Equatable implements BaseState<SignupState> {
 
   SignupState copyAsSuccess() {
     return copyWith(status: SignupStatus.success);
-  }
-
-  SignupState copyAsPendingVerification() {
-    return copyWith(isBusy: false, status: SignupStatus.pendingVerification);
   }
 
   factory SignupState.initial() => SignupState(status: SignupStatus.initial);

@@ -19,34 +19,6 @@ abstract class BaseCompleteRegistrationDTO extends Equatable {
   List<Object?> get props => [fullName, role, email, phoneNumber, password];
 }
 
-class CompletePatientRegistrationDTO extends BaseCompleteRegistrationDTO {
-  const CompletePatientRegistrationDTO({
-    required super.email,
-    required super.phoneNumber,
-    required super.fullName,
-    required super.password,
-  }) : super(role: Role.patient);
-}
-
-class CompletePhysicianRegistrationDTO extends BaseCompleteRegistrationDTO {
-  const CompletePhysicianRegistrationDTO({
-    required super.email,
-    required super.phoneNumber,
-    required super.fullName,
-    required super.password,
-    required this.biography,
-    required this.location,
-    required this.languages,
-  }) : super(role: Role.physician);
-
-  final String biography;
-  final List<String> languages;
-  final String location;
-
-  @override
-  List<Object?> get props => [...super.props, biography, languages, location];
-}
-
 class UpdateUserDTO {
   final String? email;
   final String? phoneNumber;

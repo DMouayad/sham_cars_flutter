@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'colors.dart';
+
 class AppTheme {
   static const kFontFamily = 'almarai';
 
@@ -8,6 +10,94 @@ class AppTheme {
   /// 1️⃣  Color constants (hex)
   /// ---------------------------------------------------------------------------
 
+  static const corporateColorScheme = ColorScheme(
+    brightness: Brightness.light,
+
+    // Primary
+    primary: CorporateColors.primary,
+    onPrimary: CorporateColors.primaryContent,
+    primaryContainer:
+        CorporateColors.primary, // Corporate style often keeps high contrast
+    onPrimaryContainer: CorporateColors.primaryContent,
+
+    // Secondary
+    secondary: CorporateColors.secondary,
+    onSecondary: CorporateColors.secondaryContent,
+    secondaryContainer: CorporateColors.secondary,
+    onSecondaryContainer: CorporateColors.secondaryContent,
+
+    // Tertiary (Accent)
+    tertiary: CorporateColors.accent,
+    onTertiary: CorporateColors.accentContent,
+    tertiaryContainer: CorporateColors.accent,
+    onTertiaryContainer: CorporateColors.accentContent,
+
+    // Error
+    error: CorporateColors.error,
+    onError: CorporateColors.errorContent,
+
+    // Backgrounds
+    surface: CorporateColors.base100,
+    onSurface: CorporateColors.baseContent,
+
+    // Containers
+    surfaceContainer: CorporateColors.base200,
+    surfaceContainerHigh: CorporateColors.base300,
+
+    // Neutral
+    inverseSurface: CorporateColors.neutral,
+    onInverseSurface: CorporateColors.neutralContent,
+
+    // Outline (Subtle border using base content)
+    outline: Color(0x332B3440),
+    outlineVariant: CorporateColors.base300,
+  );
+
+  static final ThemeData corporateTheme = ThemeData(
+    useMaterial3: true,
+    colorScheme: corporateColorScheme,
+    scaffoldBackgroundColor: CorporateColors.base100, // Crisp white background
+    // Custom Color Extension
+    extensions: <ThemeExtension<dynamic>>[DaisyCustomColors.corporate],
+
+    // --radius-box: 0.25rem -> 4px
+    cardTheme: CardThemeData(
+      color: CorporateColors.base100,
+      surfaceTintColor: Colors.transparent, // Remove M3 tint to keep it crisp
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.0),
+        side: const BorderSide(
+          color: CorporateColors.base200,
+          width: 1,
+        ), // Optional: Corporate look often has borders
+      ),
+      elevation: 0, // "Corporate" flat look (depth: 0 in CSS)
+    ),
+
+    // --radius-field: 0.25rem -> 4px
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: CorporateColors.base100,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(4.0),
+        borderSide: const BorderSide(color: CorporateColors.base300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(4.0),
+        borderSide: const BorderSide(color: CorporateColors.base300),
+      ),
+    ),
+
+    // --radius-selector: 0.25rem -> 4px
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+        backgroundColor: CorporateColors.primary,
+        foregroundColor: CorporateColors.primaryContent,
+        elevation: 0,
+      ),
+    ),
+  );
   // Light mode
 
   static final _lightColorScheme = ColorScheme(

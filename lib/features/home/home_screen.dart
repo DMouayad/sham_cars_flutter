@@ -1,263 +1,251 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
-import 'package:sham_cars/features/home/components/home_section.dart';
-import 'package:sham_cars/features/home/components/nearby_facilities_section.dart';
-import 'package:sham_cars/features/search/cubit/search_cubit.dart';
-import 'package:sham_cars/features/search/models/search_result.dart';
-import 'package:sham_cars/features/search/widgets/search_filters_section.dart';
-import 'package:sham_cars/features/theme/app_theme.dart';
-import 'package:sham_cars/features/search/widgets/search_card_wrapper.dart';
-import 'package:sham_cars/utils/utils.dart';
+import 'package:sham_cars/features/common/data_state.dart';
+import 'package:sham_cars/features/questions/widgets/question_card.dart';
+import 'package:sham_cars/features/reviews/widgets/review_card.dart';
+import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/features/vehicle/widgets/compact_vehicle_card.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+import 'home_cubit.dart';
+import 'models.dart';
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({
+    super.key,
+    required this.onOpenModel,
+    required this.onOpenQuestion,
+    required this.onViewAllVehicles,
+    required this.onViewAllQuestions,
+  });
 
-class _HomeScreenState extends State<HomeScreen> {
-  final sheetController = DraggableScrollableController();
-  final ValueNotifier<double> _opacityNotifier = ValueNotifier(1.0);
-  var initialChildSize = .7;
-  bool sheetIsOpening = false;
-
-  @override
-  void initState() {
-    sheetController.addListener(() {
-      // Update opacity based on scroll offset
-      if (!sheetIsOpening && sheetController.size < initialChildSize) {
-        double opacity = sheetController.size;
-        _opacityNotifier.value = opacity;
-      }
-      if (sheetController.size == initialChildSize) {
-        _opacityNotifier.value = 1;
-      }
-    });
-    super.initState();
-  }
-
-  SearchResult? selectedResult;
-
-  Future<void> hideSheet() async {
-    if (selectedResult == null) {
-      return;
-    }
-
-    selectedResult = null;
-    await sheetController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.fastEaseInToSlowEaseOut,
-    );
-    _opacityNotifier.value = 1;
-    setState(() {});
-  }
-
-  Future<void> showSheet(SearchResult result) async {
-    sheetIsOpening = true;
-    setState(() => selectedResult = result);
-    await Future.delayed(const Duration(milliseconds: 50));
-    await sheetController.animateTo(
-      initialChildSize,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.fastLinearToSlowEaseIn,
-    );
-    sheetIsOpening = false;
-  }
-
-  @override
-  void dispose() {
-    sheetController.dispose();
-    super.dispose();
-  }
+  final void Function(int modelId) onOpenModel;
+  final void Function(int questionId) onOpenQuestion;
+  final VoidCallback onViewAllVehicles;
+  final VoidCallback onViewAllQuestions;
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        PinnedHeaderSliver(
-          child: Container(
-            color: context.colorScheme.surface,
-            child: _PinnedSearchSec(context.read()),
+    return BlocBuilder<HomeCubit, DataState<HomeData>>(
+      builder: (context, state) => switch (state) {
+        DataInitial() ||
+        DataLoading() => const Center(child: CircularProgressIndicator()),
+        DataError(:final error) => _ErrorView(
+          error: error,
+          onRetry: () => context.read<HomeCubit>().load(),
+        ),
+        DataLoaded(:final data) => _HomeContent(
+          data: data,
+          onOpenModel: onOpenModel,
+          onOpenQuestion: onOpenQuestion,
+          onViewAllVehicles: onViewAllVehicles,
+          onViewAllQuestions: onViewAllQuestions,
+          onRefresh: () => context.read<HomeCubit>().refresh(),
+        ),
+      },
+    );
+  }
+}
+
+class _HomeContent extends StatelessWidget {
+  const _HomeContent({
+    required this.data,
+    required this.onOpenModel,
+    required this.onOpenQuestion,
+    required this.onViewAllVehicles,
+    required this.onViewAllQuestions,
+    required this.onRefresh,
+  });
+
+  final HomeData data;
+  final void Function(int) onOpenModel;
+  final void Function(int) onOpenQuestion;
+  final VoidCallback onViewAllVehicles;
+  final VoidCallback onViewAllQuestions;
+  final Future<void> Function() onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    final enrichedModels = data.enrichedModels;
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView(
+        padding: const EdgeInsets.all(ThemeConstants.p),
+        children: [
+          // Search
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'ابحث عن سيارة أو علامة...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(ThemeConstants.rCard),
+              ),
+            ),
           ),
-        ),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            BlocBuilder<SearchCubit, SearchState>(
-              builder: (context, state) {
-                if (state.isBusy || state.hasResults) {
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 12,
+
+          // Discover Vehicles
+          if (enrichedModels.isNotEmpty) ...[
+            const SizedBox(height: 18),
+            _SectionHeader(title: 'اكتشف السيارات', onTap: onViewAllVehicles),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 200,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: enrichedModels.length.clamp(0, 10),
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (_, i) {
+                  final model = enrichedModels[i];
+                  return SizedBox(
+                    width: 280,
+                    child: CompactModelCard(
+                      model: model,
+                      onTap: () => onOpenModel(model.id),
                     ),
-                    itemBuilder: (context, i) {
-                      return AnimatedSwitcher(
-                        key: Key('search-result-card-$i'),
-                        duration: Duration(milliseconds: 300 * i),
-                        child: state.isBusy
-                            ? const _CardSkeleton()
-                            : SearchCardWrapper(
-                                result: state.results[i],
-                                onTap: () {
-                                  FocusScope.of(context).unfocus();
-                                  showSheet(state.results[i]);
-                                },
-                              ),
-                      );
-                    },
-                    separatorBuilder: (context, _) {
-                      return const Padding(
-                        padding: EdgeInsets.only(bottom: 10),
-                      );
-                    },
-                    itemCount: state.isBusy ? 4 : state.results.length,
                   );
-                }
-                return const SizedBox(height: 22);
-              },
+                },
+              ),
             ),
-            HomeScreenSection(
-              title: context.l10n.homeFacilitiesSectionTitle,
-              content: const NearbyFacilitiesSection(),
-            ),
-          ]),
+          ],
+
+          // Latest Questions
+          if (data.latestQuestions.isNotEmpty) ...[
+            const SizedBox(height: 22),
+            _SectionHeader(title: 'أحدث الأسئلة', onTap: onViewAllQuestions),
+            const SizedBox(height: 10),
+            ...data.latestQuestions
+                .take(3)
+                .map(
+                  (q) => Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: QuestionCard(
+                      question: q,
+                      onTap: () => onOpenQuestion(q.id),
+                    ),
+                  ),
+                ),
+          ],
+
+          // Latest Reviews
+          if (data.latestReviews.isNotEmpty) ...[
+            const SizedBox(height: 22),
+            _SectionHeader(title: 'أحدث التجارب', onTap: onViewAllVehicles),
+            const SizedBox(height: 10),
+            ...data.latestReviews
+                .take(3)
+                .map(
+                  (r) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ReviewCard(
+                      review: r,
+                      onOpenVehicle: r.vehicle != null
+                          ? () => onOpenModel(r.vehicle!.id)
+                          : null,
+                    ),
+                  ),
+                ),
+          ] else ...[
+            // Placeholder if no reviews
+            const SizedBox(height: 22),
+            _SectionHeader(title: 'أحدث التجارب', onTap: onViewAllVehicles),
+            const SizedBox(height: 10),
+            _ReviewsPlaceholder(),
+          ],
+
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.onTap});
+
+  final String title;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
+        const Spacer(),
+        TextButton(onPressed: onTap, child: const Text('عرض الكل')),
       ],
     );
   }
 }
 
-class _CardSkeleton extends StatelessWidget {
-  const _CardSkeleton();
+class _ReviewsPlaceholder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest,
+        borderRadius: ThemeConstants.cardRadius,
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.rate_review_outlined, size: 40, color: cs.outline),
+          const SizedBox(height: 12),
+          Text(
+            'لا توجد تجارب بعد',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'كن أول من يشارك تجربته!',
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: cs.outline),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({required this.error, required this.onRetry});
+
+  final Object error;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
-    var borderRadius = BorderRadius.circular(6);
-    return Skeletonizer.zone(
-      child: Card(
-        elevation: 0,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              // flex: 0,
-              child: Bone.square(
-                size: 44,
-                borderRadius: BorderRadius.circular(4),
-                indentEnd: 16,
-              ),
+            Icon(
+              Icons.cloud_off,
+              size: 48,
+              color: Theme.of(context).colorScheme.outline,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Bone.text(width: 120, fontSize: 14, borderRadius: borderRadius),
-                const SizedBox(height: 5),
-                Bone.text(width: 50, borderRadius: borderRadius),
-                const SizedBox(height: 5),
-                Bone.text(fontSize: 10, width: 240, borderRadius: borderRadius),
-              ],
+            const SizedBox(height: 16),
+            Text('حدث خطأ', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('إعادة المحاولة'),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _PinnedSearchSec extends StatefulWidget {
-  const _PinnedSearchSec(this.searchCubit);
-  final SearchCubit searchCubit;
-
-  @override
-  State<_PinnedSearchSec> createState() => _PinnedSearchSecState();
-}
-
-class _PinnedSearchSecState extends State<_PinnedSearchSec> {
-  bool showFilters = false;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SearchAnchor(
-          builder: (context, controller) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: _SearchBar(onTap: () => setState(() => showFilters = true)),
-          ),
-          isFullScreen: false,
-          suggestionsBuilder: (context, controller) => [],
-        ),
-        AnimatedCrossFade(
-          firstChild: SearchFiltersSection(widget.searchCubit),
-          secondChild: const SizedBox.shrink(),
-          crossFadeState: showFilters
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
-          duration: const Duration(milliseconds: 300),
-        ),
-        if (showFilters)
-          const SizedBox(
-            width: 100,
-            child: Divider(color: AppTheme.lightGreyColor),
-          ),
-      ],
-    );
-  }
-}
-
-class _SearchBar extends StatelessWidget {
-  const _SearchBar({required this.onTap});
-  final void Function() onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SearchBar(
-      onTap: onTap,
-      autoFocus: false,
-      controller: context.read<SearchCubit>().searchTextController,
-      hintText: context.l10n.homeSearchBarHint,
-      hintStyle: WidgetStatePropertyAll(
-        context.textTheme.bodySmall?.copyWith(
-          color: context.colorScheme.onSurface,
-        ),
-      ),
-      onSubmitted: context.read<SearchCubit>().searchFor,
-      leading: const Icon(Icons.search),
-      shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      trailing: [
-        ListenableBuilder(
-          listenable: context.read<SearchCubit>().searchTextController,
-          builder: (context, child) {
-            final controller = context.read<SearchCubit>().searchTextController;
-            return controller.text.isNotEmpty
-                ? child!
-                : const SizedBox.shrink();
-          },
-          child: IconButton(
-            onPressed: () {
-              context.read<SearchCubit>().searchTextController.text = "";
-              context.read<SearchCubit>().searchFor("");
-            },
-            icon: const Icon(Icons.clear),
-          ),
-        ),
-      ],
-      side: WidgetStateBorderSide.resolveWith((states) {
-        if (states.contains(WidgetState.focused)) {
-          return BorderSide(color: context.colorScheme.primary);
-        }
-        return BorderSide(color: context.colorScheme.outline);
-      }),
-      elevation: const WidgetStatePropertyAll(0),
     );
   }
 }

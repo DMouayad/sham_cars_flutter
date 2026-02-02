@@ -484,5 +484,8 @@
     "openProfileBtnLabel": "Open profile",
     "@openProfileBtnLabel": {
         "description": "The label of the open profile button"
-    }
+    },
+    "nameFieldLabel": "Name",
+    "nameFieldHint": "Your name",
+    "nameIsRequired": "Please enter your name"
 }

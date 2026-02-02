@@ -9,7 +9,7 @@ class UserBuilder {
   // Method to build the User object
   User build({
     String? id,
-    Role role = Role.guest,
+    Role role = Role.user,
     bool activated = true,
     String? email,
     String? phoneNumber,

@@ -159,5 +159,8 @@
     "stayOnPageBtnLabel": "البقاء في الصفحة",
     "goBackBtnLabel": "العودة",
     "openProfileBtnLabel": "استعراض الملف الشخصي",
-    "passwordRuleSpecialChar": "يجب أن يحتوي على حرف خاص"
+    "passwordRuleSpecialChar": "يجب أن يحتوي على حرف خاص",
+    "nameFieldLabel": "الاسم",
+    "nameFieldHint": "ادخل اسمك",
+    "nameIsRequired": "يرجى إدخال الاسم الخاص بك"
 }

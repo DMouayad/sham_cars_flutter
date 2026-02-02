@@ -1093,6 +1093,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open profile'**
   String get openProfileBtnLabel;
+
+  /// No description provided for @nameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get nameFieldLabel;
+
+  /// No description provided for @nameFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get nameFieldHint;
+
+  /// No description provided for @nameIsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get nameIsRequired;
 }
 
 class _AppLocalizationsDelegate

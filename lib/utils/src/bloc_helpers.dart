@@ -2,11 +2,11 @@ import 'package:sham_cars/utils/utils.dart';
 
 import 'app_error.dart';
 
-class BlocHelpers {
+class BlocHelpers<E extends BaseAppError> {
   final void Function() emitProcessingRequest;
   final void Function() setAsIdle;
   final bool Function() isBusy;
-  final void Function(BaseAppError err) onError;
+  final void Function(E err) onError;
   final Duration timeoutDuration;
 
   const BlocHelpers({
@@ -20,7 +20,7 @@ class BlocHelpers {
   void handleFuture<T>(
     Future<T> future, {
     required void Function(T value) onSuccess,
-    void Function(BaseAppError err)? onError,
+    void Function(E err)? onError,
   }) {
     emitProcessingRequest();
 
@@ -28,7 +28,7 @@ class BlocHelpers {
         .then(onSuccess)
         .onError((err, stackTrace) {
           pLogger.e('$runtimeType', error: err, stackTrace: stackTrace);
-          final appError = err is AppError ? err : AppError.undefined;
+          final appError = err is E ? err : AppError.undefined as E;
           onError != null ? onError(appError) : this.onError(appError);
         })
         .timeout(

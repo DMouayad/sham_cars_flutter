@@ -1,7 +1,9 @@
 import 'dart:io';
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+
+import 'package:equatable/equatable.dart';
+
 import 'package:sham_cars/utils/utils.dart';
 
 sealed class BaseAppError {
@@ -11,19 +13,24 @@ sealed class BaseAppError {
 class ApiError extends Equatable implements BaseAppError {
   final String? message;
   final Object? extra;
-  final AppError appErr;
-
-  const ApiError({this.message, this.extra, required this.appErr});
+  final AppError? appErr;
+  final int statusCode;
+  const ApiError({
+    this.message,
+    this.extra,
+    this.appErr,
+    required this.statusCode,
+  });
 
   @override
-  List<Object?> get props => [message, extra, appErr];
+  List<Object?> get props => [message, extra, appErr, statusCode];
 
   @override
   bool? get stringify => false;
 
   @override
   String getMessage(BuildContext context) {
-    return appErr.getMessage(context);
+    return message ?? '';
   }
 }
 
@@ -132,6 +139,7 @@ enum AppError implements BaseAppError {
   factory AppError.fromHttpResponse(int statusCode) {
     return switch (statusCode) {
       HttpStatus.unauthorized => AppError.unauthenticated,
+      HttpStatus.forbidden => AppError.unauthorized,
       HttpStatus.notFound => AppError.notFound,
       HttpStatus.badRequest => AppError.invalidApiRequest,
       _ => AppError.serverError,

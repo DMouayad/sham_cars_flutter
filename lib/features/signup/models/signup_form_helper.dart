@@ -16,12 +16,14 @@ class SignupFormHelper extends BaseFormHelper {
       ),
       signupCodeDigits = {},
       passwordConfirmationController = TextEditingController(),
+      nameController = TextEditingController(),
       super();
   final ValueNotifier<bool> signupCodeIsComplete = ValueNotifier(false);
   final Map<int, String> signupCodeDigits;
   String get signupCodeValue => signupCodeDigits.values.join();
 
   final TextEditingController phoneNoController;
+  final TextEditingController nameController;
   final TextEditingController passwordConfirmationController;
 
   bool isMale = true;
@@ -29,6 +31,7 @@ class SignupFormHelper extends BaseFormHelper {
   final showSignupCodeValidationErrorMsg = ValueNotifier(false);
 
   String get phoneNoValue => phoneNoController.text;
+  String get nameValue => nameController.text;
 
   String? phoneNoValidator(String? value, BuildContext context) {
     if (value?.isEmpty ?? true) {
@@ -37,6 +40,13 @@ class SignupFormHelper extends BaseFormHelper {
       if (!isValidPhoneNo(value)) {
         return context.l10n.phoneNumberIsInvalid;
       }
+    }
+    return null;
+  }
+
+  String? nameValidator(String? value, BuildContext context) {
+    if (value?.isEmpty ?? true) {
+      return context.l10n.nameIsRequired;
     }
     return null;
   }
@@ -75,5 +85,6 @@ class SignupFormHelper extends BaseFormHelper {
     super.dispose();
     phoneNoController.dispose();
     passwordConfirmationController.dispose();
+    nameController.dispose();
   }
 }

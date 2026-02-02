@@ -32,7 +32,11 @@ extension JsonDecodeBodyStreamed on Response {
     return switch (statusCode) {
       HttpStatus.notFound || HttpStatus.noContent => Future.value({}),
       HttpStatus.tooManyRequests => Future.error(
-        ApiError(appErr: AppError.rateLimitExceeded, extra: this),
+        ApiError(
+          statusCode: HttpStatus.tooManyRequests,
+          appErr: AppError.rateLimitExceeded,
+          extra: this,
+        ),
       ),
       _ => _tryDecodingResponse(),
     };

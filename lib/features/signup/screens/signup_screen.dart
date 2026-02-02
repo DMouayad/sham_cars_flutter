@@ -10,8 +10,6 @@ import 'package:sham_cars/widgets/dialogs/error_dialog.dart';
 import 'package:sham_cars/widgets/no_pop_wrapper.dart';
 import 'package:sham_cars/widgets/page_loader.dart';
 
-import 'signup_confirmation_screen.dart';
-
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
@@ -22,15 +20,12 @@ class SignupScreen extends StatelessWidget {
       lazy: false,
       child: BlocListener<SignupCubit, SignupState>(
         listenWhen: (prev, current) =>
+            prev.isBusy != current.isBusy ||
             prev.hasException != current.hasException ||
             prev.isSuccess != current.isSuccess,
         listener: (context, state) {
           if (state.isBusy) {
-            context.showLoader(
-              message: state.isPendingVerification
-                  ? context.l10n.signupInProgress
-                  : context.l10n.sendingSignupCodeInProgress,
-            );
+            context.showLoader(message: context.l10n.signupInProgress);
           } else {
             context.hideLoader();
           }
@@ -41,7 +36,7 @@ class SignupScreen extends StatelessWidget {
               errMessage: state.appErr?.getMessage(context),
             );
           } else if (state.isSuccess) {
-            const ProfileRoute().pushReplacement(context);
+            AccountVerificationRoute(context.read()).pushReplacement(context);
           }
         },
         child: const _SignupScreenContent(),
@@ -55,20 +50,12 @@ class _SignupScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SignupCubit, SignupState>(
-      buildWhen: (prev, current) =>
-          prev.isPendingVerification != current.isPendingVerification,
-      builder: (context, state) {
-        return NoPopWrapper(
-          dialogTitle: context.l10n.popConfirmationDialogTitle,
-          dialogMessage: context.l10n.confirmExitingSignupDialogMessage,
-          goBackBtnLabel: context.l10n.exitSignupProcessBtnLabel,
-          stayOnPageBtnLabel: context.l10n.continueSignupBtnLabel,
-          child: state.isPendingVerification
-              ? const SignupConfirmationScreen()
-              : const SignupForm(),
-        );
-      },
+    return NoPopWrapper(
+      dialogTitle: context.l10n.popConfirmationDialogTitle,
+      dialogMessage: context.l10n.confirmExitingSignupDialogMessage,
+      goBackBtnLabel: context.l10n.exitSignupProcessBtnLabel,
+      stayOnPageBtnLabel: context.l10n.continueSignupBtnLabel,
+      child: const SignupForm(),
     );
   }
 }

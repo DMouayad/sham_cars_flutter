@@ -1,24 +1,38 @@
 part of '../repositories.dart';
 
 final class AuthRepository extends IAuthRepository {
-  AuthRepository(this._tokensRepository, this._localUserRepository);
+  AuthRepository(
+    this._client,
+    this._tokensRepository,
+    this._localUserRepository,
+    this._apiUserRepository,
+  );
   final LocalUserRepository _localUserRepository;
   final ITokensRepository _tokensRepository;
+  final ApiUserRepository _apiUserRepository;
+  final RestClient _client;
 
   @override
   Future<User> logIn(LoginRequest req) async {
-    final (username, token) = await RestClient.instance
+    final (username, token) = await _client
         .request(
           HttpMethod.post,
           ApiRoutes.authRoutes.login,
           body: {'email': req.emailOrPhone, 'password': req.password},
         )
         .then(_decodeLoginResponse);
-    final user = await _localUserRepository.getUser(username);
-    if (user == null) {
-      throw AppError.unauthenticated;
-    }
     await _tokensRepository.store(token);
+
+    User? user = await _localUserRepository.findByEmail(req.emailOrPhone);
+    if (user == null) {
+      user = await _apiUserRepository.getUser(token);
+      if (user != null) {
+        await _localUserRepository.saveUser(user);
+      }
+    }
+    if (user == null) {
+      throw AppError.undefined;
+    }
     return user;
   }
 
@@ -28,7 +42,7 @@ final class AuthRepository extends IAuthRepository {
     if (accessToken == null) {
       return;
     }
-    return RestClient.instance
+    return _client
         .request(
           HttpMethod.post,
           ApiRoutes.authRoutes.logout,
@@ -47,7 +61,7 @@ final class AuthRepository extends IAuthRepository {
   }
 
   @override
-  Future<void> signup(SignupRequest req) async {
+  Future<User> signup(SignupRequest req) async {
     final reqBody = {
       'name': req.name,
       'email': req.email,
@@ -56,30 +70,52 @@ final class AuthRepository extends IAuthRepository {
       'c_password': req.password,
     };
 
-    await RestClient.instance.request(
+    await _client.request(
       HttpMethod.post,
       ApiRoutes.authRoutes.signup,
       body: reqBody,
     );
+    final user = User(
+      role: Role.user,
+      activated: true,
+      email: req.email,
+      phoneNumber: req.phone,
+      fullName: req.name,
+      emailVerifiedAt: null,
+      phoneNumberVerifiedAt: null,
+      createdAt: DateTime.now(),
+      identityConfirmedAt: null,
+    );
+    await _localUserRepository.saveUser(user);
+    return user;
   }
 
   @override
-  Future<void> verifyAccount(VerifyAccountRequest req) async {
+  Future<User> verifyAccount(VerifyAccountRequest req) async {
     final reqBody = {'email': req.email, 'email_otp': req.code};
-    return RestClient.instance
-        .request(
-          HttpMethod.post,
-          ApiRoutes.authRoutes.verifyAccount,
-          body: reqBody,
-        )
-        .then((res) {});
-    // .then(decodeAuthorizedUserResponse);
-    // securely store the token
-    // return _tokensRepository.store(token).then((_) => _updateState(user));
+    final data = await _client.request(
+      HttpMethod.post,
+      ApiRoutes.authRoutes.verifyAccount,
+      body: reqBody,
+    );
+    final token = data['token'];
+    if (token! is String) {
+      throw AppError.signupFailed;
+    }
+    await _tokensRepository.store(token);
+    User? user = await _localUserRepository.findByEmail(req.email);
+    if (user == null) {
+      user = await _apiUserRepository.getUser(token);
+      if (user != null) {
+        await _localUserRepository.saveUser(user);
+      }
+    }
+
+    return user!;
   }
 
   (String username, String token) _decodeLoginResponse(JsonObject value) {
-    if (value['data'] case {'token': String token, 'name': String username}) {
+    if (value case {'token': String token, 'name': String username}) {
       return (username, token);
     }
     sLogger.e('Invalid login response: $value');

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:sham_cars/features/signup/cubit/signup_cubit.dart';
 import 'package:sham_cars/utils/utils.dart';
+import 'package:sham_cars/widgets/custom_text_field.dart';
 import 'package:sham_cars/widgets/form/email_text_field.dart';
 import 'package:sham_cars/widgets/form/password_text_field.dart';
 import 'package:sham_cars/widgets/form/phone_text_field.dart';
@@ -41,6 +44,15 @@ class SignupForm extends StatelessWidget {
                   ),
                 ),
                 formGap,
+                CustomTextField(
+                  controller: formHelper.nameController,
+                  validator: (value) =>
+                      formHelper.nameValidator(value, context),
+                  hintText: context.l10n.nameFieldHint,
+                  labelText: context.l10n.nameFieldLabel,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                ),
                 EmailTextField(formHelper: formHelper),
                 PhoneTextField(
                   controller: formHelper.phoneNoController,

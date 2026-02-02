@@ -26,12 +26,12 @@ extension on GoRouterState {
   bool get isLoginRoute => matchedLocation == RoutePath.login;
   bool get isSignupRoute => matchedLocation == RoutePath.signup;
   bool get isAccountVerificationRoute =>
-      matchedLocation == RoutePath.accountVerification;
+      matchedLocation == RoutePath.emailVerification;
 
   bool get isProtectedRoute {
     return [
       RoutePath.profile,
-      RoutePath.accountVerification,
+      RoutePath.emailVerification,
     ].contains(matchedLocation);
   }
 }

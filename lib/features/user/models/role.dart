@@ -1,7 +1,5 @@
 enum Role {
-  patient,
-  physician,
-  guest;
+  user;
 
   static Role byNameOrThrow(String name) {
     try {

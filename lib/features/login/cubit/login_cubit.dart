@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/utils/src/app_error.dart';
 import 'package:sham_cars/features/auth/repositories.dart';
 import 'package:sham_cars/features/login/login_form_helper.dart';
@@ -29,17 +30,22 @@ class LoginCubit extends Cubit<LoginState> {
     }
     _helpers.handleFuture(
       GetIt.I.get<IAuthRepository>().logIn((
-        emailOrPhone: formHelper.emailOrPhoneValue,
+        emailOrPhone: formHelper.emailValue,
         password: formHelper.passwordValue,
       )),
       onError: (exception) {
         if (exception == AppError.unauthenticated) {
           emit(const LoginFailureState(AppError.invalidLoginCredential));
+        } else if (exception == AppError.unauthorized) {
+          emit(const LoginSuccessState());
         } else {
           _helpers.onError(exception);
         }
       },
-      onSuccess: (_) => emit(const LoginSuccessState()),
+      onSuccess: (user) {
+        GetIt.I.get<AuthNotifier>().updateCurrentUser(user);
+        emit(const LoginSuccessState());
+      },
     );
   }
 }

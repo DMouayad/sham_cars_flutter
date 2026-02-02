@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/utils/src/app_error.dart';
-import 'package:sham_cars/utils/src/bloc_helpers.dart';
 
 part 'phone_verification_state.dart';
 
@@ -11,37 +10,13 @@ const kVerificationCodeRequestInterval = Duration(minutes: 15);
 const kValidVerificationCode = '0000';
 
 class PhoneVerificationCubit extends Cubit<PhoneVerificationState> {
-  late final BlocHelpers _helpers;
   PhoneVerificationCubit()
     : super(
         PhoneVerificationUserInputState(
           digits: Map.fromIterable([0, 1, 2, 3], value: (_) => null),
           lastRequestedCodeAt: DateTime.now(),
         ),
-      ) {
-    _helpers = BlocHelpers(
-      onError: (exception) => emit(
-        PhoneVerificationFailureState(
-          appException: exception,
-          digits: state.digits,
-          lastRequestedCodeAt: state.lastRequestedCodeAt,
-        ),
-      ),
-      emitProcessingRequest: () => emit(
-        PhoneVerificationInProgressState(
-          digits: state.digits,
-          lastRequestedCodeAt: state.lastRequestedCodeAt,
-        ),
-      ),
-      setAsIdle: () => emit(
-        PhoneVerificationUserInputState(
-          digits: state.digits,
-          lastRequestedCodeAt: state.lastRequestedCodeAt,
-        ),
-      ),
-      isBusy: () => state.isBusy,
-    );
-  }
+      ) {}
 
   void onVerificationCodeDigitChanged(int digit, String value) {
     if (digit > 3) {

@@ -539,4 +539,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openProfileBtnLabel => 'استعراض الملف الشخصي';
+
+  @override
+  String get nameFieldLabel => 'الاسم';
+
+  @override
+  String get nameFieldHint => 'ادخل اسمك';
+
+  @override
+  String get nameIsRequired => 'يرجى إدخال الاسم الخاص بك';
 }

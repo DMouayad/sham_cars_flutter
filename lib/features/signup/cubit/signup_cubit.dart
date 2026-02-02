@@ -74,7 +74,7 @@ class SignupCubit extends BaseCubit<SignupState> {
   Future<void> _signupWithEmail() async {
     final SignupRequest req = (
       email: formHelper.emailValue,
-      name: formHelper.emailValue,
+      name: formHelper.nameValue,
       phone: formHelper.phoneNoValue,
       password: formHelper.passwordValue,
     );
@@ -82,7 +82,7 @@ class SignupCubit extends BaseCubit<SignupState> {
     _helpers.handleFuture(
       _authRepo.signup(req),
       onSuccess: (_) {
-        emit(state.copyAsPendingVerification());
+        emit(state.copyAsSuccess());
       },
     );
   }

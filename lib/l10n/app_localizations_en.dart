@@ -542,4 +542,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openProfileBtnLabel => 'Open profile';
+
+  @override
+  String get nameFieldLabel => 'Name';
+
+  @override
+  String get nameFieldHint => 'Your name';
+
+  @override
+  String get nameIsRequired => 'Please enter your name';
 }

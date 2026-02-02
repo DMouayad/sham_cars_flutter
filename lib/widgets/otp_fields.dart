@@ -76,10 +76,13 @@ class _OtpFieldsState extends State<OtpFields> {
         ),
       );
     });
-    return Row(
-      textDirection: TextDirection.ltr,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: fields,
+    return SizedBox(
+      width: 300,
+      child: Row(
+        textDirection: TextDirection.ltr,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: fields,
+      ),
     );
   }
 }

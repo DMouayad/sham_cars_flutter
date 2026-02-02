@@ -23,9 +23,30 @@ RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
     StatefulShellBranchData.$branch(
       routes: [
         GoRouteData.$route(
+          path: '/vehicles',
+          name: 'vehicles',
+          factory: $VehiclesRoute._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: ':id',
+              factory: $VehicleDetailsRoute._fromState,
+            ),
+          ],
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
           path: '/community',
           name: 'community',
           factory: $CommunityRoute._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: ':id',
+              factory: $QuestionDetailsRoute._fromState,
+            ),
+          ],
         ),
       ],
     ),
@@ -47,9 +68,18 @@ RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
           factory: $SignupRoute._fromState,
         ),
         GoRouteData.$route(
-          path: '/profile/verification',
-          name: 'phoneVerification',
+          path: '/profile/emaill-verification',
+          name: 'email_verification',
           factory: $AccountVerificationRoute._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/compare',
+          name: 'compare',
+          factory: $CompareRoute._fromState,
         ),
       ],
     ),
@@ -81,12 +111,82 @@ mixin $HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
+mixin $VehiclesRoute on GoRouteData {
+  static VehiclesRoute _fromState(GoRouterState state) => const VehiclesRoute();
+
+  @override
+  String get location => GoRouteData.$location('/vehicles');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $VehicleDetailsRoute on GoRouteData {
+  static VehicleDetailsRoute _fromState(GoRouterState state) =>
+      VehicleDetailsRoute(int.parse(state.pathParameters['id']!));
+
+  VehicleDetailsRoute get _self => this as VehicleDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/vehicles/${Uri.encodeComponent(_self.id.toString())}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
 mixin $CommunityRoute on GoRouteData {
   static CommunityRoute _fromState(GoRouterState state) =>
       const CommunityRoute();
 
   @override
   String get location => GoRouteData.$location('/community');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $QuestionDetailsRoute on GoRouteData {
+  static QuestionDetailsRoute _fromState(GoRouterState state) =>
+      QuestionDetailsRoute(int.parse(state.pathParameters['id']!));
+
+  QuestionDetailsRoute get _self => this as QuestionDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/community/${Uri.encodeComponent(_self.id.toString())}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -177,7 +277,7 @@ mixin $AccountVerificationRoute on GoRouteData {
   AccountVerificationRoute get _self => this as AccountVerificationRoute;
 
   @override
-  String get location => GoRouteData.$location('/profile/verification');
+  String get location => GoRouteData.$location('/profile/emaill-verification');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
@@ -193,4 +293,24 @@ mixin $AccountVerificationRoute on GoRouteData {
   @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
+}
+
+mixin $CompareRoute on GoRouteData {
+  static CompareRoute _fromState(GoRouterState state) => const CompareRoute();
+
+  @override
+  String get location => GoRouteData.$location('/compare');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
 }
