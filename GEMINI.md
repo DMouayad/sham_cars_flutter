@@ -1,0 +1,1 @@
+use the API.md for info about the Restful API this flutter app use.

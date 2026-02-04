@@ -2,8 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sham_cars/api/rest_client.dart';
 import 'package:sham_cars/features/auth/repositories.dart';
-import 'package:sham_cars/features/home/models.dart';
 import 'package:sham_cars/features/questions/models.dart';
+import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
 import 'package:sham_cars/utils/src/app_error.dart';
@@ -12,8 +12,8 @@ import 'community_repository.dart';
 
 class CommunityState {
   final List<Question> questions;
-  final List<HomeReview> reviews;
-  final List<CarModel> carModels;
+  final List<Review> reviews;
+  final List<CarTrimSummary> carTrims;
   final bool isLoading;
   final bool isSubmitting;
   final Object? error;
@@ -23,7 +23,7 @@ class CommunityState {
   const CommunityState({
     this.questions = const [],
     this.reviews = const [],
-    this.carModels = const [],
+    this.carTrims = const [],
     this.isLoading = false,
     this.isSubmitting = false,
     this.error,
@@ -33,8 +33,8 @@ class CommunityState {
 
   CommunityState copyWith({
     List<Question>? questions,
-    List<HomeReview>? reviews,
-    List<CarModel>? carModels,
+    List<Review>? reviews,
+    List<CarTrimSummary>? carTrims,
     bool? isLoading,
     bool? isSubmitting,
     Object? error,
@@ -45,7 +45,7 @@ class CommunityState {
     return CommunityState(
       questions: questions ?? this.questions,
       reviews: reviews ?? this.reviews,
-      carModels: carModels ?? this.carModels,
+      carTrims: carTrims ?? this.carTrims,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       error: clearErrors ? null : error,
@@ -64,14 +64,14 @@ class CommunityState {
     }).toList();
   }
 
-  List<HomeReview> get filteredReviews {
+  List<Review> get filteredReviews {
     if (searchQuery.isEmpty) return reviews;
     final q = searchQuery.toLowerCase();
     return reviews.where((item) {
-      return item.title.toLowerCase().contains(q) ||
+      return (item.title?.toLowerCase().contains(q) ?? false) ||
           item.body.toLowerCase().contains(q) ||
           item.userName.toLowerCase().contains(q) ||
-          (item.trimSummary?.name.toLowerCase().contains(q) ?? false);
+          (item.trimName?.toLowerCase().contains(q) ?? false);
     }).toList();
   }
 
@@ -91,16 +91,14 @@ class CommunityCubit extends Cubit<CommunityState> {
       await RestClient.runCached(() async {
         final results = await Future.wait([
           _communityRepo.getQuestions(),
-          // _fetchReviews(),
-          _carDataRepo.getModels(),
+          _carDataRepo.getTrims(), // Fetch car trims
         ]);
 
         emit(
           state.copyWith(
             questions: results[0] as List<Question>,
-            // reviews: results[1] as List<HomeReview>,
             reviews: [],
-            carModels: results[1] as List<CarModel>,
+            carTrims: results[1] as List<CarTrimSummary>, // Assign car trims
             isLoading: false,
           ),
         );
@@ -110,7 +108,7 @@ class CommunityCubit extends Cubit<CommunityState> {
     }
   }
 
-  Future<List<HomeReview>> _fetchReviews() async {
+  Future<List<Review>> _fetchReviews() async {
     try {
       return await _communityRepo.getLatestReviews(limit: 50);
     } catch (_) {
@@ -123,7 +121,7 @@ class CommunityCubit extends Cubit<CommunityState> {
   }
 
   Future<bool> submitQuestion({
-    required int carModelId,
+    required int trimId,
     required String title,
     required String body,
   }) async {
@@ -134,7 +132,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         throw AppError.unauthenticated;
       }
       await _communityRepo.postQuestion(
-        carModelId: carModelId,
+        carTrimId: trimId,
         title: title,
         body: body,
         accessToken: accessToken,

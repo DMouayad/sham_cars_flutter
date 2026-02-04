@@ -1,6 +1,5 @@
 import 'package:sham_cars/api/cache.dart';
 import 'package:sham_cars/api/rest_client.dart';
-import 'package:sham_cars/features/home/models.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/reviews/models.dart';
 
@@ -12,17 +11,19 @@ class CommunityRepository {
 
   // ============ REVIEWS ============
 
-  Future<List<Review>> getReviews(int carTrimId) async {
-    final cacheKey = 'reviews_$carTrimId';
+  Future<List<Review>> getReviews(
+    int carTrimId, {
+    int take = 15,
+    int skip = 0,
+  }) async {
+    final cacheKey = 'reviews_${carTrimId}_${take}_$skip';
 
-    if (_cache.get<List<Review>>(cacheKey) case final cached?) {
-      return cached;
-    }
+    if (_cache.get<List<Review>>(cacheKey) case final cached?) return cached;
 
     final data = await _client.requestList(
       HttpMethod.get,
       '/community/reviews',
-      query: {'car_trim_id': '$carTrimId'},
+      query: {'car_trim_id': '$carTrimId', 'take': '$take', 'skip': '$skip'},
     );
 
     final reviews = data.map(Review.fromJson).toList();
@@ -30,13 +31,13 @@ class CommunityRepository {
     return reviews;
   }
 
-  Future<List<HomeReview>> getLatestReviews({int limit = 10}) async {
+  Future<List<Review>> getLatestReviews({int limit = 10}) async {
     final data = await _client.requestList(
       HttpMethod.get,
       '/community/reviews',
       query: {'limit': '$limit'},
     );
-    return data.map(HomeReview.fromJson).toList();
+    return data.map(Review.fromJson).toList();
   }
 
   Future<void> postReview({
@@ -54,8 +55,8 @@ class CommunityRepository {
         'car_trim_id': carTrimId,
         'rating': rating,
         'comment': comment,
-        if (title != null) 'title': title,
-        if (cityCode != null) 'city_code': cityCode,
+        // if (title != null) 'title': title,
+        // if (cityCode != null) 'city_code': cityCode,
       },
       accessToken: accessToken,
     );
@@ -67,15 +68,22 @@ class CommunityRepository {
 
   // ============ QUESTIONS ============
 
-  Future<List<Question>> getQuestions({int? carModelId}) async {
-    final cacheKey = 'questions_${carModelId ?? 'all'}';
+  Future<List<Question>> getQuestions({
+    int? trimId,
+    int? modelId,
+    int take = 15,
+    int skip = 0,
+  }) async {
+    final cacheKey =
+        'questions_${trimId ?? "null"}_${modelId ?? "null"}_${take}_$skip';
 
-    if (_cache.get<List<Question>>(cacheKey) case final cached?) {
-      return cached;
-    }
+    if (_cache.get<List<Question>>(cacheKey) case final cached?) return cached;
 
     final query = <String, String>{
-      if (carModelId != null) 'car_model_id': '$carModelId',
+      if (trimId != null) 'car_trim_id': '$trimId',
+      if (modelId != null) 'car_model_id': '$modelId',
+      'take': '$take',
+      'skip': '$skip',
     };
 
     final data = await _client.requestList(
@@ -83,8 +91,8 @@ class CommunityRepository {
       '/community/questions',
       query: query,
     );
-
     final questions = data.map(Question.fromJson).toList();
+
     _cache.set(cacheKey, questions);
     return questions;
   }
@@ -97,8 +105,28 @@ class CommunityRepository {
     return Question.fromJson(data);
   }
 
+  // Future<void> postQuestion({
+  //   required int carModelId,
+  //   required String title,
+  //   required String body,
+  //   required String accessToken,
+  // }) async {
+  //   await _client.request(
+  //     HttpMethod.post,
+  //     '/community/questions',
+  //     body: {'car_model_id': carModelId, 'title': title, 'body': body},
+  //     accessToken: accessToken,
+  //   );
+
+  //   // Invalidate caches
+  //   _cache.invalidatePrefix('questions_');
+  //   _cache.invalidate('home_data');
+  // }
+  //
+
   Future<void> postQuestion({
-    required int carModelId,
+    int? carModelId,
+    required int carTrimId,
     required String title,
     required String body,
     required String accessToken,
@@ -106,11 +134,15 @@ class CommunityRepository {
     await _client.request(
       HttpMethod.post,
       '/community/questions',
-      body: {'car_model_id': carModelId, 'title': title, 'body': body},
+      body: {
+        'car_model_id': carModelId,
+        'car_trim_id': carTrimId,
+        'title': title,
+        'body': body,
+      },
       accessToken: accessToken,
     );
 
-    // Invalidate caches
     _cache.invalidatePrefix('questions_');
     _cache.invalidate('home_data');
   }

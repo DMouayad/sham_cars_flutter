@@ -1,184 +1,182 @@
 import 'package:flutter/material.dart';
-import 'package:sham_cars/features/home/models.dart';
 import 'package:sham_cars/features/questions/models.dart';
+import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
-import 'package:sham_cars/features/vehicle/models.dart';
 
-class CommunityQuestionCard extends StatelessWidget {
-  const CommunityQuestionCard({
-    super.key,
-    required this.question,
-    required this.onTap,
-  });
+// class CommunityQuestionCard extends StatelessWidget {
+//   const CommunityQuestionCard({
+//     super.key,
+//     required this.question,
+//     required this.onTap,
+//   });
 
-  final Question question;
-  final VoidCallback onTap;
+//   final Question question;
+//   final VoidCallback onTap;
 
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
+//   @override
+//   Widget build(BuildContext context) {
+//     final cs = Theme.of(context).colorScheme;
+//     final tt = Theme.of(context).textTheme;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: ThemeConstants.cardRadius,
-      child: Ink(
-        padding: const EdgeInsets.all(ThemeConstants.pSm),
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: ThemeConstants.cardRadius,
-          border: Border.all(color: cs.outlineVariant),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Type badge
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: cs.tertiaryContainer,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.help_outline,
-                        size: 14,
-                        color: cs.onTertiaryContainer,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'سؤال',
-                        style: tt.labelSmall?.copyWith(
-                          color: cs.onTertiaryContainer,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  _formatDate(question.createdAt),
-                  style: tt.labelSmall?.copyWith(color: cs.outline),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
+//     return InkWell(
+//       onTap: onTap,
+//       borderRadius: ThemeConstants.cardRadius,
+//       child: Ink(
+//         padding: const EdgeInsets.all(ThemeConstants.pSm),
+//         decoration: BoxDecoration(
+//           color: cs.surface,
+//           borderRadius: ThemeConstants.cardRadius,
+//           border: Border.all(color: cs.outlineVariant),
+//         ),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             // Type badge
+//             Row(
+//               children: [
+//                 Container(
+//                   padding: const EdgeInsets.symmetric(
+//                     horizontal: 8,
+//                     vertical: 4,
+//                   ),
+//                   decoration: BoxDecoration(
+//                     color: cs.tertiaryContainer,
+//                     borderRadius: BorderRadius.circular(6),
+//                   ),
+//                   child: Row(
+//                     mainAxisSize: MainAxisSize.min,
+//                     children: [
+//                       Icon(
+//                         Icons.help_outline,
+//                         size: 14,
+//                         color: cs.onTertiaryContainer,
+//                       ),
+//                       const SizedBox(width: 4),
+//                       Text(
+//                         'سؤال',
+//                         style: tt.labelSmall?.copyWith(
+//                           color: cs.onTertiaryContainer,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 const Spacer(),
+//                 Text(
+//                   _formatDate(question.createdAt),
+//                   style: tt.labelSmall?.copyWith(color: cs.outline),
+//                 ),
+//               ],
+//             ),
+//             const SizedBox(height: 12),
 
-            // Title
-            Text(
-              question.title,
-              style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (question.body.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Text(
-                question.body,
-                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-            const SizedBox(height: 12),
+//             // Title
+//             Text(
+//               question.title,
+//               style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+//               maxLines: 2,
+//               overflow: TextOverflow.ellipsis,
+//             ),
+//             if (question.body.isNotEmpty) ...[
+//               const SizedBox(height: 6),
+//               Text(
+//                 question.body,
+//                 style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+//                 maxLines: 2,
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//             ],
+//             const SizedBox(height: 12),
 
-            // Footer
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: cs.primaryContainer,
-                  child: Text(
-                    question.userName.isNotEmpty ? question.userName[0] : '؟',
-                    style: tt.labelSmall?.copyWith(
-                      color: cs.onPrimaryContainer,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  question.userName,
-                  style: tt.labelMedium?.copyWith(fontWeight: FontWeight.w500),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: question.answersCount > 0
-                        ? cs.primaryContainer
-                        : cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.chat_bubble_outline,
-                        size: 14,
-                        color: question.answersCount > 0
-                            ? cs.onPrimaryContainer
-                            : cs.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${question.answersCount}',
-                        style: tt.labelSmall?.copyWith(
-                          color: question.answersCount > 0
-                              ? cs.onPrimaryContainer
-                              : cs.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+//             // Footer
+//             Row(
+//               children: [
+//                 CircleAvatar(
+//                   radius: 12,
+//                   backgroundColor: cs.primaryContainer,
+//                   child: Text(
+//                     question.userName.isNotEmpty ? question.userName[0] : '؟',
+//                     style: tt.labelSmall?.copyWith(
+//                       color: cs.onPrimaryContainer,
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(width: 8),
+//                 Text(
+//                   question.userName,
+//                   style: tt.labelMedium?.copyWith(fontWeight: FontWeight.w500),
+//                 ),
+//                 const Spacer(),
+//                 Container(
+//                   padding: const EdgeInsets.symmetric(
+//                     horizontal: 8,
+//                     vertical: 4,
+//                   ),
+//                   decoration: BoxDecoration(
+//                     color: question.answersCount > 0
+//                         ? cs.primaryContainer
+//                         : cs.surfaceContainerHighest,
+//                     borderRadius: BorderRadius.circular(12),
+//                   ),
+//                   child: Row(
+//                     mainAxisSize: MainAxisSize.min,
+//                     children: [
+//                       Icon(
+//                         Icons.chat_bubble_outline,
+//                         size: 14,
+//                         color: question.answersCount > 0
+//                             ? cs.onPrimaryContainer
+//                             : cs.onSurfaceVariant,
+//                       ),
+//                       const SizedBox(width: 4),
+//                       Text(
+//                         '${question.answersCount}',
+//                         style: tt.labelSmall?.copyWith(
+//                           color: question.answersCount > 0
+//                               ? cs.onPrimaryContainer
+//                               : cs.onSurfaceVariant,
+//                           fontWeight: FontWeight.w600,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
-  String _formatDate(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inDays == 0) {
-      if (diff.inHours == 0) return 'الآن';
-      return 'منذ ${diff.inHours} س';
-    }
-    if (diff.inDays == 1) return 'أمس';
-    if (diff.inDays < 7) return 'منذ ${diff.inDays} أيام';
-    return '${dt.day}/${dt.month}';
-  }
-}
-
-// In community_screen.dart, update _CommunityReviewCard:
+//   String _formatDate(DateTime dt) {
+//     final diff = DateTime.now().difference(dt);
+//     if (diff.inDays == 0) {
+//       if (diff.inHours == 0) return 'الآن';
+//       return 'منذ ${diff.inHours} س';
+//     }
+//     if (diff.inDays == 1) return 'أمس';
+//     if (diff.inDays < 7) return 'منذ ${diff.inDays} أيام';
+//     return '${dt.day}/${dt.month}';
+//   }
+// }
 
 class CommunityReviewCard extends StatelessWidget {
-  const CommunityReviewCard({required this.review, this.onTap});
+  const CommunityReviewCard({super.key, required this.review, this.onTap});
 
-  final HomeReview review;
-  final void Function(CarTrimSummary)? onTap;
+  final Review review;
+  final void Function(int)? onTap;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final trim = review.trimSummary;
 
     return InkWell(
-      onTap: trim != null && onTap != null ? () => onTap!(trim) : null,
+      onTap: review.trimId != null && onTap != null
+          ? () => onTap!(review.trimId!)
+          : null,
       borderRadius: ThemeConstants.cardRadius,
       child: Ink(
         padding: const EdgeInsets.all(ThemeConstants.pSm),
@@ -211,15 +209,15 @@ class CommunityReviewCard extends StatelessWidget {
             const SizedBox(height: 12),
 
             // Trim info (if available)
-            if (trim != null && trim.hasBasicInfo) ...[
-              _TrimRow(trim: trim),
+            if (review.trimName != null) ...[
+              _TrimRow(review: review),
               const SizedBox(height: 12),
             ],
 
             // Review content
-            if (review.title.isNotEmpty) ...[
+            if (review.title?.isNotEmpty ?? false) ...[
               Text(
-                review.title,
+                review.title!,
                 style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -305,8 +303,8 @@ class CommunityReviewCard extends StatelessWidget {
 }
 
 class _TrimRow extends StatelessWidget {
-  const _TrimRow({required this.trim});
-  final CarTrimSummary trim;
+  const _TrimRow({required this.review});
+  final Review review;
 
   @override
   Widget build(BuildContext context) {
@@ -320,9 +318,10 @@ class _TrimRow extends StatelessWidget {
           child: SizedBox(
             width: 48,
             height: 48,
-            child: trim.imageUrl != null && trim.imageUrl!.isNotEmpty
+            child:
+                review.trimImageUrl != null && review.trimImageUrl!.isNotEmpty
                 ? Image.network(
-                    trim.imageUrl!,
+                    review.trimImageUrl!,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => _ImagePlaceholder(),
                   )
@@ -335,14 +334,14 @@ class _TrimRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                trim.makeName.toUpperCase(),
+                review.makeName?.toUpperCase() ?? '',
                 style: tt.labelSmall?.copyWith(
                   color: cs.primary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                trim.displayName,
+                review.trimDisplayName ?? '',
                 style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -350,7 +349,7 @@ class _TrimRow extends StatelessWidget {
             ],
           ),
         ),
-        if (trim.range.isNotEmpty)
+        if (review.trimRange?.isNotEmpty ?? false)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(
@@ -360,9 +359,9 @@ class _TrimRow extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.route, size: 12, color: Colors.green),
+                const Icon(Icons.route, size: 12, color: Colors.green),
                 const SizedBox(width: 4),
-                Text(trim.range.display, style: tt.labelSmall),
+                Text(review.trimRange!, style: tt.labelSmall),
               ],
             ),
           ),

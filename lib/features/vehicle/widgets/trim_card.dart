@@ -200,7 +200,6 @@ class _SpecsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
 
     return Wrap(
       spacing: 8,
@@ -248,7 +247,7 @@ class _SpecChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: ThemeConstants.pillRadius,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

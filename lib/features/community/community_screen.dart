@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/community/widgets/filters.dart';
+import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
-import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/utils/utils.dart';
+import 'package:sham_cars/widgets/scaffold_with_navbar.dart';
 
 import 'community_cubit.dart';
 import 'models.dart';
@@ -12,6 +16,8 @@ import 'widgets/add_review_sheet.dart';
 import 'widgets/ask_question_sheet.dart';
 import 'widgets/cards.dart';
 import 'widgets/search_field.dart';
+import '../questions/models.dart';
+import '../reviews/models.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({
@@ -21,7 +27,7 @@ class CommunityScreen extends StatefulWidget {
   });
 
   final void Function(int id) onOpenQuestion;
-  final void Function(CarTrimSummary summary) onOpenVehicle;
+  final void Function(int id) onOpenVehicle;
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -32,18 +38,26 @@ class _CommunityScreenState extends State<CommunityScreen> {
   final _scrollController = ScrollController();
   CommunityFilter _filter = CommunityFilter.all;
   bool _showFab = true;
+  late final AuthNotifier _authNotifier;
 
   @override
   void initState() {
     super.initState();
+    _authNotifier = GetIt.I.get<AuthNotifier>();
+    _authNotifier.addListener(_onAuthChanged);
     _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _authNotifier.removeListener(_onAuthChanged);
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onAuthChanged() {
+    setState(() {}); // Rebuild to reflect login status changes
   }
 
   void _onScroll() {
@@ -58,6 +72,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = _authNotifier.isLoggedIn;
+
     return Scaffold(
       body: BlocBuilder<CommunityCubit, CommunityState>(
         builder: (context, state) {
@@ -153,10 +169,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
           opacity: _showFab ? 1 : 0,
-          child: _CommunitySpeedDial(
-            onAskQuestion: () => _showSheet(context, isQuestion: true),
-            onAddReview: () => _showSheet(context, isQuestion: false),
-          ),
+          child: isLoggedIn
+              ? _CommunitySpeedDial(
+                  onAskQuestion: () => _showSheet(context, isQuestion: true),
+                  onAddReview: () => _showSheet(context, isQuestion: false),
+                )
+              : FloatingActionButton.extended(
+                  onPressed: () => StatefulNavigationShell.of(
+                    context,
+                  ).goBranch(navigationShellIndex.profile),
+                  label: const Text('Join to contribute'),
+                  icon: const Icon(Icons.login),
+                  backgroundColor: context.colorScheme.secondary,
+                ),
         ),
       ),
     );
@@ -167,10 +192,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
     if (_filter == CommunityFilter.all ||
         _filter == CommunityFilter.questions) {
-      items.addAll(state.filteredQuestions.map(CommunityItem.question));
+      items.addAll(state.filteredQuestions);
     }
     if (_filter == CommunityFilter.all || _filter == CommunityFilter.reviews) {
-      items.addAll(state.filteredReviews.map(CommunityItem.review));
+      items.addAll(state.filteredReviews);
     }
 
     // Sort by date (newest first)
@@ -181,16 +206,16 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   Widget _buildItem(CommunityItem item) {
     return switch (item) {
-      QuestionItem(:final question) => CommunityQuestionCard(
+      final Question question => QuestionCard(
         question: question,
+        showQuestionBadge: true,
         onTap: () => widget.onOpenQuestion(question.id),
       ),
-      ReviewItem(:final review) => CommunityReviewCard(
+      final Review review => CommunityReviewCard(
         review: review,
-        // onTap: review.vehicle != null
-        //     ? () => widget.onOpenVehicle(review.vehicle!)
-        //     : null,
+        onTap: (trimId) => widget.onOpenVehicle(trimId),
       ),
+      CommunityItem() => const SizedBox.shrink(),
     };
   }
 

@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
     required this.onViewAllQuestions,
   });
 
-  final void Function(CarTrimSummary summary) onOpenTrim;
+  final void Function(int trimId, [CarTrimSummary? summary]) onOpenTrim;
   final void Function(int questionId) onOpenQuestion;
   final VoidCallback onViewAllVehicles;
   final VoidCallback onViewAllQuestions;
@@ -137,10 +137,13 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
         sliver: SliverList.separated(
           itemCount: state.searchResults.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (_, i) {
             final trim = state.searchResults[i];
-            return TrimCard(trim: trim, onTap: () => widget.onOpenTrim(trim));
+            return TrimCard(
+              trim: trim,
+              onTap: () => widget.onOpenTrim(trim.id, trim),
+            );
           },
         ),
       ),
@@ -164,15 +167,12 @@ class _HomeScreenState extends State<HomeScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
               itemCount: data.featuredTrims.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (_, i) {
                 final trim = data.featuredTrims[i];
-                return SizedBox(
-                  width: 180,
-                  child: CompactTrimCard(
-                    trim: trim,
-                    onTap: () => widget.onOpenTrim(trim),
-                  ),
+                return CompactTrimCard(
+                  trim: trim,
+                  onTap: () => widget.onOpenTrim(trim.id, trim),
                 );
               },
             ),
@@ -193,11 +193,12 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
           sliver: SliverList.separated(
             itemCount: data.latestQuestions.take(3).length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (_, i) {
               final q = data.latestQuestions[i];
               return QuestionCard(
                 question: q,
+                compact: true,
                 onTap: () => widget.onOpenQuestion(q.id),
               );
             },
@@ -218,15 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
           sliver: SliverList.separated(
             itemCount: data.latestReviews.take(3).length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
             itemBuilder: (_, i) {
               final r = data.latestReviews[i];
-              return ReviewCard(
-                review: r,
-                // onOpenVehicle: r.vehicle != null
-                //     ? () => widget.onOpenTrim(r.vehicle!.id)
-                //     : null,
-              );
+              return ReviewCard(review: r, onTap: () {});
             },
           ),
         ),

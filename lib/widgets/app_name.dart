@@ -12,13 +12,13 @@ class AppName extends StatelessWidget {
       textDirection: TextDirection.ltr,
       child: DefaultTextStyle(
         textAlign: TextAlign.center,
-        style: GoogleFonts.spaceGrotesk(
-          // fontFamily: 'SpaceGrotesk',
-          // fontWeight: FontWeight.bold,
-        ),
+        style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w600),
         child: SvgPicture.asset(
           'assets/images/app-name.svg',
-          theme: SvgTheme(currentColor: color ?? context.colorScheme.secondary),
+          theme: SvgTheme(
+            fontSize: 18,
+            currentColor: color ?? context.colorScheme.primary,
+          ),
         ),
       ),
     );

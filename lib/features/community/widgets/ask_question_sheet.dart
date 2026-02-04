@@ -17,7 +17,7 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
-  CarModel? _selectedModel;
+  CarTrimSummary? _selectedTrim;
 
   @override
   void dispose() {
@@ -29,7 +29,6 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    // final authState = context.watch<AuthCubit>().state;
     final questionsState = context.watch<CommunityCubit>().state;
 
     return Padding(
@@ -91,21 +90,18 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                   const SizedBox(height: 16),
                 ],
 
-                // Model picker
-                DropdownButtonFormField<CarModel>(
-                  initialValue: _selectedModel,
+                // Trim picker
+                DropdownButtonFormField<CarTrimSummary>(
+                  initialValue: _selectedTrim,
                   decoration: const InputDecoration(
-                    labelText: 'السيارة (اختياري)',
+                    labelText: 'السيارة (النسخة)',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.directions_car),
+                    prefixIcon: Icon(Icons.directions_car_sharp),
                   ),
-                  items: questionsState.carModels.map((m) {
-                    return DropdownMenuItem(
-                      value: m,
-                      child: Text(m.displayName),
-                    );
+                  items: questionsState.carTrims.map((t) {
+                    return DropdownMenuItem(value: t, child: Text(t.fullName));
                   }).toList(),
-                  onChanged: (m) => setState(() => _selectedModel = m),
+                  onChanged: (t) => setState(() => _selectedTrim = t),
                 ),
                 const SizedBox(height: 12),
 
@@ -180,15 +176,15 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedModel == null) {
+    if (_selectedTrim == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('الرجاء اختيار السيارة')));
+      ).showSnackBar(const SnackBar(content: Text('الرجاء اختيار النسخة')));
       return;
     }
 
     final success = await context.read<CommunityCubit>().submitQuestion(
-      carModelId: _selectedModel!.id,
+      trimId: _selectedTrim!.id,
       title: _titleController.text.trim(),
       body: _bodyController.text.trim(),
     );

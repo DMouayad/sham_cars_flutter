@@ -3,131 +3,150 @@ import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 
 class CompactTrimCard extends StatelessWidget {
-  const CompactTrimCard({super.key, required this.trim, required this.onTap});
+  const CompactTrimCard({
+    super.key,
+    required this.trim,
+    required this.onTap,
+    this.width = 210,
+    this.height = 240,
+  });
 
   final CarTrimSummary trim;
   final VoidCallback onTap;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: ThemeConstants.cardRadius,
-      child: Ink(
-        decoration: BoxDecoration(
-          color: cs.surface,
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Material(
+        color: cs.surface,
+        shape: RoundedRectangleBorder(
           borderRadius: ThemeConstants.cardRadius,
-          border: Border.all(color: cs.outlineVariant),
+          side: BorderSide(color: cs.outlineVariant),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image
-            Expanded(
-              flex: 3,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(ThemeConstants.rCard),
-                ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image
+              AspectRatio(
+                aspectRatio: 16 / 10,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
                     _buildImage(cs),
                     if (trim.isFeatured)
-                      Positioned(
-                        top: 6,
-                        right: 6,
+                      PositionedDirectional(
+                        top: 10,
+                        start: 10,
                         child: Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: cs.primary,
-                            borderRadius: BorderRadius.circular(4),
+                            color: Colors.black.withOpacity(0.30),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.18),
+                            ),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.star_rounded,
-                            size: 12,
-                            color: cs.onPrimary,
+                            size: 14,
+                            color: Colors.amber,
                           ),
                         ),
                       ),
                   ],
                 ),
               ),
-            ),
 
-            // Info
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Brand
-                    Text(
-                      trim.makeName.toUpperCase(),
-                      style: tt.labelSmall?.copyWith(
-                        color: cs.primary,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-
-                    // Name
-                    Expanded(
-                      child: Text(
-                        trim.displayName,
-                        style: tt.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
+              // Text area
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        trim.makeName.toUpperCase(),
+                        style: tt.labelSmall?.copyWith(
+                          color: cs.primary,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.6,
                         ),
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+                      const SizedBox(height: 4),
 
-                    // Bottom row: Range or Body Type
-                    Row(
-                      children: [
-                        if (trim.range.isNotEmpty) ...[
-                          Icon(Icons.route, size: 12, color: Colors.green),
-                          const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          trim.displayName,
+                          style: tt.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            height: 1.15,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // Footer: single line (range OR body type)
+                      Row(
+                        children: [
+                          Icon(
+                            trim.range.isNotEmpty
+                                ? Icons.route
+                                : Icons.directions_car_outlined,
+                            size: 14,
+                            color: trim.range.isNotEmpty
+                                ? Colors.green
+                                : cs.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              trim.range.display,
+                              trim.range.isNotEmpty
+                                  ? trim.range.display
+                                  : trim.bodyType,
                               style: tt.labelSmall?.copyWith(
                                 color: cs.onSurfaceVariant,
+                                fontWeight: FontWeight.w700,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ] else if (trim.bodyType.isNotEmpty) ...[
-                          Icon(
-                            Icons.directions_car_outlined,
-                            size: 12,
-                            color: cs.outline,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            trim.bodyType,
-                            style: tt.labelSmall?.copyWith(
-                              color: cs.onSurfaceVariant,
+                          Expanded(
+                            child: Text(
+                              trim.priceDisplay?.isNotEmpty ?? false
+                                  ? trim.priceDisplay!
+                                  : trim.bodyType,
+                              style: tt.labelSmall?.copyWith(
+                                color: cs.onSurfaceVariant,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,8 +1,9 @@
-// lib/features/community/widgets/add_review_sheet.dart
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
+import 'package:sham_cars/features/auth/repositories.dart';
 import 'package:sham_cars/features/community/community_cubit.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
@@ -21,7 +22,7 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
 
-  CarModel? _selectedModel;
+  CarTrimSummary? _selectedTrim;
   int _rating = 5;
   String? _cityCode;
 
@@ -33,6 +34,24 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
     ('latakia', 'اللاذقية'),
     ('tartus', 'طرطوس'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.preselectedTrimId != null) {
+      // Find the CarTrimSummary from communityState.carTrims
+      // This will be available after CommunityCubit loads, so we need a slight delay
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _selectedTrim = context
+              .read<CommunityCubit>()
+              .state
+              .carTrims
+              .firstWhereOrNull((trim) => trim.id == widget.preselectedTrimId);
+        });
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -116,22 +135,19 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                   const SizedBox(height: 16),
                 ],
 
-                // Model picker
-                DropdownButtonFormField<CarModel>(
-                  initialValue: _selectedModel,
+                // Trim picker
+                DropdownButtonFormField<CarTrimSummary>(
+                  initialValue: _selectedTrim,
                   decoration: const InputDecoration(
-                    labelText: 'السيارة *',
+                    labelText: 'السيارة (النسخة) *',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.directions_car),
+                    prefixIcon: Icon(Icons.directions_car_sharp),
                   ),
-                  items: communityState.carModels.map((m) {
-                    return DropdownMenuItem(
-                      value: m,
-                      child: Text(m.displayName),
-                    );
+                  items: communityState.carTrims.map((t) {
+                    return DropdownMenuItem(value: t, child: Text(t.fullName));
                   }).toList(),
-                  onChanged: (m) => setState(() => _selectedModel = m),
-                  validator: (v) => v == null ? 'الرجاء اختيار السيارة' : null,
+                  onChanged: (t) => setState(() => _selectedTrim = t),
+                  validator: (v) => v == null ? 'الرجاء اختيار النسخة' : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -235,26 +251,40 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedTrim == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('الرجاء اختيار النسخة')));
+      return;
+    }
 
-    // Note: API uses car_trim_id, but we only have car_model_id from picker
-    // You might need to adjust this based on your API
-    // final success = await context.read<CommunityCubit>().submitReview(
-    //   carTrimId: _selectedModel!.id, // This should be trim ID ideally
-    //   rating: _rating,
-    //   comment: _bodyController.text.trim(),
-    //   title: _titleController.text.trim().isEmpty
-    //       ? null
-    //       : _titleController.text.trim(),
-    //   cityCode: _cityCode,
-    //   accessToken: token,
-    // );
+    final token = await GetIt.I.get<ITokensRepository>().get();
+    if (token == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('يجب تسجيل الدخول لإضافة تجربة')),
+        );
+      }
+      return;
+    }
 
-    // if (success && mounted) {
-    //   Navigator.pop(context);
-    //   ScaffoldMessenger.of(
-    //     context,
-    //   ).showSnackBar(const SnackBar(content: Text('تم نشر التجربة بنجاح')));
-    // }
+    final success = await context.read<CommunityCubit>().submitReview(
+      carTrimId: _selectedTrim!.id,
+      rating: _rating,
+      comment: _bodyController.text.trim(),
+      title: _titleController.text.trim().isEmpty
+          ? null
+          : _titleController.text.trim(),
+      cityCode: _cityCode,
+      accessToken: token,
+    );
+
+    if (success && mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('تم نشر التجربة بنجاح')));
+    }
   }
 }
 

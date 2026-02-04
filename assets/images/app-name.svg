@@ -9,5 +9,6 @@
         fill="currentcolor"
         font-family="SpaceGrotesk_regular"
         font-size="60"
+        font-weight="600"
         letter-spacing="-1">hamCars</text>
 </svg>

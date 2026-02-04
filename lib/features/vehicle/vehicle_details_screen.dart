@@ -1,115 +1,267 @@
-// lib/features/vehicle/screens/vehicle_detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/common/data_state.dart';
+import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/router/routes.dart';
 
 import 'cubits/car_trim_cubit.dart';
+import 'cubits/trim_community_preview_cubit.dart';
 import 'models.dart';
-import 'widgets/spec_list.dart';
+import 'widgets/community_preview.dart';
+import 'widgets/specs.dart';
 
 class VehicleDetailsScreen extends StatelessWidget {
-  const VehicleDetailsScreen({super.key, required this.trimSummary});
-
-  final CarTrimSummary trimSummary; // Optional preview data
+  const VehicleDetailsScreen({
+    super.key,
+    required this.trimId,
+    this.trimSummary,
+  });
+  final int trimId;
+  final CarTrimSummary? trimSummary;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
-        builder: (context, state) => switch (state) {
-          DataInitial() || DataLoading() => _LoadingBody(summary: trimSummary),
-          DataError(:final error) => _ErrorBody(
-            summary: trimSummary,
-            onRetry: () => context.read<CarTrimCubit>().load(trimSummary.id),
-          ),
-          DataLoaded(:final data) => _DetailBody(trim: data),
-        },
+    return BlocProvider(
+      create: (_) =>
+          TrimCommunityPreviewCubit(context.read<CommunityRepository>())
+            ..load(trimId: trimId),
+      child: Scaffold(
+        body: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
+          builder: (context, state) {
+            // Build a single VM for both states (summary while loading, trim when loaded)
+            final vm = switch (state) {
+              DataLoaded(:final data) => _VehicleVm.fromTrim(data),
+              _ =>
+                trimSummary != null
+                    ? _VehicleVm.fromSummary(trimSummary!)
+                    : null,
+            };
+
+            if (vm == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return switch (state) {
+              DataInitial() || DataLoading() => _VehicleDetailsView(
+                vm: vm,
+                loadingMore: true,
+                onRetry: null,
+              ),
+              DataError() => _VehicleDetailsView(
+                vm: vm,
+                loadingMore: false,
+                onRetry: () => context.read<CarTrimCubit>().load(trimId),
+              ),
+              DataLoaded(:final data) => _VehicleDetailsView(
+                vm: _VehicleVm.fromTrim(data),
+                loadingMore: false,
+                onRetry: null,
+              ),
+            };
+          },
+        ),
       ),
     );
   }
 }
 
-/// Shows preview from summary while loading full details
-class _LoadingBody extends StatelessWidget {
-  const _LoadingBody({this.summary});
+/// View-model to keep UI simple (summary and full trim share same UI)
+class _VehicleVm {
+  final int trimId;
+  final String makeName;
+  final String displayName; // pinned title
+  final String? yearDisplay;
+  final String bodyType;
 
-  final CarTrimSummary? summary;
+  final List<String> images;
+
+  final String? priceText;
+
+  final String rangeText;
+  final String batteryText;
+  final String accelText;
+
+  final Map<String, String> specs; // full specs
+  final String? description;
+
+  const _VehicleVm({
+    required this.trimId,
+    required this.makeName,
+    required this.displayName,
+    required this.images,
+    this.yearDisplay,
+    this.bodyType = '',
+    this.priceText,
+    this.rangeText = '',
+    this.batteryText = '',
+    this.accelText = '',
+    this.specs = const {},
+    this.description,
+  });
+
+  factory _VehicleVm.fromSummary(CarTrimSummary s) {
+    return _VehicleVm(
+      trimId: s.id,
+      makeName: s.makeName,
+      displayName: s.displayName,
+      yearDisplay: s.yearDisplay,
+      bodyType: s.bodyType,
+      images: [if ((s.imageUrl ?? '').isNotEmpty) s.imageUrl!],
+      priceText: s.priceDisplay,
+      rangeText: s.range.isNotEmpty ? s.range.display : '',
+      batteryText: s.batteryCapacity.isNotEmpty
+          ? s.batteryCapacity.display
+          : '',
+      accelText: s.acceleration.isNotEmpty ? s.acceleration.display : '',
+      // summary has no full specs
+      specs: const {},
+      description: null,
+    );
+  }
+
+  factory _VehicleVm.fromTrim(CarTrim t) {
+    return _VehicleVm(
+      trimId: t.id,
+      makeName: t.makeName,
+      displayName: t.displayName,
+      yearDisplay: t.yearDisplay,
+      bodyType: t.bodyType,
+      images: t.images,
+      priceText: t.priceRangeText,
+      rangeText: t.range.isNotEmpty ? t.range.display : '',
+      batteryText: t.batteryCapacity.isNotEmpty
+          ? t.batteryCapacity.display
+          : '',
+      accelText: t.acceleration.isNotEmpty ? t.acceleration.display : '',
+      specs: t.specs,
+      description: (t.description?.isNotEmpty ?? false) ? t.description : null,
+    );
+  }
+}
+
+class _VehicleDetailsView extends StatelessWidget {
+  const _VehicleDetailsView({
+    required this.vm,
+    required this.loadingMore,
+    required this.onRetry,
+  });
+
+  final _VehicleVm vm;
+  final bool loadingMore;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
-    if (summary == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    final s = summary!;
 
     return CustomScrollView(
       slivers: [
-        // App Bar with Image
         SliverAppBar(
           expandedHeight: 280,
           pinned: true,
+          stretch: true,
+          backgroundColor: cs.surface.withOpacity(0.88),
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          title: Text(
+            vm.displayName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+          ),
+
           flexibleSpace: FlexibleSpaceBar(
-            background: _PreviewImage(imageUrl: s.imageUrl),
+            background: _GalleryHeader(
+              images: vm.images,
+              makeName: vm.makeName,
+              yearDisplay: vm.yearDisplay,
+              bodyType: vm.bodyType,
+            ),
           ),
         ),
 
-        // Preview Content
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(ThemeConstants.p),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Brand & Year
-                Row(
-                  children: [
-                    Text(
-                      s.makeName.toUpperCase(),
-                      style: tt.labelMedium?.copyWith(
-                        color: cs.primary,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    if (s.yearDisplay case final year?) ...[
-                      const SizedBox(width: 8),
-                      _Badge(text: year),
-                    ],
-                    if (s.bodyType.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      _Badge(text: s.bodyType, isPrimary: true),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 8),
+        SliverPadding(
+          padding: const EdgeInsets.all(ThemeConstants.p),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              if (onRetry != null) _ErrorBanner(onRetry: onRetry!),
+              const SizedBox(height: 12),
 
-                // Model & Trim Name
+              _KeySpecsRow(
+                rangeText: vm.rangeText,
+                batteryText: vm.batteryText,
+                accelText: vm.accelText,
+                priceText: vm.priceText,
+              ),
+              const SizedBox(height: 20),
+              const SizedBox(height: 20),
+
+              BlocBuilder<
+                TrimCommunityPreviewCubit,
+                DataState<TrimCommunityPreview>
+              >(
+                builder: (context, st) {
+                  return switch (st) {
+                    DataLoading() ||
+                    DataInitial() => const _LoadingMoreSection(),
+                    DataError() =>
+                      const SizedBox.shrink(), // or show a small banner
+                    DataLoaded(:final data) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (vm.specs.isNotEmpty) ...[
+                          _SectionTitle(title: 'المواصفات'),
+                          const SizedBox(height: 10),
+                          GroupedSpecs(specs: vm.specs),
+                          const SizedBox(height: 20),
+                        ],
+                        ReviewsPreview(
+                          items: data.reviews,
+                          onViewAll: () {
+                            VehicleCommunityReviewsRoute(
+                              vm.trimId,
+                              title: vm.displayName,
+                            ).push(context);
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        QuestionsPreview(
+                          items: data.questions,
+                          onViewAll: () {
+                            VehicleCommunityQuestionsRoute(
+                              vm.trimId,
+                              title: vm.displayName,
+                            ).push(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  };
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              if (vm.description != null) ...[
+                _SectionTitle(title: 'الوصف'),
+                const SizedBox(height: 10),
                 Text(
-                  s.displayName,
-                  style: tt.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  vm.description!,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: cs.onSurfaceVariant,
+                    height: 1.6,
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Price (if available)
-                if (s.priceDisplay case final price?) ...[
-                  _PriceCard(price: price),
-                  const SizedBox(height: 24),
-                ],
-
-                // Key Specs Preview
-                _KeySpecsRowPreview(summary: s),
-                const SizedBox(height: 24),
-
-                // Loading indicator for more content
-                _LoadingMoreSection(),
+                const SizedBox(height: 20),
               ],
-            ),
+
+              if (loadingMore) const _LoadingMoreSection(),
+              const SizedBox(height: 24),
+            ]),
           ),
         ),
       ],
@@ -117,92 +269,235 @@ class _LoadingBody extends StatelessWidget {
   }
 }
 
-class _PreviewImage extends StatelessWidget {
-  const _PreviewImage({this.imageUrl});
-  final String? imageUrl;
+class _GalleryHeader extends StatefulWidget {
+  const _GalleryHeader({
+    required this.images,
+    required this.makeName,
+    required this.yearDisplay,
+    required this.bodyType,
+  });
 
+  final List<String> images;
+  final String makeName;
+  final String? yearDisplay;
+  final String bodyType;
   @override
-  Widget build(BuildContext context) {
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
-      return Image.network(
-        imageUrl!,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _ImagePlaceholder(),
-      );
-    }
-    return _ImagePlaceholder();
-  }
+  State<_GalleryHeader> createState() => _GalleryHeaderState();
 }
 
-class _ImagePlaceholder extends StatelessWidget {
+class _GalleryHeaderState extends State<_GalleryHeader> {
+  int _current = 0;
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      color: cs.surfaceContainerHighest,
-      child: Center(
-        child: Icon(Icons.directions_car, size: 64, color: cs.outline),
-      ),
+
+    final images = widget.images.where((e) => e.isNotEmpty).toList();
+    if (images.isEmpty) return const _ImagePlaceholder();
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        PageView.builder(
+          itemCount: images.length,
+          onPageChanged: (i) => setState(() => _current = i),
+          itemBuilder: (_, i) => Image.network(
+            images[i],
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              color: cs.surfaceContainerHighest,
+              child: Icon(Icons.broken_image, color: cs.outline),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: const [0.0, 0.35, 1.0],
+                colors: [
+                  // “white at top” but theme-aware (light mode = white, dark mode = dark surface)
+                  Theme.of(context).colorScheme.surface.withOpacity(0.70),
+
+                  Colors.transparent,
+
+                  // black at bottom
+                  Colors.black.withOpacity(0.45),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // Pills inside header stack (top area)
+        PositionedDirectional(
+          bottom: MediaQuery.paddingOf(context).bottom + 12,
+          start: 16,
+          end: 16,
+          child: _HeaderPills(
+            makeName: widget.makeName,
+            yearDisplay: widget.yearDisplay,
+            bodyType: widget.bodyType,
+          ),
+        ),
+
+        if (images.length > 1)
+          Positioned(
+            bottom: 18,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                images.length,
+                (i) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: i == _current ? 16 : 8,
+                  height: 8,
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    color: i == _current
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
 
-class _Badge extends StatelessWidget {
-  const _Badge({required this.text, this.isPrimary = false});
-  final String text;
-  final bool isPrimary;
+class _HeaderPills extends StatelessWidget {
+  const _HeaderPills({
+    required this.makeName,
+    required this.yearDisplay,
+    required this.bodyType,
+  });
+
+  final String makeName;
+  final String? yearDisplay;
+  final String bodyType;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        _GlassPill(text: makeName.toUpperCase()),
+        if (yearDisplay != null) _GlassPill(text: yearDisplay!),
+        if (bodyType.isNotEmpty) _GlassPill(text: bodyType),
+      ],
+    );
+  }
+}
+
+class _GlassPill extends StatelessWidget {
+  const _GlassPill({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isPrimary ? cs.secondaryContainer : cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(4),
+        color: Colors.black.withOpacity(0.30),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white.withOpacity(0.18)),
       ),
       child: Text(
         text,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: isPrimary ? cs.onSecondaryContainer : cs.onSurfaceVariant,
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.6,
         ),
       ),
     );
   }
 }
 
-class _PriceCard extends StatelessWidget {
-  const _PriceCard({required this.price});
-  final String price;
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.title});
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+    );
+  }
+}
+
+class _RealWorldRangeCard extends StatelessWidget {
+  const _RealWorldRangeCard({
+    required this.cityLabel,
+    required this.seasonLabel,
+    required this.valueText,
+    required this.onAdd,
+  });
+
+  final String cityLabel;
+  final String seasonLabel;
+  final String valueText;
+  final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: cs.primaryContainer,
+        color: cs.surfaceContainerHighest,
         borderRadius: ThemeConstants.cardRadius,
+        border: Border.all(color: cs.outlineVariant),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.sell_outlined, color: cs.onPrimaryContainer),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Text(
+            'المدى الحقيقي (80% → 20%)',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$cityLabel • $seasonLabel',
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+          ),
+          const SizedBox(height: 12),
+          Row(
             children: [
               Text(
-                'السعر',
-                style: tt.labelSmall?.copyWith(color: cs.onPrimaryContainer),
-              ),
-              Text(
-                price,
-                style: tt.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: cs.onPrimaryContainer,
+                valueText,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
                 ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'كم',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(color: cs.onSurfaceVariant),
+              ),
+              const Spacer(),
+              FilledButton.icon(
+                onPressed: onAdd,
+                icon: const Icon(Icons.add),
+                label: const Text('أضف بياناتك'),
               ),
             ],
           ),
@@ -212,39 +507,117 @@ class _PriceCard extends StatelessWidget {
   }
 }
 
-class _KeySpecsRowPreview extends StatelessWidget {
-  const _KeySpecsRowPreview({required this.summary});
-  final CarTrimSummary summary;
+class _ErrorBanner extends StatelessWidget {
+  const _ErrorBanner({required this.onRetry});
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
-    final items = <_KeySpec>[
-      if (summary.range.isNotEmpty)
-        _KeySpec(Icons.route, 'المدى', summary.range.display, Colors.green),
-      if (summary.batteryCapacity.isNotEmpty)
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: cs.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.cloud_off, color: cs.onErrorContainer),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'تعذر تحميل التفاصيل الكاملة',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: cs.onErrorContainer),
+            ),
+          ),
+          TextButton(onPressed: onRetry, child: const Text('إعادة')),
+        ],
+      ),
+    );
+  }
+}
+
+class _KeySpecsRow extends StatelessWidget {
+  const _KeySpecsRow({
+    required this.rangeText,
+    required this.batteryText,
+    required this.accelText,
+    this.priceText,
+  });
+
+  final String rangeText;
+  final String batteryText;
+  final String accelText;
+  final String? priceText;
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    final specs = <_KeySpec>[
+      if (rangeText.isNotEmpty)
+        _KeySpec(Icons.route, 'المدى', rangeText, Colors.green),
+      if (batteryText.isNotEmpty)
         _KeySpec(
           Icons.battery_charging_full,
           'البطارية',
-          summary.batteryCapacity.display,
+          batteryText,
           Colors.blue,
         ),
-      if (summary.acceleration.isNotEmpty)
-        _KeySpec(
-          Icons.speed,
-          '0-100',
-          summary.acceleration.display,
-          Colors.orange,
-        ),
+      if (accelText.isNotEmpty)
+        _KeySpec(Icons.speed, '0-100', accelText, Colors.orange),
     ];
 
-    if (items.isEmpty) return const SizedBox.shrink();
+    if (specs.isEmpty && (priceText == null || priceText!.isEmpty)) {
+      return const SizedBox.shrink();
+    }
 
-    return Row(
-      children: items
-          .map((item) => Expanded(child: _KeySpecCard(spec: item)))
-          .expand((w) => [w, const SizedBox(width: 12)])
-          .take(items.length * 2 - 1)
-          .toList(),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: ThemeConstants.cardRadius,
+        border: Border.all(color: cs.outlineVariant),
+      ),
+      child: Column(
+        children: [
+          if (specs.isNotEmpty)
+            Row(
+              children: specs
+                  .map((s) => Expanded(child: _KeySpecCard(spec: s)))
+                  .expand((w) => [w, const SizedBox(width: 12)])
+                  .take(specs.length * 2 - 1)
+                  .toList(),
+            ),
+
+          if (priceText != null && priceText!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Divider(color: cs.outlineVariant, height: 1),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(Icons.sell_outlined, size: 18, color: cs.onSurfaceVariant),
+                const SizedBox(width: 8),
+                Text(
+                  'السعر',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelMedium?.copyWith(color: cs.onSurfaceVariant),
+                ),
+                const Spacer(),
+                Text(
+                  priceText!,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w900),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -269,17 +642,17 @@ class _KeySpecCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: spec.color.withOpacity(0.1),
+        color: spec.color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: spec.color.withOpacity(0.2)),
+        border: Border.all(color: spec.color.withOpacity(0.18)),
       ),
       child: Column(
         children: [
-          Icon(spec.icon, size: 24, color: spec.color),
+          Icon(spec.icon, size: 22, color: spec.color),
           const SizedBox(height: 8),
           Text(
             spec.value,
-            style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+            style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w800),
             textAlign: TextAlign.center,
           ),
           Text(
@@ -293,12 +666,14 @@ class _KeySpecCard extends StatelessWidget {
 }
 
 class _LoadingMoreSection extends StatelessWidget {
+  const _LoadingMoreSection();
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest,
         borderRadius: ThemeConstants.cardRadius,
@@ -310,7 +685,7 @@ class _LoadingMoreSection extends StatelessWidget {
             height: 24,
             child: CircularProgressIndicator(strokeWidth: 2),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Text(
             'جاري تحميل المزيد...',
             style: Theme.of(
@@ -323,331 +698,16 @@ class _LoadingMoreSection extends StatelessWidget {
   }
 }
 
-/// Full detail body (after loading completes)
-class _DetailBody extends StatelessWidget {
-  const _DetailBody({required this.trim});
-
-  final CarTrim trim;
+class _ImagePlaceholder extends StatelessWidget {
+  const _ImagePlaceholder();
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    return CustomScrollView(
-      slivers: [
-        // App Bar with Image Gallery
-        SliverAppBar(
-          expandedHeight: 280,
-          pinned: true,
-          flexibleSpace: FlexibleSpaceBar(
-            background: _ImageGallery(images: trim.images),
-          ),
-        ),
-
-        // Content
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.all(ThemeConstants.p),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Brand & Year & Body Type
-                Row(
-                  children: [
-                    Text(
-                      trim.makeName.toUpperCase(),
-                      style: tt.labelMedium?.copyWith(
-                        color: cs.primary,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    if (trim.yearDisplay case final year?) ...[
-                      const SizedBox(width: 8),
-                      _Badge(text: year),
-                    ],
-                    if (trim.bodyType.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      _Badge(text: trim.bodyType, isPrimary: true),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                // Model & Trim Name
-                Text(
-                  trim.displayName,
-                  style: tt.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Price Card
-                if (trim.priceRangeText case final price?) ...[
-                  _PriceCard(price: price),
-                  const SizedBox(height: 24),
-                ],
-
-                // Key Specs
-                _KeySpecsRow(trim: trim),
-                const SizedBox(height: 24),
-
-                // All Specs (expandable)
-                Text(
-                  'المواصفات',
-                  style: tt.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 12),
-                ExpandableSpecsList(specs: trim.specs),
-                const SizedBox(height: 24),
-
-                // Description
-                if (trim.description case final desc? when desc.isNotEmpty) ...[
-                  Text(
-                    'الوصف',
-                    style: tt.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    desc,
-                    style: tt.bodyMedium?.copyWith(
-                      color: cs.onSurfaceVariant,
-                      height: 1.6,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
-
-                // Actions
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.rate_review_outlined),
-                        label: const Text('التجارب'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.help_outline),
-                        label: const Text('الأسئلة'),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 32),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _KeySpecsRow extends StatelessWidget {
-  const _KeySpecsRow({required this.trim});
-  final CarTrim trim;
-
-  @override
-  Widget build(BuildContext context) {
-    final items = <_KeySpec>[
-      if (trim.range.isNotEmpty)
-        _KeySpec(Icons.route, 'المدى', trim.range.display, Colors.green),
-      if (trim.batteryCapacity.isNotEmpty)
-        _KeySpec(
-          Icons.battery_charging_full,
-          'البطارية',
-          trim.batteryCapacity.display,
-          Colors.blue,
-        ),
-      if (trim.acceleration.isNotEmpty)
-        _KeySpec(
-          Icons.speed,
-          '0-100',
-          trim.acceleration.display,
-          Colors.orange,
-        ),
-    ];
-
-    if (items.isEmpty) return const SizedBox.shrink();
-
-    return Row(
-      children: items
-          .map((item) => Expanded(child: _KeySpecCard(spec: item)))
-          .expand((w) => [w, const SizedBox(width: 12)])
-          .take(items.length * 2 - 1)
-          .toList(),
-    );
-  }
-}
-
-class _ImageGallery extends StatefulWidget {
-  const _ImageGallery({required this.images});
-  final List<String> images;
-
-  @override
-  State<_ImageGallery> createState() => _ImageGalleryState();
-}
-
-class _ImageGalleryState extends State<_ImageGallery> {
-  int _current = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    if (widget.images.isEmpty) {
-      return _ImagePlaceholder();
-    }
-
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        PageView.builder(
-          itemCount: widget.images.length,
-          onPageChanged: (i) => setState(() => _current = i),
-          itemBuilder: (_, i) => Image.network(
-            widget.images[i],
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              color: cs.surfaceContainerHighest,
-              child: Icon(Icons.broken_image, color: cs.outline),
-            ),
-          ),
-        ),
-        if (widget.images.length > 1)
-          Positioned(
-            bottom: 16,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                widget.images.length,
-                (i) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: i == _current ? 16 : 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: i == _current
-                        ? cs.primary
-                        : cs.onSurface.withOpacity(0.3),
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _ErrorBody extends StatelessWidget {
-  const _ErrorBody({this.summary, required this.onRetry});
-
-  final CarTrimSummary? summary;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    // If we have summary, show it with error banner
-    if (summary != null) {
-      return CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Hero(
-                tag: '${summary?.id}-image',
-
-                child: _PreviewImage(imageUrl: summary!.imageUrl),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(ThemeConstants.p),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Error banner
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: cs.errorContainer,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.cloud_off, color: cs.onErrorContainer),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'تعذر تحميل التفاصيل الكاملة',
-                            style: TextStyle(color: cs.onErrorContainer),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: onRetry,
-                          child: const Text('إعادة'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Basic info from summary
-                  Text(
-                    summary!.makeName.toUpperCase(),
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: cs.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    summary!.displayName,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-
-    // No summary, show full error screen
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: cs.error),
-          const SizedBox(height: 16),
-          Text('حدث خطأ', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh),
-            label: const Text('إعادة المحاولة'),
-          ),
-        ],
+    return Container(
+      color: cs.surfaceContainerHighest,
+      child: Center(
+        child: Icon(Icons.directions_car, size: 64, color: cs.outline),
       ),
     );
   }

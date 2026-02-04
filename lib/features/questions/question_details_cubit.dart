@@ -32,8 +32,8 @@ class QuestionDetailsState {
       question: question ?? this.question,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      error: clearErrors ? null : error,
-      submitError: clearErrors ? null : submitError,
+      error: clearErrors ? null : (error ?? this.error),
+      submitError: clearErrors ? null : (submitError ?? this.submitError),
     );
   }
 }
@@ -67,7 +67,7 @@ class QuestionDetailsCubit extends Cubit<QuestionDetailsState> {
 
     emit(state.copyWith(isSubmitting: true, clearErrors: true));
     try {
-      final accessToken = await GetIt.I.get<TokensRepository>().get();
+      final accessToken = await GetIt.I.get<ITokensRepository>().get();
       if (accessToken == null) {
         throw AppError.unauthenticated;
       }

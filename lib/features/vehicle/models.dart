@@ -204,31 +204,6 @@ class CarSpecs {
   );
 }
 
-/// Lightweight vehicle info for embedding in reviews, etc.
-class VehicleSummary {
-  final int id;
-  final String name;
-  final String brandName;
-  final int? year;
-  final String imageUrl;
-
-  const VehicleSummary({
-    required this.id,
-    required this.name,
-    required this.brandName,
-    this.year,
-    required this.imageUrl,
-  });
-
-  factory VehicleSummary.fromJson(Map<String, dynamic> json) => VehicleSummary(
-    id: json['id'],
-    name: json['name'],
-    brandName: json['brand_name'],
-    year: json['year'],
-    imageUrl: json['image_url'] ?? '',
-  );
-}
-
 /// Lightweight trim for lists (home, vehicles screen)
 
 int? _parseInt(dynamic value) {
@@ -432,7 +407,7 @@ class TrimFilters {
 
   Map<String, String> toQueryParams() {
     return {
-      if (search != null && search!.isNotEmpty) 'q': search!,
+      if (search != null && search!.isNotEmpty) 'search': search!,
       if (makeId != null) 'make_id': '$makeId',
       if (modelId != null) 'model_id': '$modelId',
       if (bodyTypeId != null) 'body_type_id': '$bodyTypeId',

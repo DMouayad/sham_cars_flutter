@@ -31,6 +31,16 @@ RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
               path: ':id',
               factory: $VehicleDetailsRoute._fromState,
             ),
+            GoRouteData.$route(
+              path: ':id/community/reviews',
+              name: 'vehicle_community_reviews',
+              factory: $VehicleCommunityReviewsRoute._fromState,
+            ),
+            GoRouteData.$route(
+              path: ':id/community/qa',
+              name: 'vehicle_community_qa',
+              factory: $VehicleCommunityQuestionsRoute._fromState,
+            ),
           ],
         ),
       ],
@@ -133,7 +143,10 @@ mixin $VehiclesRoute on GoRouteData {
 
 mixin $VehicleDetailsRoute on GoRouteData {
   static VehicleDetailsRoute _fromState(GoRouterState state) =>
-      VehicleDetailsRoute(state.extra as CarTrimSummary);
+      VehicleDetailsRoute(
+        id: int.parse(state.pathParameters['id']!),
+        $extra: state.extra as CarTrimSummary?,
+      );
 
   VehicleDetailsRoute get _self => this as VehicleDetailsRoute;
 
@@ -156,6 +169,66 @@ mixin $VehicleDetailsRoute on GoRouteData {
   @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
+}
+
+mixin $VehicleCommunityReviewsRoute on GoRouteData {
+  static VehicleCommunityReviewsRoute _fromState(GoRouterState state) =>
+      VehicleCommunityReviewsRoute(
+        int.parse(state.pathParameters['id']!),
+        title: state.uri.queryParameters['title']!,
+      );
+
+  VehicleCommunityReviewsRoute get _self =>
+      this as VehicleCommunityReviewsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/vehicles/${Uri.encodeComponent(_self.id.toString())}/community/reviews',
+    queryParams: {'title': _self.title},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $VehicleCommunityQuestionsRoute on GoRouteData {
+  static VehicleCommunityQuestionsRoute _fromState(GoRouterState state) =>
+      VehicleCommunityQuestionsRoute(
+        int.parse(state.pathParameters['id']!),
+        title: state.uri.queryParameters['title']!,
+      );
+
+  VehicleCommunityQuestionsRoute get _self =>
+      this as VehicleCommunityQuestionsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/vehicles/${Uri.encodeComponent(_self.id.toString())}/community/qa',
+    queryParams: {'title': _self.title},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $CommunityRoute on GoRouteData {

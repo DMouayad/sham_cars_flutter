@@ -20,6 +20,8 @@ import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/page_loader.dart';
 
+import 'features/community/community_cubit.dart';
+
 class MainApp extends StatelessWidget {
   const MainApp({
     super.key,
@@ -50,6 +52,11 @@ class MainApp extends StatelessWidget {
           RepositoryProvider(
             create: (context) =>
                 HomeRepository(responseCache, context.read(), context.read()),
+          ),
+          BlocProvider(
+            lazy: true,
+            create: (context) =>
+                CommunityCubit(context.read(), context.read())..load(),
           ),
         ],
         child: const MainAppView(),

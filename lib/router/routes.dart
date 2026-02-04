@@ -20,6 +20,7 @@ import 'package:sham_cars/features/vehicle/cubits/car_trim_cubit.dart';
 import 'package:sham_cars/features/vehicle/cubits/vehicles_list_cubit.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
+import 'package:sham_cars/features/vehicle/trim_community_screen.dart';
 import 'package:sham_cars/features/vehicle/vehicle_details_screen.dart';
 import 'package:sham_cars/features/vehicle/vehicles_list_screen.dart';
 import 'package:sham_cars/utils/utils.dart';
@@ -40,6 +41,8 @@ class RoutePath {
   static const questionDetails = ':id';
   static const vehicles = '/vehicles';
   static const vehicleDetails = ':id';
+  static const vehicleCommunityReviews = ':id/community/reviews';
+  static const vehicleCommunityQuestions = ':id/community/qa';
   static const compare = '/compare';
   static const community = '/community';
 }
@@ -56,6 +59,14 @@ class RoutePath {
           name: 'vehicles',
           routes: [
             TypedGoRoute<VehicleDetailsRoute>(path: RoutePath.vehicleDetails),
+            TypedGoRoute<VehicleCommunityReviewsRoute>(
+              path: RoutePath.vehicleCommunityReviews,
+              name: 'vehicle_community_reviews',
+            ),
+            TypedGoRoute<VehicleCommunityQuestionsRoute>(
+              path: RoutePath.vehicleCommunityQuestions,
+              name: 'vehicle_community_qa',
+            ),
           ],
         ),
       ],
@@ -122,7 +133,8 @@ class HomeRoute extends GoRouteData with $HomeRoute {
     return BlocProvider(
       create: (context) => HomeCubit(context.read())..load(),
       child: HomeScreen(
-        onOpenTrim: (summary) => VehicleDetailsRoute(summary).push(context),
+        onOpenTrim: (id, [summary]) =>
+            VehicleDetailsRoute(id: id, $extra: summary).push(context),
         onOpenQuestion: (id) => QuestionDetailsRoute(id).go(context),
         onViewAllVehicles: () =>
             StatefulNavigationShell.of(context).goBranch(1),
@@ -187,7 +199,8 @@ class VehiclesRoute extends GoRouteData with $VehiclesRoute {
     return BlocProvider(
       create: (ctx) => VehiclesListCubit(ctx.read<CarDataRepository>())..init(),
       child: VehiclesScreen(
-        onOpenTrim: (summary) => VehicleDetailsRoute(summary).push(context),
+        onOpenTrim: (summary) =>
+            VehicleDetailsRoute(id: summary.id, $extra: summary).push(context),
       ),
     );
   }
@@ -195,15 +208,52 @@ class VehiclesRoute extends GoRouteData with $VehiclesRoute {
 
 @immutable
 class VehicleDetailsRoute extends GoRouteData with $VehicleDetailsRoute {
-  const VehicleDetailsRoute(this.$extra);
-  final CarTrimSummary $extra;
-  int get id => $extra.id;
+  const VehicleDetailsRoute({required this.id, this.$extra});
+  final CarTrimSummary? $extra;
+  final int id;
+
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider(
       create: (context) =>
-          CarTrimCubit(context.read<CarDataRepository>())..load($extra.id),
-      child: VehicleDetailsScreen(trimSummary: $extra),
+          CarTrimCubit(context.read<CarDataRepository>())..load(id),
+      child: VehicleDetailsScreen(trimId: id, trimSummary: $extra),
+    );
+  }
+}
+
+@immutable
+class VehicleCommunityReviewsRoute extends GoRouteData
+    with $VehicleCommunityReviewsRoute {
+  const VehicleCommunityReviewsRoute(this.id, {required this.title});
+
+  final int id;
+  final String title;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return TrimCommunityScreen(
+      trimId: id,
+      initialTab: 0, // 0 = reviews
+      trimTitle: title,
+    );
+  }
+}
+
+@immutable
+class VehicleCommunityQuestionsRoute extends GoRouteData
+    with $VehicleCommunityQuestionsRoute {
+  const VehicleCommunityQuestionsRoute(this.id, {required this.title});
+
+  final int id;
+  final String title;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return TrimCommunityScreen(
+      trimId: id,
+      initialTab: 1, // 1 = Q&A
+      trimTitle: title,
     );
   }
 }
@@ -232,13 +282,9 @@ class CommunityRoute extends GoRouteData with $CommunityRoute {
   const CommunityRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider(
-      create: (context) =>
-          CommunityCubit(context.read(), context.read())..load(),
-      child: CommunityScreen(
-        onOpenVehicle: (summray) => VehicleDetailsRoute(summray).push(context),
-        onOpenQuestion: (id) => QuestionDetailsRoute(id).push(context),
-      ),
+    return CommunityScreen(
+      onOpenVehicle: (id) => VehicleDetailsRoute(id: id).push(context),
+      onOpenQuestion: (id) => QuestionDetailsRoute(id).push(context),
     );
   }
 }

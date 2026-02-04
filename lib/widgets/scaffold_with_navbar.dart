@@ -6,6 +6,13 @@ import 'package:sham_cars/features/home/components/custom_drawer.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/app_name.dart';
 
+const navigationShellIndex = (
+  explore: 0,
+  vehicles: 1,
+  community: 2,
+  profile: 3,
+);
+
 class ScaffoldWithNavBar extends StatelessWidget {
   // The navigation shell and container for the branch Navigators
   final StatefulNavigationShell navigationShell;
@@ -37,6 +44,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
         title: const SizedBox(width: 140, child: AppName()),
         centerTitle: true,
       ),
+      // extendBodyBehindAppBar: true,
       body: navigationShell, // The current active branch's content
       drawer: const CustomDrawer(),
       bottomNavigationBar: BottomNavigationBar(
