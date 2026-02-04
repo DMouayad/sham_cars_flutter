@@ -66,6 +66,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                   padding: const EdgeInsets.all(ThemeConstants.p),
                   child: Column(
                     spacing: 8,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TextField(
@@ -100,6 +101,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             _FilterChipsRow(
                               state: state,

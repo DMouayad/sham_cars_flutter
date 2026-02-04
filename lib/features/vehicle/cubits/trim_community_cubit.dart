@@ -85,7 +85,7 @@ class TrimCommunityCubit extends Cubit<TrimCommunityState> {
 
     try {
       final results = await Future.wait([
-        repo.getReviews(trimId, take: _take, skip: 0),
+        repo.getReviews(trimId: trimId, take: _take, skip: 0),
         repo.getQuestions(trimId: trimId, take: _take, skip: 0),
       ]);
 
@@ -120,7 +120,7 @@ class TrimCommunityCubit extends Cubit<TrimCommunityState> {
 
     try {
       final next = await repo.getReviews(
-        _trimId!,
+        trimId: _trimId!,
         take: _take,
         skip: state.reviewsSkip,
       );

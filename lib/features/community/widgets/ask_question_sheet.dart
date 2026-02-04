@@ -2,12 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
-import 'package:sham_cars/features/community/community_cubit.dart';
+import 'package:sham_cars/features/community/cubits/community_actions_cubit.dart';
+import 'package:sham_cars/features/community/cubits/trim_picker_cubit.dart';
+import 'package:sham_cars/features/community/widgets/trim_picker_sheet.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
+import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
 
 class AskQuestionSheet extends StatefulWidget {
-  const AskQuestionSheet({super.key});
+  const AskQuestionSheet({
+    super.key,
+    this.preselectedTrimId,
+    this.preselectedTrimTitle,
+    this.lockTrim = false,
+  });
+
+  final int? preselectedTrimId;
+  final String? preselectedTrimTitle;
+  final bool lockTrim;
 
   @override
   State<AskQuestionSheet> createState() => _AskQuestionSheetState();
@@ -17,7 +29,19 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
-  CarTrimSummary? _selectedTrim;
+
+  int? _trimId;
+  String? _trimTitle;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.preselectedTrimId != null) {
+      _trimId = widget.preselectedTrimId;
+      _trimTitle =
+          widget.preselectedTrimTitle ?? 'النسخة #${widget.preselectedTrimId}';
+    }
+  }
 
   @override
   void dispose() {
@@ -26,174 +50,242 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
     super.dispose();
   }
 
+  Future<void> _pickTrim() async {
+    final selected = await showModalBottomSheet<CarTrimSummary>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (c) => TrimPickerCubit(c.read<CarDataRepository>()),
+          ),
+        ],
+        child: const TrimPickerSheet(),
+      ),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _trimId = selected.id;
+        _trimTitle = selected.fullName;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final questionsState = context.watch<CommunityCubit>().state;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        left: ThemeConstants.p,
-        right: ThemeConstants.p,
-        top: ThemeConstants.p,
-        bottom: MediaQuery.of(context).viewInsets.bottom + ThemeConstants.p,
-      ),
-      child: Form(
-        key: _formKey,
-        child: ListenableBuilder(
-          listenable: GetIt.I.get<AuthNotifier>(),
-          builder: (context, _) {
-            final authNotifier = GetIt.I.get<AuthNotifier>();
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Text(
-                      'اطرح سؤالاً',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+    return BlocProvider(
+      create: (_) => CommunityActionsCubit(context.read()),
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: ThemeConstants.p,
+          right: ThemeConstants.p,
+          top: ThemeConstants.p,
+          bottom: MediaQuery.of(context).viewInsets.bottom + ThemeConstants.p,
+        ),
+        child: Form(
+          key: _formKey,
+          child: ListenableBuilder(
+            listenable: GetIt.I.get<AuthNotifier>(),
+            builder: (context, _) {
+              final auth = GetIt.I.get<AuthNotifier>();
+
+              return BlocBuilder<CommunityActionsCubit, CommunityActionsState>(
+                builder: (context, actionState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'اطرح سؤالاً',
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
                       ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                // Auth warning
-                if (!authNotifier.isLoggedIn) ...[
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: cs.errorContainer,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.info_outline, color: cs.onErrorContainer),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'يجب تسجيل الدخول لطرح سؤال',
-                            style: TextStyle(color: cs.onErrorContainer),
+                      if (!auth.isLoggedIn) ...[
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: cs.errorContainer,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: cs.onErrorContainer,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'يجب تسجيل الدخول لطرح سؤال',
+                                  style: TextStyle(color: cs.onErrorContainer),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                        const SizedBox(height: 16),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
 
-                // Trim picker
-                DropdownButtonFormField<CarTrimSummary>(
-                  initialValue: _selectedTrim,
-                  decoration: const InputDecoration(
-                    labelText: 'السيارة (النسخة)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.directions_car_sharp),
-                  ),
-                  items: questionsState.carTrims.map((t) {
-                    return DropdownMenuItem(value: t, child: Text(t.fullName));
-                  }).toList(),
-                  onChanged: (t) => setState(() => _selectedTrim = t),
-                ),
-                const SizedBox(height: 12),
+                      _TrimField(
+                        title: _trimTitle,
+                        locked: widget.lockTrim,
+                        onPick: _pickTrim,
+                      ),
+                      const SizedBox(height: 12),
 
-                // Title
-                TextFormField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'عنوان السؤال *',
-                    hintText: 'مثال: ما هو أفضل نظام شحن؟',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'الرجاء إدخال عنوان السؤال';
-                    }
-                    if (v.trim().length < 10) return 'العنوان قصير جداً';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _titleController,
+                        decoration: const InputDecoration(
+                          labelText: 'عنوان السؤال *',
+                          hintText: 'مثال: ما هو أفضل نظام شحن؟',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'الرجاء إدخال عنوان السؤال';
+                          }
+                          if (v.trim().length < 10) return 'العنوان قصير جداً';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
 
-                // Body
-                TextFormField(
-                  controller: _bodyController,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                    labelText: 'تفاصيل السؤال *',
-                    hintText: 'اشرح سؤالك بالتفصيل...',
-                    border: OutlineInputBorder(),
-                    alignLabelWithHint: true,
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'الرجاء إدخال تفاصيل السؤال';
-                    }
-                    if (v.trim().length < 20) return 'التفاصيل قصيرة جداً';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _bodyController,
+                        maxLines: 4,
+                        decoration: const InputDecoration(
+                          labelText: 'تفاصيل السؤال *',
+                          hintText: 'اشرح سؤالك بالتفصيل...',
+                          border: OutlineInputBorder(),
+                          alignLabelWithHint: true,
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'الرجاء إدخال تفاصيل السؤال';
+                          }
+                          if (v.trim().length < 20) {
+                            return 'التفاصيل قصيرة جداً';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
 
-                // Error
-                if (questionsState.submitError case final err?)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Text(err, style: TextStyle(color: cs.error)),
-                  ),
+                      if (actionState.submitError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            actionState.submitError!,
+                            style: TextStyle(color: cs.error),
+                          ),
+                        ),
 
-                const SizedBox(height: 8),
+                      FilledButton(
+                        onPressed:
+                            (!auth.isLoggedIn || actionState.isSubmitting)
+                            ? null
+                            : () async {
+                                if (!_formKey.currentState!.validate()) return;
+                                if (_trimId == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('الرجاء اختيار النسخة'),
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                // Submit
-                FilledButton(
-                  onPressed:
-                      authNotifier.isLoggedIn && !questionsState.isSubmitting
-                      ? _submit
-                      : null,
-                  child: questionsState.isSubmitting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('نشر السؤال'),
-                ),
-              ],
-            );
-          },
+                                final ok = await context
+                                    .read<CommunityActionsCubit>()
+                                    .submitQuestion(
+                                      carTrimId: _trimId!,
+                                      title: _titleController.text.trim(),
+                                      body: _bodyController.text.trim(),
+                                    );
+
+                                if (ok && context.mounted) {
+                                  Navigator.pop(context, true);
+                                }
+                              },
+                        child: actionState.isSubmitting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('نشر السؤال'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
   }
+}
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_selectedTrim == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('الرجاء اختيار النسخة')));
-      return;
+class _TrimField extends StatelessWidget {
+  const _TrimField({
+    required this.title,
+    required this.locked,
+    required this.onPick,
+  });
+
+  final String? title;
+  final bool locked;
+  final VoidCallback onPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    if (locked) {
+      return InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'السيارة (النسخة)',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.directions_car_sharp),
+        ),
+        child: Text(title ?? '—', style: TextStyle(color: cs.onSurface)),
+      );
     }
 
-    final success = await context.read<CommunityCubit>().submitQuestion(
-      trimId: _selectedTrim!.id,
-      title: _titleController.text.trim(),
-      body: _bodyController.text.trim(),
+    return InkWell(
+      onTap: onPick,
+      borderRadius: ThemeConstants.cardRadius,
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'السيارة (النسخة) *',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.directions_car_sharp),
+        ),
+        child: Row(
+          children: [
+            Expanded(child: Text(title ?? 'اضغط للاختيار')),
+            Icon(Icons.expand_more, color: cs.onSurfaceVariant),
+          ],
+        ),
+      ),
     );
-
-    if (success && mounted) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('تم نشر السؤال بنجاح')));
-    }
   }
 }

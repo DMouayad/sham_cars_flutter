@@ -47,6 +47,7 @@ class QuestionCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 10,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               // Type badge
               if (showQuestionBadge)

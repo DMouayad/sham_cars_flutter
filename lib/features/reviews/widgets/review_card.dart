@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/utils/date_time_text.dart';
 
 class ReviewCard extends StatelessWidget {
   const ReviewCard({
@@ -49,7 +50,7 @@ class ReviewCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      _formatDate(review.createdAt),
+                      _formatDate(context, review.createdAt),
                       style: tt.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                       ),
@@ -89,13 +90,8 @@ class ReviewCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime dt) {
-    // keep simple; you can swap to intl/your l10n later
-    final y = dt.year.toString();
-    final m = dt.month.toString().padLeft(2, '0');
-    final d = dt.day.toString().padLeft(2, '0');
-    return '$y/$m/$d';
-  }
+  String _formatDate(BuildContext context, DateTime dt) =>
+      DateTimeText.relativeOrShort(context, dt);
 }
 
 class _RatingPill extends StatelessWidget {

@@ -304,7 +304,7 @@ class _GalleryHeaderState extends State<_GalleryHeader> {
           itemBuilder: (_, i) => Image.network(
             images[i],
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
+            errorBuilder: (_, _, _) => Container(
               color: cs.surfaceContainerHighest,
               child: Icon(Icons.broken_image, color: cs.outline),
             ),
@@ -320,9 +320,7 @@ class _GalleryHeaderState extends State<_GalleryHeader> {
                 colors: [
                   // “white at top” but theme-aware (light mode = white, dark mode = dark surface)
                   Theme.of(context).colorScheme.surface.withOpacity(0.70),
-
                   Colors.transparent,
-
                   // black at bottom
                   Colors.black.withOpacity(0.45),
                 ],

@@ -21,7 +21,7 @@ class TrimCommunityPreviewCubit extends Cubit<DataState<TrimCommunityPreview>> {
 
     try {
       final results = await Future.wait([
-        _repo.getReviews(trimId, take: 2),
+        _repo.getReviews(trimId: trimId, take: 2),
         _repo.getQuestions(trimId: trimId, take: 2), // temporarily
       ]);
 

@@ -1,21 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:sham_cars/api/rest_client.dart';
-import 'package:sham_cars/features/auth/repositories.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/reviews/models.dart';
-import 'package:sham_cars/features/vehicle/models.dart';
-import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
-import 'package:sham_cars/utils/src/app_error.dart';
 
 import 'community_repository.dart';
 
 class CommunityState {
   final List<Question> questions;
   final List<Review> reviews;
-  final List<CarTrimSummary> carTrims;
+
   final bool isLoading;
   final bool isSubmitting;
+
+  final bool isLoadingMoreQuestions;
+  final bool hasMoreQuestions;
+  final int questionsSkip;
+
+  final bool isLoadingMoreReviews;
+  final bool hasMoreReviews;
+  final int reviewsSkip;
+
   final Object? error;
   final String? submitError;
   final String searchQuery;
@@ -23,9 +26,15 @@ class CommunityState {
   const CommunityState({
     this.questions = const [],
     this.reviews = const [],
-    this.carTrims = const [],
     this.isLoading = false,
     this.isSubmitting = false,
+
+    this.isLoadingMoreQuestions = false,
+    this.hasMoreQuestions = true,
+    this.questionsSkip = 0,
+    this.isLoadingMoreReviews = false,
+    this.hasMoreReviews = true,
+    this.reviewsSkip = 0,
     this.error,
     this.submitError,
     this.searchQuery = '',
@@ -34,9 +43,14 @@ class CommunityState {
   CommunityState copyWith({
     List<Question>? questions,
     List<Review>? reviews,
-    List<CarTrimSummary>? carTrims,
     bool? isLoading,
     bool? isSubmitting,
+    bool? isLoadingMoreQuestions,
+    bool? hasMoreQuestions,
+    int? questionsSkip,
+    bool? hasMoreReviews,
+    bool? isLoadingMoreReviews,
+    int? reviewsSkip,
     Object? error,
     String? submitError,
     String? searchQuery,
@@ -45,12 +59,18 @@ class CommunityState {
     return CommunityState(
       questions: questions ?? this.questions,
       reviews: reviews ?? this.reviews,
-      carTrims: carTrims ?? this.carTrims,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      error: clearErrors ? null : error,
-      submitError: clearErrors ? null : submitError,
+      isLoadingMoreQuestions:
+          isLoadingMoreQuestions ?? this.isLoadingMoreQuestions,
+      hasMoreQuestions: hasMoreQuestions ?? this.hasMoreQuestions,
+      questionsSkip: questionsSkip ?? this.questionsSkip,
+      error: clearErrors ? null : (error ?? this.error),
+      submitError: clearErrors ? null : (submitError ?? this.submitError),
       searchQuery: searchQuery ?? this.searchQuery,
+      isLoadingMoreReviews: isLoadingMoreReviews ?? this.isLoadingMoreReviews,
+      hasMoreReviews: hasMoreReviews ?? this.hasMoreReviews,
+      reviewsSkip: reviewsSkip ?? this.reviewsSkip,
     );
   }
 
@@ -80,94 +100,94 @@ class CommunityState {
 
 class CommunityCubit extends Cubit<CommunityState> {
   final CommunityRepository _communityRepo;
-  final CarDataRepository _carDataRepo;
 
-  CommunityCubit(this._communityRepo, this._carDataRepo)
-    : super(const CommunityState());
+  CommunityCubit(this._communityRepo) : super(const CommunityState());
+
+  static const int _take = 15;
 
   Future<void> load() async {
     emit(state.copyWith(isLoading: true, clearErrors: true));
-    try {
-      await RestClient.runCached(() async {
-        final results = await Future.wait([
-          _communityRepo.getQuestions(),
-          _carDataRepo.getTrims(), // Fetch car trims
-        ]);
 
-        emit(
-          state.copyWith(
-            questions: results[0] as List<Question>,
-            reviews: [],
-            carTrims: results[1] as List<CarTrimSummary>, // Assign car trims
-            isLoading: false,
-          ),
-        );
-      });
+    try {
+      final results = await Future.wait([
+        _communityRepo.getQuestions(take: _take, skip: 0),
+        _communityRepo.getReviews(take: _take, skip: 0),
+      ]);
+
+      final questions = results[0] as List<Question>;
+      final reviews = results[1] as List<Review>;
+
+      emit(
+        state.copyWith(
+          isLoading: false,
+          questions: questions,
+          reviews: reviews,
+
+          // questions paging
+          questionsSkip: questions.length,
+          hasMoreQuestions: questions.length == _take,
+          isLoadingMoreQuestions: false,
+
+          // reviews paging
+          reviewsSkip: reviews.length,
+          hasMoreReviews: reviews.length == _take,
+          isLoadingMoreReviews: false,
+        ),
+      );
     } catch (e) {
       emit(state.copyWith(error: e, isLoading: false));
     }
   }
 
-  Future<List<Review>> _fetchReviews() async {
+  Future<void> loadMoreQuestions() async {
+    if (state.searchQuery.isNotEmpty) return;
+    if (state.isLoadingMoreQuestions || !state.hasMoreQuestions) return;
+
+    emit(state.copyWith(isLoadingMoreQuestions: true));
+
     try {
-      return await _communityRepo.getLatestReviews(limit: 50);
+      final next = await _communityRepo.getQuestions(
+        take: _take,
+        skip: state.questionsSkip,
+      );
+
+      emit(
+        state.copyWith(
+          isLoadingMoreQuestions: false,
+          questions: [...state.questions, ...next],
+          questionsSkip: state.questionsSkip + next.length,
+          hasMoreQuestions: next.length == _take,
+        ),
+      );
     } catch (_) {
-      return [];
+      emit(state.copyWith(isLoadingMoreQuestions: false));
     }
   }
 
-  void search(String query) {
-    emit(state.copyWith(searchQuery: query));
-  }
+  Future<void> loadMoreReviews() async {
+    if (state.searchQuery.isNotEmpty) return;
+    if (state.isLoadingMoreReviews || !state.hasMoreReviews) return;
 
-  Future<bool> submitQuestion({
-    required int trimId,
-    required String title,
-    required String body,
-  }) async {
-    emit(state.copyWith(isSubmitting: true, clearErrors: true));
+    emit(state.copyWith(isLoadingMoreReviews: true));
+
     try {
-      final accessToken = await GetIt.I.get<ITokensRepository>().get();
-      if (accessToken == null) {
-        throw AppError.unauthenticated;
-      }
-      await _communityRepo.postQuestion(
-        carTrimId: trimId,
-        title: title,
-        body: body,
-        accessToken: accessToken,
+      final next = await _communityRepo.getReviews(
+        take: _take,
+        skip: state.reviewsSkip,
       );
-      await load();
-      return true;
-    } catch (e) {
-      emit(state.copyWith(isSubmitting: false, submitError: e.toString()));
-      return false;
+
+      emit(
+        state.copyWith(
+          isLoadingMoreReviews: false,
+          reviews: [...state.reviews, ...next],
+          reviewsSkip: state.reviewsSkip + next.length,
+          hasMoreReviews: next.length == _take,
+        ),
+      );
+    } catch (_) {
+      emit(state.copyWith(isLoadingMoreReviews: false));
     }
   }
 
-  Future<bool> submitReview({
-    required int carTrimId,
-    required int rating,
-    required String comment,
-    String? title,
-    String? cityCode,
-    required String accessToken,
-  }) async {
-    emit(state.copyWith(isSubmitting: true, clearErrors: true));
-    try {
-      await _communityRepo.postReview(
-        carTrimId: carTrimId,
-        rating: rating,
-        comment: comment,
-        title: title,
-        cityCode: cityCode,
-        accessToken: accessToken,
-      );
-      await load();
-      return true;
-    } catch (e) {
-      emit(state.copyWith(isSubmitting: false, submitError: e.toString()));
-      return false;
-    }
-  }
+  void search(String query) => emit(state.copyWith(searchQuery: query));
 }

@@ -30,7 +30,7 @@ class QuestionsTab extends StatelessWidget {
       child: ListView.separated(
         padding: const EdgeInsets.all(ThemeConstants.p),
         itemCount: questions.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (_, i) => QuestionCard(
           question: questions[i],
           onTap: () => onOpenQuestion(questions[i].id),

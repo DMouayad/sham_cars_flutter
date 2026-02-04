@@ -11,33 +11,28 @@ class CommunityRepository {
 
   // ============ REVIEWS ============
 
-  Future<List<Review>> getReviews(
-    int carTrimId, {
+  Future<List<Review>> getReviews({
+    int? trimId,
     int take = 15,
     int skip = 0,
   }) async {
-    final cacheKey = 'reviews_${carTrimId}_${take}_$skip';
+    final cacheKey = 'reviews_${trimId ?? "null"}_${take}_$skip';
 
     if (_cache.get<List<Review>>(cacheKey) case final cached?) return cached;
 
     final data = await _client.requestList(
       HttpMethod.get,
       '/community/reviews',
-      query: {'car_trim_id': '$carTrimId', 'take': '$take', 'skip': '$skip'},
+      query: {
+        if (trimId != null) 'car_trim_id': '$trimId',
+        'take': '$take',
+        'skip': '$skip',
+      },
     );
 
     final reviews = data.map(Review.fromJson).toList();
     _cache.set(cacheKey, reviews);
     return reviews;
-  }
-
-  Future<List<Review>> getLatestReviews({int limit = 10}) async {
-    final data = await _client.requestList(
-      HttpMethod.get,
-      '/community/reviews',
-      query: {'limit': '$limit'},
-    );
-    return data.map(Review.fromJson).toList();
   }
 
   Future<void> postReview({
@@ -105,25 +100,6 @@ class CommunityRepository {
     return Question.fromJson(data);
   }
 
-  // Future<void> postQuestion({
-  //   required int carModelId,
-  //   required String title,
-  //   required String body,
-  //   required String accessToken,
-  // }) async {
-  //   await _client.request(
-  //     HttpMethod.post,
-  //     '/community/questions',
-  //     body: {'car_model_id': carModelId, 'title': title, 'body': body},
-  //     accessToken: accessToken,
-  //   );
-
-  //   // Invalidate caches
-  //   _cache.invalidatePrefix('questions_');
-  //   _cache.invalidate('home_data');
-  // }
-  //
-
   Future<void> postQuestion({
     int? carModelId,
     required int carTrimId,
@@ -135,7 +111,7 @@ class CommunityRepository {
       HttpMethod.post,
       '/community/questions',
       body: {
-        'car_model_id': carModelId,
+        if (carModelId != null) 'car_model_id': carModelId,
         'car_trim_id': carTrimId,
         'title': title,
         'body': body,

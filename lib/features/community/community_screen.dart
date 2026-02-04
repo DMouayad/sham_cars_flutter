@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/community/widgets/filters.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
@@ -65,8 +67,27 @@ class _CommunityScreenState extends State<CommunityScreen> {
         _scrollController.position.userScrollDirection ==
             ScrollDirection.forward ||
         _scrollController.offset < 50;
+
     if (shouldShow != _showFab) {
       setState(() => _showFab = shouldShow);
+    }
+
+    // Lazy load questions when near bottom, unless reviews filter selected
+    final nearBottom =
+        _scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 350;
+
+    if (nearBottom && mounted) {
+      final cubit = context.read<CommunityCubit>();
+
+      if (_filter == CommunityFilter.questions) {
+        cubit.loadMoreQuestions();
+      } else if (_filter == CommunityFilter.reviews) {
+        cubit.loadMoreReviews();
+      } else {
+        cubit.loadMoreQuestions();
+        cubit.loadMoreReviews();
+      }
     }
   }
 
@@ -77,11 +98,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
     return Scaffold(
       body: BlocBuilder<CommunityCubit, CommunityState>(
         builder: (context, state) {
-          if (state.isLoading && state.questions.isEmpty) {
+          final isEmptyFeed = state.questions.isEmpty && state.reviews.isEmpty;
+
+          if (state.isLoading && isEmptyFeed) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state.error != null && state.questions.isEmpty) {
+          if (state.error != null && isEmptyFeed) {
             return _ErrorView(
               error: state.error!,
               onRetry: () => context.read<CommunityCubit>().load(),
@@ -90,6 +113,24 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
           final items = _getFilteredItems(state);
 
+          final canPaginate = state.searchQuery.isEmpty;
+
+          final hasMore = switch (_filter) {
+            CommunityFilter.questions => state.hasMoreQuestions,
+            CommunityFilter.reviews => state.hasMoreReviews,
+            CommunityFilter.all =>
+              state.hasMoreQuestions || state.hasMoreReviews,
+          };
+
+          final isLoadingMore = switch (_filter) {
+            CommunityFilter.questions => state.isLoadingMoreQuestions,
+            CommunityFilter.reviews => state.isLoadingMoreReviews,
+            CommunityFilter.all =>
+              state.isLoadingMoreQuestions || state.isLoadingMoreReviews,
+          };
+
+          final showLoader = canPaginate && hasMore;
+          final listCount = items.length + (showLoader ? 1 : 0);
           return RefreshIndicator(
             onRefresh: () => context.read<CommunityCubit>().load(),
             child: CustomScrollView(
@@ -151,9 +192,27 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       horizontal: ThemeConstants.p,
                     ),
                     sliver: SliverList.separated(
-                      itemCount: items.length,
+                      itemCount: listCount,
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
-                      itemBuilder: (_, i) => _buildItem(items[i]),
+                      itemBuilder: (_, i) {
+                        if (showLoader && i == items.length) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Center(
+                              child: isLoadingMore
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                          );
+                        }
+                        return _buildItem(items[i]);
+                      },
                     ),
                   ),
 
@@ -213,22 +272,28 @@ class _CommunityScreenState extends State<CommunityScreen> {
       ),
       final Review review => CommunityReviewCard(
         review: review,
-        onTap: (trimId) => widget.onOpenVehicle(trimId),
+        onTap: review.trimId != null
+            ? (_) => widget.onOpenVehicle(review.trimId!)
+            : null,
       ),
       CommunityItem() => const SizedBox.shrink(),
     };
   }
 
-  void _showSheet(BuildContext context, {required bool isQuestion}) {
-    showModalBottomSheet(
+  Future<void> _showSheet(
+    BuildContext context, {
+    required bool isQuestion,
+  }) async {
+    final result = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => BlocProvider.value(
-        value: context.read<CommunityCubit>(),
-        child: isQuestion ? const AskQuestionSheet() : const AddReviewSheet(),
-      ),
+      builder: (context) =>
+          isQuestion ? const AskQuestionSheet() : const AddReviewSheet(),
     );
+    if (result == true && context.mounted) {
+      context.read<CommunityCubit>().load();
+    }
   }
 }
 

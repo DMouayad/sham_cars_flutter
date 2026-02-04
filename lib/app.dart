@@ -55,8 +55,7 @@ class MainApp extends StatelessWidget {
           ),
           BlocProvider(
             lazy: true,
-            create: (context) =>
-                CommunityCubit(context.read(), context.read())..load(),
+            create: (context) => CommunityCubit(context.read())..load(),
           ),
         ],
         child: const MainAppView(),

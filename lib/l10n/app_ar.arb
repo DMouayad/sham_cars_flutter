@@ -162,5 +162,93 @@
     "passwordRuleSpecialChar": "يجب أن يحتوي على حرف خاص",
     "nameFieldLabel": "الاسم",
     "nameFieldHint": "ادخل اسمك",
-    "nameIsRequired": "يرجى إدخال الاسم الخاص بك"
+    "nameIsRequired": "يرجى إدخال الاسم الخاص بك",
+     "timeNow": "الآن",
+  "timeYesterday": "أمس",
+  "timeHoursAgo": "منذ {hours} س",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "timeDaysAgo": "منذ {days} أيام",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+
+  "commonRetry": "إعادة المحاولة",
+  "commonCancel": "إلغاء",
+  "commonClose": "إغلاق",
+  "commonPublish": "نشر",
+  "commonSubmit": "إرسال",
+  "commonSearch": "بحث",
+  "commonClear": "مسح",
+  "commonViewAll": "عرض الكل",
+  "commonLoadingMore": "جاري تحميل المزيد...",
+
+  "communityTitle": "المجتمع",
+  "communityJoinToContribute": "انضم للمشاركة",
+  "communityAskQuestion": "اطرح سؤالاً",
+  "communityAddReview": "أضف تجربة",
+  "communityFilterAll": "الكل",
+  "communityFilterQuestions": "الأسئلة",
+  "communityFilterReviews": "التجارب",
+  "communityNoContentTitle": "لا يوجد محتوى بعد",
+  "communityNoContentSubtitle": "ابدأ المحادثة!",
+  "communityNoResultsTitle": "لا توجد نتائج",
+  "communityNoResultsSubtitle": "جرّب كلمات بحث مختلفة.",
+
+  "communityQuestionsCountLabel": "سؤال",
+  "communityReviewsCountLabel": "تجربة",
+
+  "trimCommunityReviewsTab": "التجارب",
+  "trimCommunityQaTab": "سؤال وجواب",
+  "trimCommunityNoReviews": "لا توجد تجارب بعد",
+  "trimCommunityNoQuestions": "لا توجد أسئلة بعد",
+
+  "sheetAskQuestionTitle": "اطرح سؤالاً",
+  "sheetAskQuestionSubtitle": "اسأل المجتمع واحصل على إجابات من المالكين.",
+  "sheetAddReviewTitle": "أضف تجربتك",
+  "sheetAddReviewSubtitle": "شارك تجربتك لمساعدة الآخرين.",
+
+  "authRequiredToPostQuestion": "يجب تسجيل الدخول لطرح سؤال.",
+  "authRequiredToPostReview": "يجب تسجيل الدخول لإضافة تجربة.",
+  "authRequiredToPostAnswer": "يجب تسجيل الدخول لإضافة إجابة.",
+
+  "fieldTrimLabelRequired": "السيارة (النسخة) *",
+  "fieldTrimLabelOptional": "السيارة (النسخة)",
+  "fieldTrimTapToSelect": "اضغط للاختيار",
+  "fieldQuestionTitleLabel": "عنوان السؤال *",
+  "fieldQuestionBodyLabel": "تفاصيل السؤال *",
+  "fieldReviewTitleLabelOptional": "عنوان التجربة (اختياري)",
+  "fieldReviewBodyLabel": "تفاصيل التجربة *",
+  "fieldCityLabelOptional": "المدينة (اختياري)",
+
+  "buttonPublishQuestion": "نشر السؤال",
+  "buttonPublishReview": "نشر التجربة",
+  "buttonPostAnswer": "نشر الإجابة",
+
+  "validationSelectTrim": "الرجاء اختيار النسخة.",
+  "validationQuestionTitleRequired": "الرجاء إدخال عنوان السؤال.",
+  "validationQuestionTitleTooShort": "العنوان قصير جداً.",
+  "validationQuestionBodyRequired": "الرجاء إدخال تفاصيل السؤال.",
+  "validationQuestionBodyTooShort": "التفاصيل قصيرة جداً.",
+  "validationReviewBodyRequired": "الرجاء كتابة تفاصيل التجربة.",
+  "validationReviewBodyTooShort": "التفاصيل قصيرة جداً.",
+
+  "reviewTypeLabel": "تجربة",
+  "questionTypeLabel": "سؤال",
+  "answerTypeLabel": "إجابة",
+
+  "reviewsRatingFormat": "{rating}/5",
+  "@reviewsRatingFormat": {
+    "placeholders": {
+      "rating": { "type": "int" }
+    }
+  },
+
+  "trimPickerTitle": "اختر النسخة",
+  "trimPickerSearchHint": "ابحث عن نسخة..."
 }

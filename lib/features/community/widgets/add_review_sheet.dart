@@ -1,17 +1,25 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
-import 'package:sham_cars/features/auth/repositories.dart';
-import 'package:sham_cars/features/community/community_cubit.dart';
+import 'package:sham_cars/features/community/cubits/community_actions_cubit.dart';
+import 'package:sham_cars/features/community/cubits/trim_picker_cubit.dart';
+import 'package:sham_cars/features/community/widgets/trim_picker_sheet.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
+import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
 
 class AddReviewSheet extends StatefulWidget {
-  const AddReviewSheet({super.key, this.preselectedTrimId});
+  const AddReviewSheet({
+    super.key,
+    this.preselectedTrimId,
+    this.preselectedTrimTitle,
+    this.lockTrim = false,
+  });
 
   final int? preselectedTrimId;
+  final String? preselectedTrimTitle;
+  final bool lockTrim;
 
   @override
   State<AddReviewSheet> createState() => _AddReviewSheetState();
@@ -22,9 +30,11 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
 
-  CarTrimSummary? _selectedTrim;
   int _rating = 5;
   String? _cityCode;
+
+  int? _trimId;
+  String? _trimTitle;
 
   static const _cities = [
     ('damascus', 'دمشق'),
@@ -39,17 +49,9 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
   void initState() {
     super.initState();
     if (widget.preselectedTrimId != null) {
-      // Find the CarTrimSummary from communityState.carTrims
-      // This will be available after CommunityCubit loads, so we need a slight delay
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _selectedTrim = context
-              .read<CommunityCubit>()
-              .state
-              .carTrims
-              .firstWhereOrNull((trim) => trim.id == widget.preselectedTrimId);
-        });
-      });
+      _trimId = widget.preselectedTrimId;
+      _trimTitle =
+          widget.preselectedTrimTitle ?? 'النسخة #${widget.preselectedTrimId}';
     }
   }
 
@@ -60,231 +62,310 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
     super.dispose();
   }
 
+  Future<void> _pickTrim() async {
+    final selected = await showModalBottomSheet<CarTrimSummary>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => BlocProvider(
+        create: (c) => TrimPickerCubit(c.read<CarDataRepository>()),
+        child: const TrimPickerSheet(),
+      ),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _trimId = selected.id;
+        _trimTitle = selected.fullName;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final communityState = context.watch<CommunityCubit>().state;
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.9,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (_, scrollController) => Form(
-        key: _formKey,
+    return BlocProvider(
+      create: (_) => CommunityActionsCubit(context.read()),
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (_, scrollController) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: ThemeConstants.p,
+              right: ThemeConstants.p,
+              top: ThemeConstants.p,
+              bottom:
+                  MediaQuery.of(context).viewInsets.bottom + ThemeConstants.p,
+            ),
+            child: Form(
+              key: _formKey,
+              child: ListenableBuilder(
+                listenable: GetIt.I.get<AuthNotifier>(),
+                builder: (context, _) {
+                  final auth = GetIt.I.get<AuthNotifier>();
 
-        child: ListenableBuilder(
-          listenable: GetIt.I.get<AuthNotifier>(),
-          builder: (context, _) {
-            final authState = GetIt.I.get<AuthNotifier>();
-
-            return ListView(
-              controller: scrollController,
-              padding: const EdgeInsets.all(ThemeConstants.p),
-              children: [
-                // Handle
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: cs.outlineVariant,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-
-                // Header
-                Text(
-                  'أضف تجربتك',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'شارك تجربتك مع السيارة لمساعدة الآخرين',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-                ),
-                const SizedBox(height: 24),
-
-                // Auth warning
-                if (!authState.isLoggedIn) ...[
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: cs.errorContainer,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.info_outline, color: cs.onErrorContainer),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'يجب تسجيل الدخول لإضافة تجربة',
-                            style: TextStyle(color: cs.onErrorContainer),
+                  return BlocBuilder<
+                    CommunityActionsCubit,
+                    CommunityActionsState
+                  >(
+                    builder: (context, actionState) {
+                      return ListView(
+                        controller: scrollController,
+                        children: [
+                          // Handle
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 4,
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: cs.outlineVariant,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
 
-                // Trim picker
-                DropdownButtonFormField<CarTrimSummary>(
-                  initialValue: _selectedTrim,
-                  decoration: const InputDecoration(
-                    labelText: 'السيارة (النسخة) *',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.directions_car_sharp),
-                  ),
-                  items: communityState.carTrims.map((t) {
-                    return DropdownMenuItem(value: t, child: Text(t.fullName));
-                  }).toList(),
-                  onChanged: (t) => setState(() => _selectedTrim = t),
-                  validator: (v) => v == null ? 'الرجاء اختيار النسخة' : null,
-                ),
-                const SizedBox(height: 16),
+                          // Header
+                          Text(
+                            'أضف تجربتك',
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'شارك تجربتك مع السيارة لمساعدة الآخرين',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: cs.onSurfaceVariant),
+                          ),
+                          const SizedBox(height: 20),
 
-                // Rating
-                Text(
-                  'التقييم *',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                const SizedBox(height: 8),
-                _RatingSelector(
-                  value: _rating,
-                  onChanged: (r) => setState(() => _rating = r),
-                ),
-                const SizedBox(height: 16),
+                          // Auth warning
+                          if (!auth.isLoggedIn) ...[
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: cs.errorContainer,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    color: cs.onErrorContainer,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'يجب تسجيل الدخول لإضافة تجربة',
+                                      style: TextStyle(
+                                        color: cs.onErrorContainer,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
 
-                // City
-                DropdownButtonFormField<String>(
-                  initialValue: _cityCode,
-                  decoration: const InputDecoration(
-                    labelText: 'المدينة (اختياري)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.location_city),
-                  ),
-                  items: _cities.map((c) {
-                    return DropdownMenuItem(value: c.$1, child: Text(c.$2));
-                  }).toList(),
-                  onChanged: (c) => setState(() => _cityCode = c),
-                ),
-                const SizedBox(height: 16),
+                          // Trim field (locked or pickable)
+                          _TrimField(
+                            title: _trimTitle,
+                            locked: widget.lockTrim,
+                            onPick: _pickTrim,
+                          ),
+                          const SizedBox(height: 16),
 
-                // Title
-                TextFormField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'عنوان التجربة (اختياري)',
-                    hintText: 'مثال: تجربة رائعة بعد سنة من الاستخدام',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                          // Rating
+                          Text(
+                            'التقييم *',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          _RatingSelector(
+                            value: _rating,
+                            onChanged: (r) => setState(() => _rating = r),
+                          ),
+                          const SizedBox(height: 16),
 
-                // Body
-                TextFormField(
-                  controller: _bodyController,
-                  maxLines: 5,
-                  decoration: const InputDecoration(
-                    labelText: 'تفاصيل التجربة *',
-                    hintText: 'اكتب عن تجربتك مع السيارة...',
-                    border: OutlineInputBorder(),
-                    alignLabelWithHint: true,
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'الرجاء كتابة تفاصيل التجربة';
-                    }
-                    if (v.trim().length < 30) {
-                      return 'التفاصيل قصيرة جداً (30 حرف على الأقل)';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
+                          // City
+                          DropdownButtonFormField<String>(
+                            initialValue: _cityCode,
+                            decoration: const InputDecoration(
+                              labelText: 'المدينة (اختياري)',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.location_city),
+                            ),
+                            items: _cities
+                                .map(
+                                  (c) => DropdownMenuItem(
+                                    value: c.$1,
+                                    child: Text(c.$2),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (c) => setState(() => _cityCode = c),
+                          ),
+                          const SizedBox(height: 16),
 
-                // Error
-                if (communityState.submitError case final err?)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: cs.errorContainer,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      err,
-                      style: TextStyle(color: cs.onErrorContainer),
-                    ),
-                  ),
+                          // Title
+                          TextFormField(
+                            controller: _titleController,
+                            decoration: const InputDecoration(
+                              labelText: 'عنوان التجربة (اختياري)',
+                              hintText:
+                                  'مثال: تجربة رائعة بعد سنة من الاستخدام',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
 
-                // Submit
-                FilledButton(
-                  onPressed:
-                      authState.isLoggedIn && !communityState.isSubmitting
-                      ? _submit
-                      : null,
-                  child: communityState.isSubmitting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('نشر التجربة'),
-                ),
-                const SizedBox(height: 16),
-              ],
-            );
-          },
-        ),
+                          // Body
+                          TextFormField(
+                            controller: _bodyController,
+                            maxLines: 5,
+                            decoration: const InputDecoration(
+                              labelText: 'تفاصيل التجربة *',
+                              hintText: 'اكتب عن تجربتك مع السيارة...',
+                              border: OutlineInputBorder(),
+                              alignLabelWithHint: true,
+                            ),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty) {
+                                return 'الرجاء كتابة تفاصيل التجربة';
+                              }
+                              if (v.trim().length < 30) {
+                                return 'التفاصيل قصيرة جداً (30 حرف على الأقل)';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+
+                          if (actionState.submitError != null)
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: cs.errorContainer,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                actionState.submitError!,
+                                style: TextStyle(color: cs.onErrorContainer),
+                              ),
+                            ),
+
+                          FilledButton(
+                            onPressed:
+                                (!auth.isLoggedIn || actionState.isSubmitting)
+                                ? null
+                                : () async {
+                                    if (!_formKey.currentState!.validate()) {
+                                      return;
+                                    }
+                                    if (_trimId == null) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('الرجاء اختيار النسخة'),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    final ok = await context
+                                        .read<CommunityActionsCubit>()
+                                        .submitReview(
+                                          carTrimId: _trimId!,
+                                          rating: _rating,
+                                          comment: _bodyController.text.trim(),
+                                          title:
+                                              _titleController.text
+                                                  .trim()
+                                                  .isEmpty
+                                              ? null
+                                              : _titleController.text.trim(),
+                                          cityCode: _cityCode,
+                                        );
+
+                                    if (ok && mounted) {
+                                      Navigator.pop(context, true);
+                                    }
+                                  },
+                            child: actionState.isSubmitting
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text('نشر التجربة'),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
+}
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_selectedTrim == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('الرجاء اختيار النسخة')));
-      return;
+class _TrimField extends StatelessWidget {
+  const _TrimField({
+    required this.title,
+    required this.locked,
+    required this.onPick,
+  });
+
+  final String? title;
+  final bool locked;
+  final VoidCallback onPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    if (locked) {
+      return InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'السيارة (النسخة)',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.directions_car_sharp),
+        ),
+        child: Text(title ?? '—', style: TextStyle(color: cs.onSurface)),
+      );
     }
 
-    final token = await GetIt.I.get<ITokensRepository>().get();
-    if (token == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('يجب تسجيل الدخول لإضافة تجربة')),
-        );
-      }
-      return;
-    }
-
-    final success = await context.read<CommunityCubit>().submitReview(
-      carTrimId: _selectedTrim!.id,
-      rating: _rating,
-      comment: _bodyController.text.trim(),
-      title: _titleController.text.trim().isEmpty
-          ? null
-          : _titleController.text.trim(),
-      cityCode: _cityCode,
-      accessToken: token,
+    return InkWell(
+      onTap: onPick,
+      borderRadius: ThemeConstants.cardRadius,
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'السيارة (النسخة) *',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.directions_car_sharp),
+        ),
+        child: Row(
+          children: [
+            Expanded(child: Text(title ?? 'اضغط للاختيار')),
+            Icon(Icons.expand_more, color: cs.onSurfaceVariant),
+          ],
+        ),
+      ),
     );
-
-    if (success && mounted) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('تم نشر التجربة بنجاح')));
-    }
   }
 }
 

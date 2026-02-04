@@ -549,4 +549,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get nameIsRequired => 'يرجى إدخال الاسم الخاص بك';
+
+  @override
+  String get timeNow => 'الآن';
+
+  @override
+  String get timeYesterday => 'أمس';
+
+  @override
+  String timeHoursAgo(int hours) {
+    return 'منذ $hours س';
+  }
+
+  @override
+  String timeDaysAgo(int days) {
+    return 'منذ $days أيام';
+  }
 }

@@ -487,5 +487,93 @@
     },
     "nameFieldLabel": "Name",
     "nameFieldHint": "Your name",
-    "nameIsRequired": "Please enter your name"
+    "nameIsRequired": "Please enter your name",
+     "timeNow": "Now",
+  "timeYesterday": "Yesterday",
+  "timeHoursAgo": "{hours}h ago",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
+  },
+  "timeDaysAgo": "{days} days ago",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+
+  "commonRetry": "Retry",
+  "commonCancel": "Cancel",
+  "commonClose": "Close",
+  "commonPublish": "Publish",
+  "commonSubmit": "Submit",
+  "commonSearch": "Search",
+  "commonClear": "Clear",
+  "commonViewAll": "View all",
+  "commonLoadingMore": "Loading more...",
+
+  "communityTitle": "Community",
+  "communityJoinToContribute": "Join to contribute",
+  "communityAskQuestion": "Ask a question",
+  "communityAddReview": "Add a review",
+  "communityFilterAll": "All",
+  "communityFilterQuestions": "Questions",
+  "communityFilterReviews": "Reviews",
+  "communityNoContentTitle": "No content yet",
+  "communityNoContentSubtitle": "Start the conversation!",
+  "communityNoResultsTitle": "No results",
+  "communityNoResultsSubtitle": "Try different keywords.",
+
+  "communityQuestionsCountLabel": "Questions",
+  "communityReviewsCountLabel": "Reviews",
+
+  "trimCommunityReviewsTab": "Reviews",
+  "trimCommunityQaTab": "Q&A",
+  "trimCommunityNoReviews": "No reviews yet",
+  "trimCommunityNoQuestions": "No questions yet",
+
+  "sheetAskQuestionTitle": "Ask a question",
+  "sheetAskQuestionSubtitle": "Ask the community and get help from owners.",
+  "sheetAddReviewTitle": "Add your review",
+  "sheetAddReviewSubtitle": "Share your experience to help others.",
+
+  "authRequiredToPostQuestion": "You must be signed in to ask a question.",
+  "authRequiredToPostReview": "You must be signed in to add a review.",
+  "authRequiredToPostAnswer": "You must be signed in to answer.",
+
+  "fieldTrimLabelRequired": "Car (trim) *",
+  "fieldTrimLabelOptional": "Car (trim)",
+  "fieldTrimTapToSelect": "Tap to select",
+  "fieldQuestionTitleLabel": "Question title *",
+  "fieldQuestionBodyLabel": "Question details *",
+  "fieldReviewTitleLabelOptional": "Review title (optional)",
+  "fieldReviewBodyLabel": "Review details *",
+  "fieldCityLabelOptional": "City (optional)",
+
+  "buttonPublishQuestion": "Post question",
+  "buttonPublishReview": "Post review",
+  "buttonPostAnswer": "Post answer",
+
+  "validationSelectTrim": "Please select a trim.",
+  "validationQuestionTitleRequired": "Please enter a title.",
+  "validationQuestionTitleTooShort": "Title is too short.",
+  "validationQuestionBodyRequired": "Please enter details.",
+  "validationQuestionBodyTooShort": "Details are too short.",
+  "validationReviewBodyRequired": "Please enter review details.",
+  "validationReviewBodyTooShort": "Details are too short.",
+
+  "reviewTypeLabel": "Review",
+  "questionTypeLabel": "Question",
+  "answerTypeLabel": "Answer",
+
+  "reviewsRatingFormat": "{rating}/5",
+  "@reviewsRatingFormat": {
+    "placeholders": {
+      "rating": { "type": "int" }
+    }
+  },
+
+  "trimPickerTitle": "Select a trim",
+  "trimPickerSearchHint": "Search trims..."
 }

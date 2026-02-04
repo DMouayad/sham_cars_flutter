@@ -4,7 +4,6 @@ import 'package:sham_cars/api/cache.dart';
 import 'package:sham_cars/api/rest_client.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/questions/models.dart';
-import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
 
@@ -71,14 +70,6 @@ class HomeRepository {
     }
 
     return completer.future;
-  }
-
-  Future<List<Review>> _fetchReviews() async {
-    try {
-      return await _communityRepo.getLatestReviews(limit: 10);
-    } catch (_) {
-      return [];
-    }
   }
 
   /// Search across trims

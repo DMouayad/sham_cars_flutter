@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
-import 'package:sham_cars/features/community/community_cubit.dart';
 import 'package:sham_cars/features/community/community_screen.dart';
 import 'package:sham_cars/features/compare/compare_screen.dart';
 import 'package:sham_cars/features/email_verification/email_verification_screen.dart';

@@ -551,4 +551,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nameIsRequired => 'Please enter your name';
+
+  @override
+  String get timeNow => 'Now';
+
+  @override
+  String get timeYesterday => 'Yesterday';
+
+  @override
+  String timeHoursAgo(int hours) {
+    return '${hours}h ago';
+  }
+
+  @override
+  String timeDaysAgo(int days) {
+    return '$days days ago';
+  }
 }

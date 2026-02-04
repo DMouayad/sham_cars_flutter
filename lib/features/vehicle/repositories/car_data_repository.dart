@@ -42,6 +42,14 @@ class CarDataRepository {
     return data.map(CarTrimSummary.fromJson).toList();
   }
 
+  Future<List<CarTrimSummary>> getTrimsPage({
+    String? search,
+    int take = 15,
+    int skip = 0,
+  }) {
+    return getTrims(TrimFilters(search: search, take: take, skip: skip));
+  }
+
   /// Get featured trims for home screen
   Future<List<CarTrimSummary>> getFeaturedTrims({int limit = 10}) async {
     return getTrims(TrimFilters(take: limit));

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
@@ -9,7 +10,7 @@ import 'package:sham_cars/features/reviews/widgets/review_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/community/widgets/ask_question_sheet.dart';
 import 'package:sham_cars/features/community/widgets/add_review_sheet.dart';
-import 'package:go_router/go_router.dart'; // Added GoRouter import for navigation
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/widgets/scaffold_with_navbar.dart';
 
 import 'cubits/trim_community_cubit.dart';
@@ -84,12 +85,17 @@ class TrimCommunityScreen extends StatelessWidget {
 
               floatingActionButton: isLoggedIn
                   ? _CommunitySpeedDial(
-                      onAskQuestion: () =>
-                          _showSheet(context, trimId: trimId, isQuestion: true),
+                      onAskQuestion: () => _showSheet(
+                        context,
+                        isQuestion: true,
+                        trimId: trimId,
+                        trimTitle: trimTitle,
+                      ),
                       onAddReview: () => _showSheet(
                         context,
                         trimId: trimId,
                         isQuestion: false,
+                        trimTitle: trimTitle,
                       ),
                     )
                   : FloatingActionButton.extended(
@@ -110,21 +116,25 @@ class TrimCommunityScreen extends StatelessWidget {
     BuildContext context, {
     required int trimId,
     required bool isQuestion,
+    String? trimTitle,
   }) async {
-    await showModalBottomSheet(
+    final result = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => BlocProvider.value(
-        value: context.read<TrimCommunityCubit>(),
-        child: isQuestion
-            ? const AskQuestionSheet()
-            : AddReviewSheet(preselectedTrimId: trimId),
-      ),
+      builder: (_) => isQuestion
+          ? AskQuestionSheet(
+              preselectedTrimId: trimId,
+              preselectedTrimTitle: trimTitle,
+              lockTrim: true,
+            )
+          : AddReviewSheet(
+              preselectedTrimId: trimId,
+              preselectedTrimTitle: trimTitle,
+              lockTrim: true,
+            ),
     );
-
-    if (context.mounted) {
-      // easiest correct behavior after posting
+    if (result == true && context.mounted) {
       context.read<TrimCommunityCubit>().refreshAll();
     }
   }
@@ -186,7 +196,7 @@ class _ReviewsTabState extends State<_ReviewsTab> {
               padding: const EdgeInsets.all(ThemeConstants.p),
               sliver: SliverList.separated(
                 itemCount: count,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (_, i) {
                   if (i == state.reviews.length) {
                     return _BottomLoader(loading: state.loadingMoreReviews);
@@ -258,7 +268,7 @@ class _QuestionsTabState extends State<_QuestionsTab> {
               padding: const EdgeInsets.all(ThemeConstants.p),
               sliver: SliverList.separated(
                 itemCount: count,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (_, i) {
                   if (i == state.questions.length) {
                     return _BottomLoader(loading: state.loadingMoreQuestions);
@@ -266,7 +276,9 @@ class _QuestionsTabState extends State<_QuestionsTab> {
                   return QuestionCard(
                     question: state.questions[i],
                     showContext: false,
-                    // onTap: () => QuestionDetailsRoute(state.questions[i].id).push(context),
+                    onTap: () => QuestionDetailsRoute(
+                      state.questions[i].id,
+                    ).push(context),
                   );
                 },
               ),

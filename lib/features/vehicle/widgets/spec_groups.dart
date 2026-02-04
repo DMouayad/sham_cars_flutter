@@ -160,10 +160,12 @@ _SpecCat _classify(String key, String value) {
   // 1) Battery/Range (strongest signals first)
   if (hasKwh) return _SpecCat.batteryRange;
   if (kHas({'real', 'world', 'range'}) ||
-      key.toLowerCase().contains('real-world range'))
+      key.toLowerCase().contains('real-world range')) {
     return _SpecCat.batteryRange;
-  if (kHas({'battery'}) || kHas({'wltp', 'epa', 'range'}))
+  }
+  if (kHas({'battery'}) || kHas({'wltp', 'epa', 'range'})) {
     return _SpecCat.batteryRange;
+  }
 
   // 2) Charging (avoid substring traps; tokens only)
   if (kHas({
@@ -226,8 +228,9 @@ _SpecCat _classify(String key, String value) {
     'kg',
   })) {
     // special case: "Capacity" + cm3 is engine displacement, not dimensions
-    if (k.length == 1 && k.first == 'capacity' && hasCm3)
+    if (k.length == 1 && k.first == 'capacity' && hasCm3) {
       return _SpecCat.engineFuel;
+    }
     return _SpecCat.dimensionsPractical;
   }
 
