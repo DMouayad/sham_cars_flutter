@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:sham_cars/features/home/components/custom_drawer.dart';
+import 'package:sham_cars/router/routes.dart';
 
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/app_name.dart';
 
-const navigationShellIndex = (
-  explore: 0,
-  vehicles: 1,
-  community: 2,
-  profile: 3,
-);
+const navigationShellIndex = (explore: 0, vehicles: 1, community: 2);
 
 class ScaffoldWithNavBar extends StatelessWidget {
   // The navigation shell and container for the branch Navigators
@@ -41,7 +37,16 @@ class ScaffoldWithNavBar extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: context.colorScheme.surface,
-        title: const SizedBox(width: 140, child: AppName()),
+        title: InkWell(
+          onTap: () => context.go(RoutePath.home),
+          child: const SizedBox(width: 140, child: AppName()),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => ProfileRoute().push(context),
+            icon: const Icon(Icons.person),
+          ),
+        ],
         centerTitle: true,
       ),
       // extendBodyBehindAppBar: true,
@@ -60,10 +65,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
             label: 'Vehicles',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Community'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
-            label: 'Profile',
-          ),
         ],
         onTap: (index) => _onTap(context, index),
       ),

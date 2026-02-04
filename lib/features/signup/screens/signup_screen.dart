@@ -6,6 +6,7 @@ import 'package:sham_cars/features/signup/widgets/signup_form.dart';
 import 'package:sham_cars/features/signup/cubit/signup_cubit.dart';
 import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
+import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:sham_cars/widgets/dialogs/error_dialog.dart';
 import 'package:sham_cars/widgets/no_pop_wrapper.dart';
 import 'package:sham_cars/widgets/page_loader.dart';
@@ -42,7 +43,7 @@ class SignupScreen extends StatelessWidget {
             ).pushReplacement(context);
           }
         },
-        child: const _SignupScreenContent(),
+        child: CustomScaffold(body: const _SignupScreenContent()),
       ),
     );
   }

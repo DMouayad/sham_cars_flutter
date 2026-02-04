@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sham_cars/features/home/components/custom_drawer.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/app_name.dart';
 
@@ -28,8 +30,19 @@ class CustomScaffold extends StatelessWidget {
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: context.colorScheme.surface,
         centerTitle: true,
-        actions: [...(appBarActions != null ? appBarActions! : [])],
-        title: const SizedBox(width: 130, child: AppName()),
+        actions: [
+          ...(appBarActions != null ? appBarActions! : []),
+          IconButton(
+            onPressed: () {
+              ProfileRoute().push(context);
+            },
+            icon: const Icon(Icons.person),
+          ),
+        ],
+        title: InkWell(
+          onTap: () => context.go(RoutePath.home),
+          child: const SizedBox(width: 130, child: AppName()),
+        ),
       ),
       body: SafeArea(
         child: Padding(

@@ -11,7 +11,6 @@ import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/community/widgets/ask_question_sheet.dart';
 import 'package:sham_cars/features/community/widgets/add_review_sheet.dart';
 import 'package:sham_cars/router/routes.dart';
-import 'package:sham_cars/widgets/scaffold_with_navbar.dart';
 
 import 'cubits/trim_community_cubit.dart';
 
@@ -99,9 +98,12 @@ class TrimCommunityScreen extends StatelessWidget {
                       ),
                     )
                   : FloatingActionButton.extended(
-                      onPressed: () => StatefulNavigationShell.of(
-                        context,
-                      ).goBranch(navigationShellIndex.profile),
+                      onPressed: () {
+                        final returnTo = GoRouterState.of(
+                          context,
+                        ).uri.toString();
+                        LoginRoute(redirectTo: returnTo).push(context);
+                      },
                       label: const Text('Join to contribute'),
                       icon: const Icon(Icons.login),
                     ),

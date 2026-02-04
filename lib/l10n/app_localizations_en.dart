@@ -567,4 +567,180 @@ class AppLocalizationsEn extends AppLocalizations {
   String timeDaysAgo(int days) {
     return '$days days ago';
   }
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get commonPublish => 'Publish';
+
+  @override
+  String get commonSubmit => 'Submit';
+
+  @override
+  String get commonSearch => 'Search';
+
+  @override
+  String get commonClear => 'Clear';
+
+  @override
+  String get commonViewAll => 'View all';
+
+  @override
+  String get commonLoadingMore => 'Loading more...';
+
+  @override
+  String get communityTitle => 'Community';
+
+  @override
+  String get communityJoinToContribute => 'Join to contribute';
+
+  @override
+  String get communityAskQuestion => 'Ask a question';
+
+  @override
+  String get communityAddReview => 'Add a review';
+
+  @override
+  String get communityFilterAll => 'All';
+
+  @override
+  String get communityFilterQuestions => 'Questions';
+
+  @override
+  String get communityFilterReviews => 'Reviews';
+
+  @override
+  String get communityNoContentTitle => 'No content yet';
+
+  @override
+  String get communityNoContentSubtitle => 'Start the conversation!';
+
+  @override
+  String get communityNoResultsTitle => 'No results';
+
+  @override
+  String get communityNoResultsSubtitle => 'Try different keywords.';
+
+  @override
+  String get communityQuestionsCountLabel => 'Questions';
+
+  @override
+  String get communityReviewsCountLabel => 'Reviews';
+
+  @override
+  String get trimCommunityReviewsTab => 'Reviews';
+
+  @override
+  String get trimCommunityQaTab => 'Q&A';
+
+  @override
+  String get trimCommunityNoReviews => 'No reviews yet';
+
+  @override
+  String get trimCommunityNoQuestions => 'No questions yet';
+
+  @override
+  String get sheetAskQuestionTitle => 'Ask a question';
+
+  @override
+  String get sheetAskQuestionSubtitle =>
+      'Ask the community and get help from owners.';
+
+  @override
+  String get sheetAddReviewTitle => 'Add your review';
+
+  @override
+  String get sheetAddReviewSubtitle => 'Share your experience to help others.';
+
+  @override
+  String get authRequiredToPostQuestion =>
+      'You must be signed in to ask a question.';
+
+  @override
+  String get authRequiredToPostReview =>
+      'You must be signed in to add a review.';
+
+  @override
+  String get authRequiredToPostAnswer => 'You must be signed in to answer.';
+
+  @override
+  String get fieldTrimLabelRequired => 'Car (trim) *';
+
+  @override
+  String get fieldTrimLabelOptional => 'Car (trim)';
+
+  @override
+  String get fieldTrimTapToSelect => 'Tap to select';
+
+  @override
+  String get fieldQuestionTitleLabel => 'Question title *';
+
+  @override
+  String get fieldQuestionBodyLabel => 'Question details *';
+
+  @override
+  String get fieldReviewTitleLabelOptional => 'Review title (optional)';
+
+  @override
+  String get fieldReviewBodyLabel => 'Review details *';
+
+  @override
+  String get fieldCityLabelOptional => 'City (optional)';
+
+  @override
+  String get buttonPublishQuestion => 'Post question';
+
+  @override
+  String get buttonPublishReview => 'Post review';
+
+  @override
+  String get buttonPostAnswer => 'Post answer';
+
+  @override
+  String get validationSelectTrim => 'Please select a trim.';
+
+  @override
+  String get validationQuestionTitleRequired => 'Please enter a title.';
+
+  @override
+  String get validationQuestionTitleTooShort => 'Title is too short.';
+
+  @override
+  String get validationQuestionBodyRequired => 'Please enter details.';
+
+  @override
+  String get validationQuestionBodyTooShort => 'Details are too short.';
+
+  @override
+  String get validationReviewBodyRequired => 'Please enter review details.';
+
+  @override
+  String get validationReviewBodyTooShort => 'Details are too short.';
+
+  @override
+  String get reviewTypeLabel => 'Review';
+
+  @override
+  String get questionTypeLabel => 'Question';
+
+  @override
+  String get answerTypeLabel => 'Answer';
+
+  @override
+  String reviewsRatingFormat(int rating) {
+    return '$rating/5';
+  }
+
+  @override
+  String get trimPickerTitle => 'Select a trim';
+
+  @override
+  String get trimPickerSearchHint => 'Search trims...';
 }

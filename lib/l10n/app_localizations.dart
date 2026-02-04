@@ -1135,6 +1135,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days} days ago'**
   String timeDaysAgo(int days);
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get commonRetry;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @commonPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get commonPublish;
+
+  /// No description provided for @commonSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get commonSubmit;
+
+  /// No description provided for @commonSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get commonSearch;
+
+  /// No description provided for @commonClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get commonClear;
+
+  /// No description provided for @commonViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get commonViewAll;
+
+  /// No description provided for @commonLoadingMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more...'**
+  String get commonLoadingMore;
+
+  /// No description provided for @communityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get communityTitle;
+
+  /// No description provided for @communityJoinToContribute.
+  ///
+  /// In en, this message translates to:
+  /// **'Join to contribute'**
+  String get communityJoinToContribute;
+
+  /// No description provided for @communityAskQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question'**
+  String get communityAskQuestion;
+
+  /// No description provided for @communityAddReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a review'**
+  String get communityAddReview;
+
+  /// No description provided for @communityFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get communityFilterAll;
+
+  /// No description provided for @communityFilterQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get communityFilterQuestions;
+
+  /// No description provided for @communityFilterReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get communityFilterReviews;
+
+  /// No description provided for @communityNoContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No content yet'**
+  String get communityNoContentTitle;
+
+  /// No description provided for @communityNoContentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the conversation!'**
+  String get communityNoContentSubtitle;
+
+  /// No description provided for @communityNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get communityNoResultsTitle;
+
+  /// No description provided for @communityNoResultsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try different keywords.'**
+  String get communityNoResultsSubtitle;
+
+  /// No description provided for @communityQuestionsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get communityQuestionsCountLabel;
+
+  /// No description provided for @communityReviewsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get communityReviewsCountLabel;
+
+  /// No description provided for @trimCommunityReviewsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get trimCommunityReviewsTab;
+
+  /// No description provided for @trimCommunityQaTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Q&A'**
+  String get trimCommunityQaTab;
+
+  /// No description provided for @trimCommunityNoReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get trimCommunityNoReviews;
+
+  /// No description provided for @trimCommunityNoQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions yet'**
+  String get trimCommunityNoQuestions;
+
+  /// No description provided for @sheetAskQuestionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question'**
+  String get sheetAskQuestionTitle;
+
+  /// No description provided for @sheetAskQuestionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the community and get help from owners.'**
+  String get sheetAskQuestionSubtitle;
+
+  /// No description provided for @sheetAddReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your review'**
+  String get sheetAddReviewTitle;
+
+  /// No description provided for @sheetAddReviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your experience to help others.'**
+  String get sheetAddReviewSubtitle;
+
+  /// No description provided for @authRequiredToPostQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be signed in to ask a question.'**
+  String get authRequiredToPostQuestion;
+
+  /// No description provided for @authRequiredToPostReview.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be signed in to add a review.'**
+  String get authRequiredToPostReview;
+
+  /// No description provided for @authRequiredToPostAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be signed in to answer.'**
+  String get authRequiredToPostAnswer;
+
+  /// No description provided for @fieldTrimLabelRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Car (trim) *'**
+  String get fieldTrimLabelRequired;
+
+  /// No description provided for @fieldTrimLabelOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Car (trim)'**
+  String get fieldTrimLabelOptional;
+
+  /// No description provided for @fieldTrimTapToSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select'**
+  String get fieldTrimTapToSelect;
+
+  /// No description provided for @fieldQuestionTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Question title *'**
+  String get fieldQuestionTitleLabel;
+
+  /// No description provided for @fieldQuestionBodyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Question details *'**
+  String get fieldQuestionBodyLabel;
+
+  /// No description provided for @fieldReviewTitleLabelOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Review title (optional)'**
+  String get fieldReviewTitleLabelOptional;
+
+  /// No description provided for @fieldReviewBodyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Review details *'**
+  String get fieldReviewBodyLabel;
+
+  /// No description provided for @fieldCityLabelOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'City (optional)'**
+  String get fieldCityLabelOptional;
+
+  /// No description provided for @buttonPublishQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Post question'**
+  String get buttonPublishQuestion;
+
+  /// No description provided for @buttonPublishReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Post review'**
+  String get buttonPublishReview;
+
+  /// No description provided for @buttonPostAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Post answer'**
+  String get buttonPostAnswer;
+
+  /// No description provided for @validationSelectTrim.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a trim.'**
+  String get validationSelectTrim;
+
+  /// No description provided for @validationQuestionTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title.'**
+  String get validationQuestionTitleRequired;
+
+  /// No description provided for @validationQuestionTitleTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is too short.'**
+  String get validationQuestionTitleTooShort;
+
+  /// No description provided for @validationQuestionBodyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter details.'**
+  String get validationQuestionBodyRequired;
+
+  /// No description provided for @validationQuestionBodyTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Details are too short.'**
+  String get validationQuestionBodyTooShort;
+
+  /// No description provided for @validationReviewBodyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter review details.'**
+  String get validationReviewBodyRequired;
+
+  /// No description provided for @validationReviewBodyTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Details are too short.'**
+  String get validationReviewBodyTooShort;
+
+  /// No description provided for @reviewTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get reviewTypeLabel;
+
+  /// No description provided for @questionTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get questionTypeLabel;
+
+  /// No description provided for @answerTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer'**
+  String get answerTypeLabel;
+
+  /// No description provided for @reviewsRatingFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating}/5'**
+  String reviewsRatingFormat(int rating);
+
+  /// No description provided for @trimPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a trim'**
+  String get trimPickerTitle;
+
+  /// No description provided for @trimPickerSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search trims...'**
+  String get trimPickerSearchHint;
 }
 
 class _AppLocalizationsDelegate

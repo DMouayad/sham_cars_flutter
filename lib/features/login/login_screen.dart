@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:sham_cars/widgets/page_loader.dart';
@@ -50,7 +51,7 @@ class LoginScreen extends StatelessWidget {
               break;
           }
         },
-        child: const LoginForm(),
+        child: CustomScaffold(body: const LoginForm()),
       ),
     );
   }

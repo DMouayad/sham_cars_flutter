@@ -9,8 +9,8 @@ import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/community/widgets/filters.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
-import 'package:sham_cars/widgets/scaffold_with_navbar.dart';
 
 import 'community_cubit.dart';
 import 'models.dart';
@@ -234,9 +234,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   onAddReview: () => _showSheet(context, isQuestion: false),
                 )
               : FloatingActionButton.extended(
-                  onPressed: () => StatefulNavigationShell.of(
-                    context,
-                  ).goBranch(navigationShellIndex.profile),
+                  onPressed: () {
+                    final returnTo = GoRouterState.of(context).uri.toString();
+                    LoginRoute(redirectTo: returnTo).push(context);
+                  },
                   label: const Text('Join to contribute'),
                   icon: const Icon(Icons.login),
                   backgroundColor: context.colorScheme.secondary,

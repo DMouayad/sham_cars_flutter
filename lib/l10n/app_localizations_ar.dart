@@ -565,4 +565,178 @@ class AppLocalizationsAr extends AppLocalizations {
   String timeDaysAgo(int days) {
     return 'منذ $days أيام';
   }
+
+  @override
+  String get commonRetry => 'إعادة المحاولة';
+
+  @override
+  String get commonCancel => 'إلغاء';
+
+  @override
+  String get commonClose => 'إغلاق';
+
+  @override
+  String get commonPublish => 'نشر';
+
+  @override
+  String get commonSubmit => 'إرسال';
+
+  @override
+  String get commonSearch => 'بحث';
+
+  @override
+  String get commonClear => 'مسح';
+
+  @override
+  String get commonViewAll => 'عرض الكل';
+
+  @override
+  String get commonLoadingMore => 'جاري تحميل المزيد...';
+
+  @override
+  String get communityTitle => 'المجتمع';
+
+  @override
+  String get communityJoinToContribute => 'انضم للمشاركة';
+
+  @override
+  String get communityAskQuestion => 'اطرح سؤالاً';
+
+  @override
+  String get communityAddReview => 'أضف تجربة';
+
+  @override
+  String get communityFilterAll => 'الكل';
+
+  @override
+  String get communityFilterQuestions => 'الأسئلة';
+
+  @override
+  String get communityFilterReviews => 'التجارب';
+
+  @override
+  String get communityNoContentTitle => 'لا يوجد محتوى بعد';
+
+  @override
+  String get communityNoContentSubtitle => 'ابدأ المحادثة!';
+
+  @override
+  String get communityNoResultsTitle => 'لا توجد نتائج';
+
+  @override
+  String get communityNoResultsSubtitle => 'جرّب كلمات بحث مختلفة.';
+
+  @override
+  String get communityQuestionsCountLabel => 'سؤال';
+
+  @override
+  String get communityReviewsCountLabel => 'تجربة';
+
+  @override
+  String get trimCommunityReviewsTab => 'التجارب';
+
+  @override
+  String get trimCommunityQaTab => 'سؤال وجواب';
+
+  @override
+  String get trimCommunityNoReviews => 'لا توجد تجارب بعد';
+
+  @override
+  String get trimCommunityNoQuestions => 'لا توجد أسئلة بعد';
+
+  @override
+  String get sheetAskQuestionTitle => 'اطرح سؤالاً';
+
+  @override
+  String get sheetAskQuestionSubtitle =>
+      'اسأل المجتمع واحصل على إجابات من المالكين.';
+
+  @override
+  String get sheetAddReviewTitle => 'أضف تجربتك';
+
+  @override
+  String get sheetAddReviewSubtitle => 'شارك تجربتك لمساعدة الآخرين.';
+
+  @override
+  String get authRequiredToPostQuestion => 'يجب تسجيل الدخول لطرح سؤال.';
+
+  @override
+  String get authRequiredToPostReview => 'يجب تسجيل الدخول لإضافة تجربة.';
+
+  @override
+  String get authRequiredToPostAnswer => 'يجب تسجيل الدخول لإضافة إجابة.';
+
+  @override
+  String get fieldTrimLabelRequired => 'السيارة (النسخة) *';
+
+  @override
+  String get fieldTrimLabelOptional => 'السيارة (النسخة)';
+
+  @override
+  String get fieldTrimTapToSelect => 'اضغط للاختيار';
+
+  @override
+  String get fieldQuestionTitleLabel => 'عنوان السؤال *';
+
+  @override
+  String get fieldQuestionBodyLabel => 'تفاصيل السؤال *';
+
+  @override
+  String get fieldReviewTitleLabelOptional => 'عنوان التجربة (اختياري)';
+
+  @override
+  String get fieldReviewBodyLabel => 'تفاصيل التجربة *';
+
+  @override
+  String get fieldCityLabelOptional => 'المدينة (اختياري)';
+
+  @override
+  String get buttonPublishQuestion => 'نشر السؤال';
+
+  @override
+  String get buttonPublishReview => 'نشر التجربة';
+
+  @override
+  String get buttonPostAnswer => 'نشر الإجابة';
+
+  @override
+  String get validationSelectTrim => 'الرجاء اختيار النسخة.';
+
+  @override
+  String get validationQuestionTitleRequired => 'الرجاء إدخال عنوان السؤال.';
+
+  @override
+  String get validationQuestionTitleTooShort => 'العنوان قصير جداً.';
+
+  @override
+  String get validationQuestionBodyRequired => 'الرجاء إدخال تفاصيل السؤال.';
+
+  @override
+  String get validationQuestionBodyTooShort => 'التفاصيل قصيرة جداً.';
+
+  @override
+  String get validationReviewBodyRequired => 'الرجاء كتابة تفاصيل التجربة.';
+
+  @override
+  String get validationReviewBodyTooShort => 'التفاصيل قصيرة جداً.';
+
+  @override
+  String get reviewTypeLabel => 'تجربة';
+
+  @override
+  String get questionTypeLabel => 'سؤال';
+
+  @override
+  String get answerTypeLabel => 'إجابة';
+
+  @override
+  String reviewsRatingFormat(int rating) {
+    return '$rating/5';
+  }
+
+  @override
+  String get trimPickerTitle => 'اختر النسخة';
+
+  @override
+  String get trimPickerSearchHint => 'ابحث عن نسخة...';
 }

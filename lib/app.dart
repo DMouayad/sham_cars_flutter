@@ -35,6 +35,7 @@ class MainApp extends StatelessWidget {
     return RepositoryProvider(
       create: (context) => GoRouter(
         routes: $appRoutes,
+        navigatorKey: rootNavigatorKey,
         initialLocation: RoutePath.home,
         debugLogDiagnostics: true,
         refreshListenable: GetIt.I.get<AuthNotifier>(),

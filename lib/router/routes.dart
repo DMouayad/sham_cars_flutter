@@ -27,6 +27,8 @@ import 'package:sham_cars/widgets/scaffold_with_navbar.dart';
 
 part 'routes.g.dart';
 
+final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+
 class RoutePath {
   static const emailVerification = '/profile/emaill-verification';
   static const home = '/home';
@@ -35,8 +37,6 @@ class RoutePath {
   static const signup = '/profile/signup';
   static const forgotPassword = '/profile/forgot-password';
   static const resetPassword = '/profile/reset-password';
-  static const questions = 'questions';
-  static const askQuestion = 'new';
   static const questionDetails = ':id';
   static const vehicles = '/vehicles';
   static const vehicleDetails = ':id';
@@ -81,18 +81,6 @@ class RoutePath {
         ),
       ],
     ),
-
-    TypedStatefulShellBranch(
-      routes: [
-        TypedGoRoute<ProfileRoute>(path: RoutePath.profile, name: 'profile'),
-        TypedGoRoute<LoginRoute>(path: RoutePath.login, name: 'login'),
-        TypedGoRoute<SignupRoute>(path: RoutePath.signup, name: 'signup'),
-        TypedGoRoute<AccountVerificationRoute>(
-          path: RoutePath.emailVerification,
-          name: 'email_verification',
-        ),
-      ],
-    ),
     TypedStatefulShellBranch(
       routes: [
         TypedGoRoute<CompareRoute>(path: RoutePath.compare, name: 'compare'),
@@ -134,7 +122,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
       child: HomeScreen(
         onOpenTrim: (id, [summary]) =>
             VehicleDetailsRoute(id: id, $extra: summary).push(context),
-        onOpenQuestion: (id) => QuestionDetailsRoute(id).go(context),
+        onOpenQuestion: (id) => QuestionDetailsRoute(id).push(context),
         onViewAllVehicles: () =>
             StatefulNavigationShell.of(context).goBranch(1),
         onViewAllQuestions: () =>
@@ -144,20 +132,21 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   }
 }
 
-@immutable
+@TypedGoRoute<LoginRoute>(path: RoutePath.login, name: 'login')
 class LoginRoute extends GoRouteData with $LoginRoute {
   final String? redirectTo;
-
   const LoginRoute({this.redirectTo});
+
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return LoginScreen(redirectTo: redirectTo ?? const ProfileRoute().location);
+    return LoginScreen(redirectTo: redirectTo ?? RoutePath.profile);
   }
 }
 
-@immutable
+@TypedGoRoute<SignupRoute>(path: RoutePath.signup, name: 'signup')
 class SignupRoute extends GoRouteData with $SignupRoute {
-  const SignupRoute();
+  final String? redirectTo;
+  const SignupRoute({this.redirectTo});
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -165,6 +154,10 @@ class SignupRoute extends GoRouteData with $SignupRoute {
   }
 }
 
+@TypedGoRoute<AccountVerificationRoute>(
+  path: RoutePath.emailVerification,
+  name: 'email_verification',
+)
 @immutable
 class AccountVerificationRoute extends GoRouteData
     with $AccountVerificationRoute {
@@ -177,6 +170,7 @@ class AccountVerificationRoute extends GoRouteData
 }
 
 @immutable
+@TypedGoRoute<ProfileRoute>(path: RoutePath.profile)
 class ProfileRoute extends GoRouteData with $ProfileRoute {
   const ProfileRoute();
 
@@ -263,7 +257,7 @@ class QuestionDetailsRoute extends GoRouteData with $QuestionDetailsRoute {
   final int id;
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return QuestionDetailsScreen(id: int.parse(state.pathParameters['id']!));
+    return QuestionDetailsScreen(id: id);
   }
 }
 

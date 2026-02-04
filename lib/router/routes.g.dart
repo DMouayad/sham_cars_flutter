@@ -6,7 +6,13 @@ part of 'routes.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$mainScaffoldRoute];
+List<RouteBase> get $appRoutes => [
+  $mainScaffoldRoute,
+  $loginRoute,
+  $signupRoute,
+  $accountVerificationRoute,
+  $profileRoute,
+];
 
 RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
   factory: $MainScaffoldRouteExtension._fromState,
@@ -57,30 +63,6 @@ RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
               factory: $QuestionDetailsRoute._fromState,
             ),
           ],
-        ),
-      ],
-    ),
-    StatefulShellBranchData.$branch(
-      routes: [
-        GoRouteData.$route(
-          path: '/profile',
-          name: 'profile',
-          factory: $ProfileRoute._fromState,
-        ),
-        GoRouteData.$route(
-          path: '/profile/login',
-          name: 'login',
-          factory: $LoginRoute._fromState,
-        ),
-        GoRouteData.$route(
-          path: '/profile/signup',
-          name: 'signup',
-          factory: $SignupRoute._fromState,
-        ),
-        GoRouteData.$route(
-          path: '/profile/emaill-verification',
-          name: 'email_verification',
-          factory: $AccountVerificationRoute._fromState,
         ),
       ],
     ),
@@ -277,11 +259,11 @@ mixin $QuestionDetailsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $ProfileRoute on GoRouteData {
-  static ProfileRoute _fromState(GoRouterState state) => const ProfileRoute();
+mixin $CompareRoute on GoRouteData {
+  static CompareRoute _fromState(GoRouterState state) => const CompareRoute();
 
   @override
-  String get location => GoRouteData.$location('/profile');
+  String get location => GoRouteData.$location('/compare');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -296,6 +278,12 @@ mixin $ProfileRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+RouteBase get $loginRoute => GoRouteData.$route(
+  path: '/profile/login',
+  name: 'login',
+  factory: $LoginRoute._fromState,
+);
 
 mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) =>
@@ -325,11 +313,25 @@ mixin $LoginRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $signupRoute => GoRouteData.$route(
+  path: '/profile/signup',
+  name: 'signup',
+  factory: $SignupRoute._fromState,
+);
+
 mixin $SignupRoute on GoRouteData {
-  static SignupRoute _fromState(GoRouterState state) => const SignupRoute();
+  static SignupRoute _fromState(GoRouterState state) =>
+      SignupRoute(redirectTo: state.uri.queryParameters['redirect-to']);
+
+  SignupRoute get _self => this as SignupRoute;
 
   @override
-  String get location => GoRouteData.$location('/profile/signup');
+  String get location => GoRouteData.$location(
+    '/profile/signup',
+    queryParams: {
+      if (_self.redirectTo != null) 'redirect-to': _self.redirectTo,
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -344,6 +346,12 @@ mixin $SignupRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+RouteBase get $accountVerificationRoute => GoRouteData.$route(
+  path: '/profile/emaill-verification',
+  name: 'email_verification',
+  factory: $AccountVerificationRoute._fromState,
+);
 
 mixin $AccountVerificationRoute on GoRouteData {
   static AccountVerificationRoute _fromState(GoRouterState state) =>
@@ -370,11 +378,14 @@ mixin $AccountVerificationRoute on GoRouteData {
       context.replace(location, extra: _self.$extra);
 }
 
-mixin $CompareRoute on GoRouteData {
-  static CompareRoute _fromState(GoRouterState state) => const CompareRoute();
+RouteBase get $profileRoute =>
+    GoRouteData.$route(path: '/profile', factory: $ProfileRoute._fromState);
+
+mixin $ProfileRoute on GoRouteData {
+  static ProfileRoute _fromState(GoRouterState state) => const ProfileRoute();
 
   @override
-  String get location => GoRouteData.$location('/compare');
+  String get location => GoRouteData.$location('/profile');
 
   @override
   void go(BuildContext context) => context.go(location);
