@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+
 import 'package:sham_cars/features/auth/auth_notifier.dart';
-import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
-import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/reviews/widgets/review_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/community/widgets/ask_question_sheet.dart';
@@ -14,7 +14,7 @@ import 'package:sham_cars/widgets/scaffold_with_navbar.dart';
 
 import 'cubits/trim_community_cubit.dart';
 
-class TrimCommunityScreen extends StatefulWidget {
+class TrimCommunityScreen extends StatelessWidget {
   const TrimCommunityScreen({
     super.key,
     required this.trimId,
@@ -27,166 +27,274 @@ class TrimCommunityScreen extends StatefulWidget {
   final String trimTitle;
 
   @override
-  State<TrimCommunityScreen> createState() => _TrimCommunityScreenState();
-}
-
-class _TrimCommunityScreenState extends State<TrimCommunityScreen> {
-  late final AuthNotifier _authNotifier;
-
-  @override
-  void initState() {
-    super.initState();
-    _authNotifier = GetIt.I.get<AuthNotifier>();
-    _authNotifier.addListener(_onAuthChanged);
-  }
-
-  @override
-  void dispose() {
-    _authNotifier.removeListener(_onAuthChanged);
-    super.dispose();
-  }
-
-  void _onAuthChanged() {
-    setState(() {}); // Rebuild to reflect login status changes
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isLoggedIn = _authNotifier.isLoggedIn;
+    final authNotifier = GetIt.I.get<AuthNotifier>();
+
     return BlocProvider(
-      create: (_) =>
-          TrimCommunityCubit((context.read()))..load(trimId: widget.trimId),
+      create: (_) => TrimCommunityCubit(context.read())..load(trimId: trimId),
       child: DefaultTabController(
-        initialIndex: widget.initialTab,
+        initialIndex: initialTab,
         length: 2,
-        child: Scaffold(
-          body: BlocBuilder<TrimCommunityCubit, TrimCommunityState>(
-            builder: (context, state) {
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    pinned: true,
-                    title: Text(widget.trimTitle),
-                    bottom: const TabBar(
-                      tabs: [
-                        Tab(text: 'التجارب'),
-                        Tab(text: 'سؤال وجواب'),
+        child: AnimatedBuilder(
+          animation: authNotifier,
+          builder: (context, _) {
+            final isLoggedIn = authNotifier.isLoggedIn;
+
+            return Scaffold(
+              body: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  return [
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context,
+                      ),
+                      sliver: SliverAppBar(
+                        pinned: true,
+                        title: Text(trimTitle),
+                        forceElevated: innerBoxIsScrolled,
+                        bottom: const TabBar(
+                          tabs: [
+                            Tab(text: 'التجارب'),
+                            Tab(text: 'سؤال وجواب'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ];
+                },
+
+                body: BlocBuilder<TrimCommunityCubit, TrimCommunityState>(
+                  builder: (context, state) {
+                    if (state.loadingInitial) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state.error != null) {
+                      return Center(child: Text('حدث خطأ: ${state.error}'));
+                    }
+
+                    return TabBarView(
+                      children: [
+                        _ReviewsTab(trimId: trimId),
+                        _QuestionsTab(trimId: trimId),
                       ],
+                    );
+                  },
+                ),
+              ),
+
+              floatingActionButton: isLoggedIn
+                  ? _CommunitySpeedDial(
+                      onAskQuestion: () =>
+                          _showSheet(context, trimId: trimId, isQuestion: true),
+                      onAddReview: () => _showSheet(
+                        context,
+                        trimId: trimId,
+                        isQuestion: false,
+                      ),
+                    )
+                  : FloatingActionButton.extended(
+                      onPressed: () => StatefulNavigationShell.of(
+                        context,
+                      ).goBranch(navigationShellIndex.profile),
+                      label: const Text('Join to contribute'),
+                      icon: const Icon(Icons.login),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(ThemeConstants.p),
-                      child: _Body(state: state),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-          floatingActionButton: Builder(
-            builder: (context) {
-              if (isLoggedIn) {
-                return _CommunitySpeedDial(
-                  onAskQuestion: () => _showSheet(context, isQuestion: true),
-                  onAddReview: () => _showSheet(context, isQuestion: false),
-                );
-              } else {
-                return FloatingActionButton.extended(
-                  onPressed: () => StatefulNavigationShell.of(
-                    context,
-                  ).goBranch(navigationShellIndex.profile),
-                  label: const Text('Join to contribute'),
-                  icon: const Icon(Icons.login),
-                  // backgroundColor: context.colorScheme.secondary,
-                );
-              }
-            },
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  void _showSheet(BuildContext context, {required bool isQuestion}) {
-    showModalBottomSheet(
+  Future<void> _showSheet(
+    BuildContext context, {
+    required int trimId,
+    required bool isQuestion,
+  }) async {
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => BlocProvider.value(
-        value: context.read<TrimCommunityCubit>(), // Use TrimCommunityCubit
+        value: context.read<TrimCommunityCubit>(),
         child: isQuestion
             ? const AskQuestionSheet()
-            : AddReviewSheet(
-                preselectedTrimId: widget.trimId,
-              ), // Needs preselectedTrimId
+            : AddReviewSheet(preselectedTrimId: trimId),
       ),
     );
+
+    if (context.mounted) {
+      // easiest correct behavior after posting
+      context.read<TrimCommunityCubit>().refreshAll();
+    }
   }
 }
 
-class _Body extends StatelessWidget {
-  const _Body({required this.state});
-  final TrimCommunityState state;
+class _ReviewsTab extends StatefulWidget {
+  const _ReviewsTab({required this.trimId});
+  final int trimId;
+
+  @override
+  State<_ReviewsTab> createState() => _ReviewsTabState();
+}
+
+class _ReviewsTabState extends State<_ReviewsTab> {
+  late final ScrollController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController()..addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onScroll);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final c = context.read<TrimCommunityCubit>();
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 250) {
+      c.loadMoreReviews();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (state.loading) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 60),
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-    if (state.error != null) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 60),
-        child: Center(child: Text('حدث خطأ: ${state.error}')),
-      );
-    }
+    return BlocBuilder<TrimCommunityCubit, TrimCommunityState>(
+      buildWhen: (p, n) =>
+          p.reviews != n.reviews ||
+          p.loadingMoreReviews != n.loadingMoreReviews ||
+          p.hasMoreReviews != n.hasMoreReviews,
+      builder: (context, state) {
+        if (state.reviews.isEmpty) {
+          return const Center(child: Text('لا توجد تجارب بعد'));
+        }
 
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).height - 200,
-      child: TabBarView(
-        children: [
-          _ReviewsList(reviews: state.reviews),
-          _QuestionsList(questions: state.questions),
-        ],
+        final count = state.reviews.length + (state.hasMoreReviews ? 1 : 0);
+
+        return CustomScrollView(
+          controller: _controller,
+          slivers: [
+            SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(ThemeConstants.p),
+              sliver: SliverList.separated(
+                itemCount: count,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, i) {
+                  if (i == state.reviews.length) {
+                    return _BottomLoader(loading: state.loadingMoreReviews);
+                  }
+                  return ReviewCard(review: state.reviews[i]);
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _QuestionsTab extends StatefulWidget {
+  const _QuestionsTab({required this.trimId});
+  final int trimId;
+
+  @override
+  State<_QuestionsTab> createState() => _QuestionsTabState();
+}
+
+class _QuestionsTabState extends State<_QuestionsTab> {
+  late final ScrollController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController()..addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onScroll);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final c = context.read<TrimCommunityCubit>();
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent - 250) {
+      c.loadMoreQuestions();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TrimCommunityCubit, TrimCommunityState>(
+      buildWhen: (p, n) =>
+          p.questions != n.questions ||
+          p.loadingMoreQuestions != n.loadingMoreQuestions ||
+          p.hasMoreQuestions != n.hasMoreQuestions,
+      builder: (context, state) {
+        if (state.questions.isEmpty) {
+          return const Center(child: Text('لا توجد أسئلة بعد'));
+        }
+
+        final count = state.questions.length + (state.hasMoreQuestions ? 1 : 0);
+
+        return CustomScrollView(
+          controller: _controller,
+          slivers: [
+            SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(ThemeConstants.p),
+              sliver: SliverList.separated(
+                itemCount: count,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, i) {
+                  if (i == state.questions.length) {
+                    return _BottomLoader(loading: state.loadingMoreQuestions);
+                  }
+                  return QuestionCard(
+                    question: state.questions[i],
+                    showContext: false,
+                    // onTap: () => QuestionDetailsRoute(state.questions[i].id).push(context),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _BottomLoader extends StatelessWidget {
+  const _BottomLoader({required this.loading});
+  final bool loading;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!loading) return const SizedBox(height: 10);
+
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Center(
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
       ),
-    );
-  }
-}
-
-class _ReviewsList extends StatelessWidget {
-  const _ReviewsList({required this.reviews});
-  final List<Review> reviews;
-
-  @override
-  Widget build(BuildContext context) {
-    if (reviews.isEmpty) return const Center(child: Text('لا توجد تجارب بعد'));
-
-    return ListView.separated(
-      itemCount: reviews.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, i) => ReviewCard(review: reviews[i]),
-    );
-  }
-}
-
-class _QuestionsList extends StatelessWidget {
-  const _QuestionsList({required this.questions});
-  final List<Question> questions;
-
-  @override
-  Widget build(BuildContext context) {
-    if (questions.isEmpty) {
-      return const Center(child: Text('لا توجد أسئلة بعد'));
-    }
-
-    return ListView.separated(
-      itemCount: questions.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, i) =>
-          QuestionCard(question: questions[i], showContext: false),
     );
   }
 }
