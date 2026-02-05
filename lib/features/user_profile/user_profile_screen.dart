@@ -6,11 +6,13 @@ import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/theme/app_theme.dart';
 import 'package:sham_cars/features/user/models.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
+import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:sham_cars/widgets/dialogs/error_dialog.dart';
 import 'package:sham_cars/widgets/page_loader.dart';
 
-import 'cubit/user_profile_cubit.dart';
+import 'cubits/user_profile_cubit.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
@@ -41,54 +43,74 @@ class UserProfileScreen extends StatelessWidget {
             );
           }
         },
-        child: Column(
-          children: [
-            ListTile(
-              dense: true,
-              title: Text(context.l10n.publicProfileSettingsTileLabel),
+        child: _UserProfileScreenContent(user: user, gap: gap),
+      ),
+    );
+  }
+}
+
+class _UserProfileScreenContent extends StatelessWidget {
+  const _UserProfileScreenContent({required this.user, required this.gap});
+
+  final User? user;
+  final SizedBox gap;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScaffold(
+      body: Column(
+        children: [
+          ListTile(
+            dense: true,
+            title: Text(context.l10n.publicProfileSettingsTileLabel),
+          ),
+          ListTile(
+            title: Text(
+              user?.fullName != null
+                  ? context.l10n.signedInAs
+                  : context.l10n.signedInWith,
             ),
-            ListTile(
-              title: Text(
-                user?.fullName != null
-                    ? context.l10n.signedInAs
-                    : context.l10n.signedInWith,
+            subtitle: Text(
+              user?.fullName ?? user?.phoneNumber ?? user?.email ?? "",
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: context.colorScheme.primary,
               ),
-              subtitle: Text(
-                user?.fullName ?? user?.phoneNumber ?? user?.email ?? "",
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: context.colorScheme.primary,
-                ),
-                textDirection: TextDirection.ltr,
-              ),
+              textDirection: TextDirection.ltr,
             ),
-            gap,
-            ListTile(
-              dense: true,
-              title: Text(context.l10n.accountSettingsTileLabel),
-            ),
-            gap,
-            _CustomListTile(
-              title: context.l10n.changePasswordBtnLabel,
-              icon: Icons.lock_outline_rounded,
-              onTap: context.read<UserProfileCubit>().onChangePasswordRequested,
-            ),
-            gap,
-            _CustomListTile(
-              title: context.l10n.logoutBtnLabel,
-              icon: Icons.logout,
-              onTap: context.read<UserProfileCubit>().onLogoutRequested,
-            ),
-            gap,
-            gap,
-            _CustomListTile(
-              title: context.l10n.deleteAccountBtnLabel,
-              icon: Icons.delete_forever,
-              onTap: context.read<UserProfileCubit>().onDeleteAccountRequested,
-              textColor: AppTheme.redColor,
-              iconColor: AppTheme.redColor,
-            ),
-          ],
-        ),
+          ),
+          gap,
+          _CustomListTile(
+            icon: Icons.history,
+            title: context.l10n.profileMyActivityTitle,
+            onTap: () => const ProfileActivityRoute().push(context),
+          ),
+          gap,
+          ListTile(
+            dense: true,
+            title: Text(context.l10n.accountSettingsTileLabel),
+          ),
+          gap,
+          _CustomListTile(
+            title: context.l10n.changePasswordBtnLabel,
+            icon: Icons.lock_outline_rounded,
+            onTap: context.read<UserProfileCubit>().onChangePasswordRequested,
+          ),
+          gap,
+          _CustomListTile(
+            title: context.l10n.logoutBtnLabel,
+            icon: Icons.logout,
+            onTap: context.read<UserProfileCubit>().onLogoutRequested,
+          ),
+          gap,
+          gap,
+          _CustomListTile(
+            title: context.l10n.deleteAccountBtnLabel,
+            icon: Icons.delete_forever,
+            onTap: context.read<UserProfileCubit>().onDeleteAccountRequested,
+            textColor: AppTheme.redColor,
+            iconColor: AppTheme.redColor,
+          ),
+        ],
       ),
     );
   }

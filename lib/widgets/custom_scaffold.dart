@@ -29,7 +29,7 @@ class CustomScaffold extends StatelessWidget {
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: context.colorScheme.surface,
         centerTitle: true,
-        leading: BackButton(),
+        leading: context.canPop() ? BackButton() : null,
         title: InkWell(
           onTap: () => context.go(RoutePath.home),
           child: const SizedBox(width: 130, child: AppName()),

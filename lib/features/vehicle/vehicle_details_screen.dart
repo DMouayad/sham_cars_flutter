@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/common/data_state.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
+import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
@@ -41,6 +42,7 @@ class VehicleDetailsScreen extends StatelessWidget {
       ],
 
       child: Scaffold(
+        endDrawer: const CustomDrawer(),
         body: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
           builder: (context, state) {
             // Build a single VM for both states (summary while loading, trim when loaded)
@@ -455,75 +457,75 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _RealWorldRangeCard extends StatelessWidget {
-  const _RealWorldRangeCard({
-    required this.cityLabel,
-    required this.seasonLabel,
-    required this.valueText,
-    required this.onAdd,
-  });
+// class _RealWorldRangeCard extends StatelessWidget {
+//   const _RealWorldRangeCard({
+//     required this.cityLabel,
+//     required this.seasonLabel,
+//     required this.valueText,
+//     required this.onAdd,
+//   });
 
-  final String cityLabel;
-  final String seasonLabel;
-  final String valueText;
-  final VoidCallback onAdd;
+//   final String cityLabel;
+//   final String seasonLabel;
+//   final String valueText;
+//   final VoidCallback onAdd;
 
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+//   @override
+//   Widget build(BuildContext context) {
+//     final cs = Theme.of(context).colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest,
-        borderRadius: ThemeConstants.cardRadius,
-        border: Border.all(color: cs.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'المدى الحقيقي (80% → 20%)',
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '$cityLabel • $seasonLabel',
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(color: cs.onSurfaceVariant),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                valueText,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                'كم',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(color: cs.onSurfaceVariant),
-              ),
-              const Spacer(),
-              FilledButton.icon(
-                onPressed: onAdd,
-                icon: const Icon(Icons.add),
-                label: const Text('أضف بياناتك'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+//     return Container(
+//       padding: const EdgeInsets.all(16),
+//       decoration: BoxDecoration(
+//         color: cs.surfaceContainerHighest,
+//         borderRadius: ThemeConstants.cardRadius,
+//         border: Border.all(color: cs.outlineVariant),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             'المدى الحقيقي (80% → 20%)',
+//             style: Theme.of(
+//               context,
+//             ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+//           ),
+//           const SizedBox(height: 6),
+//           Text(
+//             '$cityLabel • $seasonLabel',
+//             style: Theme.of(
+//               context,
+//             ).textTheme.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+//           ),
+//           const SizedBox(height: 12),
+//           Row(
+//             children: [
+//               Text(
+//                 valueText,
+//                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+//                   fontWeight: FontWeight.w900,
+//                 ),
+//               ),
+//               const SizedBox(width: 6),
+//               Text(
+//                 'كم',
+//                 style: Theme.of(
+//                   context,
+//                 ).textTheme.titleMedium?.copyWith(color: cs.onSurfaceVariant),
+//               ),
+//               const Spacer(),
+//               FilledButton.icon(
+//                 onPressed: onAdd,
+//                 icon: const Icon(Icons.add),
+//                 label: const Text('أضف بياناتك'),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class _ErrorBanner extends StatelessWidget {
   const _ErrorBanner({required this.onRetry});

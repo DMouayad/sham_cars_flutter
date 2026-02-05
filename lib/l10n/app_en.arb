@@ -603,5 +603,22 @@
   "cityHoms": "Homs",
   "cityHama": "Hama",
   "cityLatakia": "Latakia",
-  "cityTartus": "Tartus"
+  "cityTartus": "Tartus",
+
+
+  "profileMyActivityTitle": "My activity",
+  "profileMyReviewsTab": "My reviews",
+  "profileMyQuestionsTab": "My questions",
+  "profileMyAnsweredQuestionsTab": "Answered",
+
+  "profileEmptyMyReviewsTitle": "No reviews yet",
+  "profileEmptyMyReviewsSubtitle": "Write your first review to help others.",
+  "profileEmptyMyQuestionsTitle": "No questions yet",
+  "profileEmptyMyQuestionsSubtitle": "Ask your first question and get help from the community.",
+  "profileEmptyMyAnsweredTitle": "No answered questions yet",
+  "profileEmptyMyAnsweredSubtitle": "Answer questions to support the community.",
+
+  "profileBrowseCarsCta": "Browse cars",
+  "profileAskQuestionCta": "Ask a question",
+  "profileBrowseCommunityCta": "Browse community"
 }

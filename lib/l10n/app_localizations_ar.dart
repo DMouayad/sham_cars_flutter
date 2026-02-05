@@ -804,4 +804,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cityTartus => 'طرطوس';
+
+  @override
+  String get profileMyActivityTitle => 'نشاطي';
+
+  @override
+  String get profileMyReviewsTab => 'تجاربي';
+
+  @override
+  String get profileMyQuestionsTab => 'أسئلتي';
+
+  @override
+  String get profileMyAnsweredQuestionsTab => 'أجبتُ';
+
+  @override
+  String get profileEmptyMyReviewsTitle => 'لا توجد تجارب بعد';
+
+  @override
+  String get profileEmptyMyReviewsSubtitle =>
+      'أضف تجربتك الأولى لمساعدة الآخرين.';
+
+  @override
+  String get profileEmptyMyQuestionsTitle => 'لا توجد أسئلة بعد';
+
+  @override
+  String get profileEmptyMyQuestionsSubtitle =>
+      'اطرح سؤالك الأول واحصل على مساعدة من المجتمع.';
+
+  @override
+  String get profileEmptyMyAnsweredTitle => 'لا توجد إجابات بعد';
+
+  @override
+  String get profileEmptyMyAnsweredSubtitle =>
+      'ساهم بالإجابة عن الأسئلة لدعم المجتمع.';
+
+  @override
+  String get profileBrowseCarsCta => 'تصفح السيارات';
+
+  @override
+  String get profileAskQuestionCta => 'اطرح سؤالاً';
+
+  @override
+  String get profileBrowseCommunityCta => 'تصفح المجتمع';
 }

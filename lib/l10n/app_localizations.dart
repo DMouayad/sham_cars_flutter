@@ -1603,6 +1603,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tartus'**
   String get cityTartus;
+
+  /// No description provided for @profileMyActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My activity'**
+  String get profileMyActivityTitle;
+
+  /// No description provided for @profileMyReviewsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'My reviews'**
+  String get profileMyReviewsTab;
+
+  /// No description provided for @profileMyQuestionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'My questions'**
+  String get profileMyQuestionsTab;
+
+  /// No description provided for @profileMyAnsweredQuestionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered'**
+  String get profileMyAnsweredQuestionsTab;
+
+  /// No description provided for @profileEmptyMyReviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get profileEmptyMyReviewsTitle;
+
+  /// No description provided for @profileEmptyMyReviewsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your first review to help others.'**
+  String get profileEmptyMyReviewsSubtitle;
+
+  /// No description provided for @profileEmptyMyQuestionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions yet'**
+  String get profileEmptyMyQuestionsTitle;
+
+  /// No description provided for @profileEmptyMyQuestionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your first question and get help from the community.'**
+  String get profileEmptyMyQuestionsSubtitle;
+
+  /// No description provided for @profileEmptyMyAnsweredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No answered questions yet'**
+  String get profileEmptyMyAnsweredTitle;
+
+  /// No description provided for @profileEmptyMyAnsweredSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer questions to support the community.'**
+  String get profileEmptyMyAnsweredSubtitle;
+
+  /// No description provided for @profileBrowseCarsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse cars'**
+  String get profileBrowseCarsCta;
+
+  /// No description provided for @profileAskQuestionCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question'**
+  String get profileAskQuestionCta;
+
+  /// No description provided for @profileBrowseCommunityCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse community'**
+  String get profileBrowseCommunityCta;
 }
 
 class _AppLocalizationsDelegate

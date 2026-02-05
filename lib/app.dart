@@ -13,6 +13,7 @@ import 'package:sham_cars/features/home/home_repository.dart';
 import 'package:sham_cars/features/theme/app_theme.dart';
 import 'package:sham_cars/features/localization/cubit/localization_cubit.dart';
 import 'package:sham_cars/features/theme/theme_cubit.dart';
+import 'package:sham_cars/features/user_profile/repositories/user_activity_repository.dart';
 import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
 import 'package:sham_cars/l10n/app_localizations.dart';
 import 'package:sham_cars/router/redirect_helper.dart';
@@ -46,6 +47,9 @@ class MainApp extends StatelessWidget {
         providers: [
           BlocProvider(lazy: false, create: (_) => ThemeCubit()),
           BlocProvider(lazy: false, create: (_) => LocalizationCubit()),
+          RepositoryProvider(
+            create: (ctx) => UserActivityRepository(restClient),
+          ),
           RepositoryProvider(
             create: (_) => CommunityRepository(restClient, responseCache),
           ),

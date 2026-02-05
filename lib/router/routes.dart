@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/community/community_screen.dart';
-import 'package:sham_cars/features/compare/compare_screen.dart';
 import 'package:sham_cars/features/email_verification/email_verification_screen.dart';
 import 'package:sham_cars/features/home/home_cubit.dart';
 
@@ -13,7 +10,7 @@ import 'package:sham_cars/features/home/home_screen.dart';
 import 'package:sham_cars/features/login/login_screen.dart';
 import 'package:sham_cars/features/questions/question_details_screen.dart';
 import 'package:sham_cars/features/signup/screens/signup_screen.dart';
-import 'package:sham_cars/features/user_profile/cubit/user_profile_cubit.dart';
+import 'package:sham_cars/features/user_profile/my_activity_screen.dart';
 import 'package:sham_cars/features/user_profile/user_profile_screen.dart';
 import 'package:sham_cars/features/vehicle/cubits/car_trim_cubit.dart';
 import 'package:sham_cars/features/vehicle/cubits/vehicles_list_cubit.dart';
@@ -37,11 +34,12 @@ class RoutePath {
   static const signup = '/profile/signup';
   static const forgotPassword = '/profile/forgot-password';
   static const resetPassword = '/profile/reset-password';
+  static const profileActivity = '/profile/activity';
   static const questionDetails = ':id';
   static const vehicles = '/vehicles';
-  static const vehicleDetails = ':id';
-  static const vehicleCommunityReviews = ':id/community/reviews';
-  static const vehicleCommunityQuestions = ':id/community/qa';
+  static const vehicleDetails = '/vehicles/:id';
+  static const vehicleCommunityReviews = 'community/reviews';
+  static const vehicleCommunityQuestions = 'community/qa';
   static const compare = '/compare';
   static const community = '/community';
 }
@@ -53,21 +51,7 @@ class RoutePath {
     ),
     TypedStatefulShellBranch(
       routes: [
-        TypedGoRoute<VehiclesRoute>(
-          path: RoutePath.vehicles,
-          name: 'vehicles',
-          routes: [
-            TypedGoRoute<VehicleDetailsRoute>(path: RoutePath.vehicleDetails),
-            TypedGoRoute<VehicleCommunityReviewsRoute>(
-              path: RoutePath.vehicleCommunityReviews,
-              name: 'vehicle_community_reviews',
-            ),
-            TypedGoRoute<VehicleCommunityQuestionsRoute>(
-              path: RoutePath.vehicleCommunityQuestions,
-              name: 'vehicle_community_qa',
-            ),
-          ],
-        ),
+        TypedGoRoute<VehiclesRoute>(path: RoutePath.vehicles, name: 'vehicles'),
       ],
     ),
     TypedStatefulShellBranch(
@@ -79,11 +63,6 @@ class RoutePath {
             TypedGoRoute<QuestionDetailsRoute>(path: RoutePath.questionDetails),
           ],
         ),
-      ],
-    ),
-    TypedStatefulShellBranch(
-      routes: [
-        TypedGoRoute<CompareRoute>(path: RoutePath.compare, name: 'compare'),
       ],
     ),
   ],
@@ -176,11 +155,7 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider(
-      create: (context) =>
-          UserProfileCubit(GetIt.I.get<AuthNotifier>().currentUser),
-      child: const UserProfileScreen(),
-    );
+    return const UserProfileScreen();
   }
 }
 
@@ -200,6 +175,20 @@ class VehiclesRoute extends GoRouteData with $VehiclesRoute {
 }
 
 @immutable
+@TypedGoRoute<VehicleDetailsRoute>(
+  path: RoutePath.vehicleDetails,
+  name: 'vehicle_details',
+  routes: [
+    TypedGoRoute<VehicleCommunityReviewsRoute>(
+      path: RoutePath.vehicleCommunityReviews,
+      name: 'vehicle_community_reviews',
+    ),
+    TypedGoRoute<VehicleCommunityQuestionsRoute>(
+      path: RoutePath.vehicleCommunityQuestions,
+      name: 'vehicle_community_qa',
+    ),
+  ],
+)
 class VehicleDetailsRoute extends GoRouteData with $VehicleDetailsRoute {
   const VehicleDetailsRoute({required this.id, this.$extra});
   final CarTrimSummary? $extra;
@@ -262,15 +251,6 @@ class QuestionDetailsRoute extends GoRouteData with $QuestionDetailsRoute {
 }
 
 @immutable
-class CompareRoute extends GoRouteData with $CompareRoute {
-  const CompareRoute();
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return CompareScreen();
-  }
-}
-
-@immutable
 class CommunityRoute extends GoRouteData with $CommunityRoute {
   const CommunityRoute();
   @override
@@ -279,5 +259,19 @@ class CommunityRoute extends GoRouteData with $CommunityRoute {
       onOpenVehicle: (id) => VehicleDetailsRoute(id: id).push(context),
       onOpenQuestion: (id) => QuestionDetailsRoute(id).push(context),
     );
+  }
+}
+
+@TypedGoRoute<ProfileActivityRoute>(
+  path: RoutePath.profileActivity,
+  name: 'profile_activity',
+)
+@immutable
+class ProfileActivityRoute extends GoRouteData with $ProfileActivityRoute {
+  const ProfileActivityRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const MyActivityScreen();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/utils/date_time_text.dart';
 
 class QuestionCard extends StatelessWidget {
   const QuestionCard({
@@ -43,42 +44,13 @@ class QuestionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Optional context line (Model • Trim)
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 10,
+            spacing: 8,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               // Type badge
-              if (showQuestionBadge)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: cs.tertiaryContainer,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.help_outline,
-                        size: 14,
-                        color: cs.onTertiaryContainer,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'سؤال',
-                        style: tt.labelSmall?.copyWith(
-                          color: cs.onTertiaryContainer,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              if (showQuestionBadge) const Icon(Icons.help_outline, size: 18),
               if (hasContext) ...[
                 Text(
                   _contextText(),
@@ -89,10 +61,10 @@ class QuestionCard extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
               ],
               Text(
-                _formatDate(question.createdAt),
+                DateTimeText.relativeOrShort(context, question.createdAt),
                 style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
               ),
             ],
@@ -167,17 +139,6 @@ class QuestionCard extends StatelessWidget {
     if (model.isNotEmpty && trim.isNotEmpty) return '$model • $trim';
     if (model.isNotEmpty) return model;
     return trim;
-  }
-
-  String _formatDate(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inDays == 0) {
-      if (diff.inHours == 0) return 'الآن';
-      return 'منذ ${diff.inHours} س';
-    }
-    if (diff.inDays == 1) return 'أمس';
-    if (diff.inDays < 7) return 'منذ ${diff.inDays} أيام';
-    return '${dt.day}/${dt.month}/${dt.year}';
   }
 }
 

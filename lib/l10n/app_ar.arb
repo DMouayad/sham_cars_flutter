@@ -279,5 +279,21 @@
   "cityHoms": "حمص",
   "cityHama": "حماة",
   "cityLatakia": "اللاذقية",
-  "cityTartus": "طرطوس"
+  "cityTartus": "طرطوس",
+
+    "profileMyActivityTitle": "نشاطي",
+  "profileMyReviewsTab": "تجاربي",
+  "profileMyQuestionsTab": "أسئلتي",
+  "profileMyAnsweredQuestionsTab": "أجبتُ",
+
+  "profileEmptyMyReviewsTitle": "لا توجد تجارب بعد",
+  "profileEmptyMyReviewsSubtitle": "أضف تجربتك الأولى لمساعدة الآخرين.",
+  "profileEmptyMyQuestionsTitle": "لا توجد أسئلة بعد",
+  "profileEmptyMyQuestionsSubtitle": "اطرح سؤالك الأول واحصل على مساعدة من المجتمع.",
+  "profileEmptyMyAnsweredTitle": "لا توجد إجابات بعد",
+  "profileEmptyMyAnsweredSubtitle": "ساهم بالإجابة عن الأسئلة لدعم المجتمع.",
+
+  "profileBrowseCarsCta": "تصفح السيارات",
+  "profileAskQuestionCta": "اطرح سؤالاً",
+  "profileBrowseCommunityCta": "تصفح المجتمع"
 }

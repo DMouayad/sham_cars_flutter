@@ -808,4 +808,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cityTartus => 'Tartus';
+
+  @override
+  String get profileMyActivityTitle => 'My activity';
+
+  @override
+  String get profileMyReviewsTab => 'My reviews';
+
+  @override
+  String get profileMyQuestionsTab => 'My questions';
+
+  @override
+  String get profileMyAnsweredQuestionsTab => 'Answered';
+
+  @override
+  String get profileEmptyMyReviewsTitle => 'No reviews yet';
+
+  @override
+  String get profileEmptyMyReviewsSubtitle =>
+      'Write your first review to help others.';
+
+  @override
+  String get profileEmptyMyQuestionsTitle => 'No questions yet';
+
+  @override
+  String get profileEmptyMyQuestionsSubtitle =>
+      'Ask your first question and get help from the community.';
+
+  @override
+  String get profileEmptyMyAnsweredTitle => 'No answered questions yet';
+
+  @override
+  String get profileEmptyMyAnsweredSubtitle =>
+      'Answer questions to support the community.';
+
+  @override
+  String get profileBrowseCarsCta => 'Browse cars';
+
+  @override
+  String get profileAskQuestionCta => 'Ask a question';
+
+  @override
+  String get profileBrowseCommunityCta => 'Browse community';
 }

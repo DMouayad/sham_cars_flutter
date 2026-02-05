@@ -52,11 +52,6 @@ class CommunityReviewCard extends StatelessWidget {
                   _RatingPill(text: l10n.reviewsRatingFormat(review.rating)),
                 ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                DateTimeText.relativeOrShort(context, review.createdAt),
-                style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
-              ),
 
               const SizedBox(height: 10),
 
@@ -101,6 +96,10 @@ class CommunityReviewCard extends StatelessWidget {
                   ),
                   if (review.cityCode case final city?)
                     _CityChip(text: CityText.label(context, city)),
+                  Text(
+                    DateTimeText.relativeOrShort(context, review.createdAt),
+                    style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
                 ],
               ),
             ],
