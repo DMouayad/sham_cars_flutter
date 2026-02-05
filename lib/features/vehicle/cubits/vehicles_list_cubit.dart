@@ -65,30 +65,106 @@ class VehiclesListCubit extends Cubit<VehiclesListState> {
 
   VehiclesListCubit(this._repo) : super(const VehiclesListState());
 
+  int _requestVersion = 0;
+
   Future<void> init() async {
-    emit(state.copyWith(isFiltersLoading: true, isLoading: true));
+    final version = ++_requestVersion;
+    emit(
+      state.copyWith(
+        isFiltersLoading: true,
+        isLoading: true,
+        clearError: true,
+        isLoadingMore: false,
+      ),
+    );
 
     try {
       await RestClient.runCached(() async {
         final results = await Future.wait([
           _repo.getBodyTypes(),
           _repo.getMakes(),
-          _repo.getTrims(state.filters),
+          _repo.getTrims(state.filters.copyWith(skip: 0)),
         ]);
+
+        if (version != _requestVersion) return;
+
+        final trims = results[2] as List<CarTrimSummary>;
 
         emit(
           state.copyWith(
             bodyTypes: results[0] as List<BodyType>,
             makes: results[1] as List<CarMake>,
-            trims: results[2] as List<CarTrimSummary>,
+            trims: trims,
             isFiltersLoading: false,
             isLoading: false,
-            hasMore: (results[2] as List).length >= _pageSize,
+            isLoadingMore: false,
+            hasMore: trims.length >= _pageSize,
           ),
         );
       });
     } catch (e) {
+      if (version != _requestVersion) return;
       emit(state.copyWith(error: e, isLoading: false, isFiltersLoading: false));
+    }
+  }
+
+  Future<void> _applyFilters(TrimFilters filters) async {
+    final version = ++_requestVersion;
+
+    // Important: stop "load more" and reset pagination when applying new filters
+    emit(
+      state.copyWith(
+        filters: filters,
+        isLoading: true,
+        isLoadingMore: false,
+        hasMore: true,
+        // Optional: clear list on new query so empty state is correct while loading
+        trims: filters.skip == 0 ? const [] : state.trims,
+        clearError: true,
+      ),
+    );
+
+    try {
+      final trims = await _repo.getTrims(filters);
+
+      if (version != _requestVersion) return;
+
+      emit(
+        state.copyWith(
+          trims: trims,
+          isLoading: false,
+          hasMore: trims.length >= _pageSize,
+        ),
+      );
+    } catch (e) {
+      if (version != _requestVersion) return;
+      emit(state.copyWith(error: e, isLoading: false));
+    }
+  }
+
+  Future<void> loadMore() async {
+    // Block loadMore while a new query is loading
+    if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
+
+    final version = _requestVersion;
+    emit(state.copyWith(isLoadingMore: true));
+
+    try {
+      final newFilters = state.filters.copyWith(skip: state.trims.length);
+      final moreTrims = await _repo.getTrims(newFilters);
+
+      if (version != _requestVersion) return;
+
+      emit(
+        state.copyWith(
+          trims: [...state.trims, ...moreTrims],
+          isLoadingMore: false,
+          hasMore: moreTrims.length >= _pageSize,
+        ),
+      );
+    } catch (_) {
+      if (version != _requestVersion) return;
+      emit(state.copyWith(isLoadingMore: false));
     }
   }
 
@@ -149,44 +225,6 @@ class VehiclesListCubit extends Cubit<VehiclesListState> {
 
   Future<void> applyFilters(TrimFilters filters) async {
     await _applyFilters(filters.copyWith(skip: 0));
-  }
-
-  Future<void> _applyFilters(TrimFilters filters) async {
-    emit(state.copyWith(filters: filters, isLoading: true, clearError: true));
-
-    try {
-      final trims = await _repo.getTrims(filters);
-      emit(
-        state.copyWith(
-          trims: trims,
-          isLoading: false,
-          hasMore: trims.length >= _pageSize,
-        ),
-      );
-    } catch (e) {
-      emit(state.copyWith(error: e, isLoading: false));
-    }
-  }
-
-  Future<void> loadMore() async {
-    if (state.isLoadingMore || !state.hasMore) return;
-
-    emit(state.copyWith(isLoadingMore: true));
-
-    try {
-      final newFilters = state.filters.copyWith(skip: state.trims.length);
-      final moreTrims = await _repo.getTrims(newFilters);
-
-      emit(
-        state.copyWith(
-          trims: [...state.trims, ...moreTrims],
-          isLoadingMore: false,
-          hasMore: moreTrims.length >= _pageSize,
-        ),
-      );
-    } catch (e) {
-      emit(state.copyWith(isLoadingMore: false));
-    }
   }
 
   Future<void> clearFilters() async {

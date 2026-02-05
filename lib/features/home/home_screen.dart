@@ -6,12 +6,13 @@ import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/reviews/widgets/review_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
-import 'package:sham_cars/features/vehicle/widgets/compact_trim_card.dart';
-import 'package:sham_cars/features/vehicle/widgets/trim_card.dart';
+import 'package:sham_cars/features/vehicle/widgets/featured_trim_card.dart';
+import 'package:sham_cars/features/vehicle/widgets/list_trim_card.dart';
 import 'package:sham_cars/utils/utils.dart';
 
 import 'home_cubit.dart';
 import 'models.dart';
+import 'widgets/featured_trim_card_skeleton.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -49,10 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          if (state.isLoading && !state.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
           if (state.error != null && !state.hasData) {
             return _ErrorView(
               error: state.error!,
@@ -88,6 +85,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Show search results OR regular content
                 if (state.showSearchResults)
                   ..._buildSearchResults(state)
+                else if (state.isLoading && !state.hasData)
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 300,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: ThemeConstants.p,
+                        ),
+                        itemCount: 5,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (_, _) => const FeaturedTrimCardSkeleton(),
+                      ),
+                    ),
+                  )
                 else if (state.data != null)
                   ..._buildHomeContent(state.data!),
 
@@ -140,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
           separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (_, i) {
             final trim = state.searchResults[i];
-            return TrimCard(
+            return TrimListCard(
               trim: trim,
               onTap: () => widget.onOpenTrim(trim.id, trim),
             );
@@ -162,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         SliverToBoxAdapter(
           child: SizedBox(
-            height: 230,
+            height: 310,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
@@ -170,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (_, i) {
                 final trim = data.featuredTrims[i];
-                return CompactTrimCard(
+                return FeaturedTrimCard(
                   trim: trim,
                   onTap: () => widget.onOpenTrim(trim.id, trim),
                 );

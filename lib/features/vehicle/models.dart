@@ -422,16 +422,19 @@ class TrimFilters {
   }
 
   bool get hasFilters =>
+      (search != null && search!.isNotEmpty) ||
       makeId != null ||
       modelId != null ||
       bodyTypeId != null ||
       minPrice != null ||
       maxPrice != null ||
       minRangeKm != null ||
-      seats != null;
+      seats != null ||
+      featured != null;
 
   int get activeFilterCount {
     int count = 0;
+    if (search != null && search!.isNotEmpty) count++;
     if (makeId != null) count++;
     if (bodyTypeId != null) count++;
     if (minPrice != null || maxPrice != null) count++;

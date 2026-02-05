@@ -2,15 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/theme/constants.dart';
-import 'package:sham_cars/features/vehicle/widgets/trim_card.dart';
-import 'package:sham_cars/utils/utils.dart';
 
 import 'cubits/vehicles_list_cubit.dart';
 import 'models.dart';
+import 'widgets/list_trim_card.dart';
+import '../questions/widgets/trim_card_skeleton.dart';
 
 class VehiclesScreen extends StatefulWidget {
   const VehiclesScreen({super.key, required this.onOpenTrim});
-
   final void Function(CarTrimSummary summary) onOpenTrim;
 
   @override
@@ -37,17 +36,26 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
   }
 
   void _onScroll() {
+    final cubit = context.read<VehiclesListCubit>();
+    final st = cubit.state;
+
+    if (st.isLoading || st.isLoadingMore || !st.hasMore) return;
+
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      context.read<VehiclesListCubit>().loadMore();
+        _scrollController.position.maxScrollExtent - 250) {
+      cubit.loadMore();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return BlocBuilder<VehiclesListCubit, VehiclesListState>(
       builder: (context, state) {
-        if (state.error != null && state.trims.isEmpty) {
+        final isEmpty = state.trims.isEmpty;
+
+        if (state.error != null && isEmpty) {
           return _ErrorView(
             error: state.error!,
             onRetry: () => context.read<VehiclesListCubit>().init(),
@@ -59,119 +67,136 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              // Search
+              // Pinned header: Search + filter actions + chips (minimal height)
               PinnedHeaderSliver(
                 child: Container(
-                  color: context.colorScheme.surface,
-                  padding: const EdgeInsets.all(ThemeConstants.p),
+                  color: cs.surface,
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                    ThemeConstants.p,
+                    10,
+                    ThemeConstants.p,
+                    10,
+                  ),
                   child: Column(
-                    spacing: 8,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      TextField(
+                      _SearchField(
                         controller: _searchController,
-                        onChanged: (q) {
-                          _debouncer.run(() {
-                            context.read<VehiclesListCubit>().search(q);
-                          });
+                        onChanged: (q) => _debouncer.run(() {
+                          context.read<VehiclesListCubit>().search(q);
+                        }),
+                        onClear: () {
+                          _searchController.clear();
+                          context.read<VehiclesListCubit>().search('');
+                          setState(() {}); // ensures suffix icon updates
                         },
-                        decoration: InputDecoration(
-                          hintText: 'ابحث عن سيارة...',
-                          prefixIcon: const Icon(Icons.search),
-                          suffixIcon: _searchController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    context.read<VehiclesListCubit>().search(
-                                      '',
-                                    );
-                                  },
-                                )
-                              : null,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              ThemeConstants.rCard,
+                      ),
+                      const SizedBox(height: 10),
+
+                      Row(
+                        children: [
+                          FilledButton.tonalIcon(
+                            onPressed: () => _showFiltersSheet(context, state),
+                            icon: Badge(
+                              isLabelVisible:
+                                  state.filters.activeFilterCount > 0,
+                              label: Text('${state.filters.activeFilterCount}'),
+                              child: const Icon(Icons.tune),
                             ),
+                            label: const Text('الفلاتر'),
                           ),
-                          filled: true,
-                        ),
+                          const SizedBox(width: 8),
+
+                          if (state.filters.hasFilters)
+                            TextButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                context
+                                    .read<VehiclesListCubit>()
+                                    .clearFilters();
+                                setState(() {});
+                              },
+                              child: const Text('مسح'),
+                            ),
+
+                          const Spacer(),
+
+                          if (state.isLoading)
+                            const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                        ],
                       ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _FilterChipsRow(
-                              state: state,
-                              onFilterTap: () =>
-                                  _showFiltersSheet(context, state),
-                            ),
-                            Icon(
-                              Icons.directions_car,
-                              size: 18,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${state.trims.length} سيارة',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
-                            ),
-                            if (state.isLoading) ...[
-                              const SizedBox(width: 8),
-                              const SizedBox(
-                                width: 12,
-                                height: 12,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
+
+                      if (state.filters.hasFilters) ...[
+                        const SizedBox(height: 8),
+                        _ActiveFiltersRow(state: state),
+                      ],
+
+                      if (!state.isLoading && state.filters.hasFilters) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          'النتائج: ${state.trims.length}',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: cs.onSurfaceVariant,
+                                fontWeight: FontWeight.w700,
                               ),
-                            ],
-                          ],
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
               ),
 
-              // Grid
-              if (state.trims.isEmpty)
-                const SliverFillRemaining(child: _EmptyView())
-              else if (state.isLoading && state.trims.isEmpty)
-                const Center(child: CircularProgressIndicator())
+              // Body
+              if (state.isLoading && state.trims.isEmpty)
+                SliverPadding(
+                  padding: const EdgeInsets.all(ThemeConstants.p),
+                  sliver: SliverList.separated(
+                    itemCount: 6,
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (_, _) => const TrimListCardSkeleton(),
+                  ),
+                )
+              else if (!state.isLoading && isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _EmptyView(
+                    onClear: state.filters.hasFilters
+                        ? () {
+                            _searchController.clear();
+                            context.read<VehiclesListCubit>().clearFilters();
+                            setState(() {});
+                          }
+                        : null,
+                  ),
+                )
               else
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: ThemeConstants.p,
-                  ),
-                  sliver: SliverGrid.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 0.7,
-                        ),
+                  padding: const EdgeInsets.all(ThemeConstants.p),
+                  sliver: SliverList.separated(
                     itemCount:
                         state.trims.length + (state.isLoadingMore ? 1 : 0),
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (_, i) {
                       if (i >= state.trims.length) {
                         return const Center(
                           child: Padding(
-                            padding: EdgeInsets.all(16),
-                            child: CircularProgressIndicator(),
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           ),
                         );
                       }
+
                       final trim = state.trims[i];
-                      return TrimCard(
+                      return TrimListCard(
                         trim: trim,
                         onTap: () => widget.onOpenTrim(trim),
                       );
@@ -205,71 +230,81 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
   }
 }
 
-class _FilterChipsRow extends StatelessWidget {
-  const _FilterChipsRow({required this.state, required this.onFilterTap});
+class _SearchField extends StatelessWidget {
+  const _SearchField({
+    required this.controller,
+    required this.onChanged,
+    required this.onClear,
+  });
 
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        hintText: 'ابحث عن سيارة...',
+        isDense: true,
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: controller.text.isNotEmpty
+            ? IconButton(icon: const Icon(Icons.close), onPressed: onClear)
+            : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(ThemeConstants.rCard),
+        ),
+        filled: true,
+      ),
+    );
+  }
+}
+
+class _ActiveFiltersRow extends StatelessWidget {
+  const _ActiveFiltersRow({required this.state});
   final VehiclesListState state;
-  final VoidCallback onFilterTap;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
       child: Row(
         children: [
-          // Filter button
-          ActionChip(
-            avatar: Badge(
-              isLabelVisible: state.filters.hasFilters,
-              smallSize: 8,
-              child: const Icon(Icons.tune, size: 18),
-            ),
-            label: const Text('الفلاتر'),
-            onPressed: onFilterTap,
-          ),
-          const SizedBox(width: 8),
-
-          // Active filter chips
           if (state.selectedMake case final make?)
             Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Chip(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: InputChip(
                 label: Text(make.name),
-                deleteIcon: const Icon(Icons.close, size: 16),
                 onDeleted: () =>
                     context.read<VehiclesListCubit>().setMake(null),
               ),
             ),
-
           if (state.selectedBodyType case final bt?)
             Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Chip(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: InputChip(
                 avatar: Text(bt.icon),
                 label: Text(bt.name),
-                deleteIcon: const Icon(Icons.close, size: 16),
                 onDeleted: () =>
                     context.read<VehiclesListCubit>().setBodyType(null),
               ),
             ),
-
           if (state.filters.minRangeKm case final range?)
             Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Chip(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: InputChip(
                 label: Text('$range+ كم'),
-                deleteIcon: const Icon(Icons.close, size: 16),
                 onDeleted: () =>
                     context.read<VehiclesListCubit>().setMinRange(null),
               ),
             ),
           if (state.filters.seats case final seats?)
             Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Chip(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: InputChip(
                 label: Text('$seats+ مقاعد'),
-                deleteIcon: const Icon(Icons.close, size: 16),
                 onDeleted: () =>
                     context.read<VehiclesListCubit>().setSeats(null),
               ),
@@ -496,32 +531,44 @@ class _FilterSection extends StatelessWidget {
 }
 
 class _EmptyView extends StatelessWidget {
-  const _EmptyView();
+  const _EmptyView({this.onClear});
+  final VoidCallback? onClear;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.directions_car_outlined, size: 64, color: cs.outline),
-          const SizedBox(height: 16),
-          Text(
-            'لا توجد سيارات',
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(color: cs.onSurfaceVariant),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'جرب تغيير الفلاتر',
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: cs.outline),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(ThemeConstants.p),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.directions_car_outlined, size: 64, color: cs.outline),
+            const SizedBox(height: 16),
+            Text(
+              'لا توجد سيارات',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: cs.onSurfaceVariant),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'جرّب تغيير الفلاتر أو البحث',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: cs.outline),
+              textAlign: TextAlign.center,
+            ),
+            if (onClear != null) ...[
+              const SizedBox(height: 14),
+              FilledButton.tonal(
+                onPressed: onClear,
+                child: const Text('مسح الفلاتر'),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

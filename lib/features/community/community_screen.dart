@@ -11,6 +11,7 @@ import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
+import 'package:sham_cars/widgets/question_card_skeleton.dart';
 
 import 'community_cubit.dart';
 import 'models.dart';
@@ -101,7 +102,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
           final isEmptyFeed = state.questions.isEmpty && state.reviews.isEmpty;
 
           if (state.isLoading && isEmptyFeed) {
-            return const Center(child: CircularProgressIndicator());
+            return ListView.separated(
+              padding: EdgeInsets.all(ThemeConstants.p),
+              itemCount: 6,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (_, __) => const QuestionCardSkeleton(),
+            );
           }
 
           if (state.error != null && isEmptyFeed) {
