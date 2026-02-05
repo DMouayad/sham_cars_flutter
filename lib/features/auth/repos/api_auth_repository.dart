@@ -14,50 +14,38 @@ final class AuthRepository extends IAuthRepository {
 
   @override
   Future<User> logIn(LoginRequest req) async {
-    final (username, token) = await _client
+    final (_, token) = await _client
         .request(
           HttpMethod.post,
           ApiRoutes.authRoutes.login,
           body: {'email': req.emailOrPhone, 'password': req.password},
         )
         .then(_decodeLoginResponse);
+
     await _tokensRepository.store(token);
 
-    User? user = await _localUserRepository.findByEmail(req.emailOrPhone);
-    if (user == null) {
-      user = await _apiUserRepository.getUser(token);
-      if (user != null) {
-        await _localUserRepository.saveUser(user);
-      }
-    }
-    if (user == null) {
-      throw AppError.undefined;
-    }
+    final user = await _apiUserRepository.getUser(token);
+    if (user == null) throw AppError.undefined;
+
+    await _localUserRepository.saveCurrentUser(user);
     return user;
   }
 
   @override
   Future<void> logOut() async {
-    final accessToken = await _tokensRepository.get();
-    if (accessToken == null) {
-      return;
+    final token = await _tokensRepository.get();
+    if (token == null) return;
+
+    try {
+      await _client.request(
+        HttpMethod.post,
+        ApiRoutes.authRoutes.logout,
+        accessToken: token,
+      );
+    } finally {
+      await _tokensRepository.store(null);
+      await _localUserRepository.clearCurrentUser();
     }
-    return _client
-        .request(
-          HttpMethod.post,
-          ApiRoutes.authRoutes.logout,
-          accessToken: accessToken,
-        )
-        .catchError((err, st) async {
-          if (err case ApiError apiError
-              when apiError.appErr == AppError.invalidPat) {
-            await _tokensRepository.store(null);
-            return Future<JsonObject>.value({});
-          } else {
-            return Future<JsonObject>.error(err, st);
-          }
-        })
-        .then((_) {});
   }
 
   @override
@@ -86,7 +74,7 @@ final class AuthRepository extends IAuthRepository {
       createdAt: DateTime.now(),
       identityConfirmedAt: null,
     );
-    await _localUserRepository.saveUser(user);
+    await _localUserRepository.saveCurrentUser(user);
     return user;
   }
 
@@ -103,12 +91,9 @@ final class AuthRepository extends IAuthRepository {
       throw AppError.signupFailed;
     }
     await _tokensRepository.store(token);
-    User? user = await _localUserRepository.findByEmail(req.email);
-    if (user == null) {
-      user = await _apiUserRepository.getUser(token);
-      if (user != null) {
-        await _localUserRepository.saveUser(user);
-      }
+    final user = await _apiUserRepository.getUser(token);
+    if (user != null) {
+      await _localUserRepository.saveCurrentUser(user);
     }
 
     return user!;

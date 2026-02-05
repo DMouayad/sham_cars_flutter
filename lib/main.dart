@@ -34,7 +34,14 @@ void _bootstrap(RestClient restClient) {
       GetIt.I.get<ApiUserRepository>(),
     ),
   );
-  GetIt.I.registerSingleton(AuthNotifier(GetIt.I.get<IAuthRepository>()));
+  GetIt.I.registerSingleton(
+    AuthNotifier(
+      GetIt.I.get<IAuthRepository>(),
+      GetIt.I.get<ITokensRepository>(),
+      GetIt.I.get<LocalUserRepository>(),
+      GetIt.I.get<ApiUserRepository>(),
+    ),
+  );
 }
 
 Future<void> main() async {
@@ -54,5 +61,9 @@ Future<void> main() async {
   final restClient = RestClient(http_factory.httpClient());
   _bootstrap(restClient);
   final cache = ResponseCache();
+
+  final auth = GetIt.I<AuthNotifier>();
+  await auth.restoreSession();
+
   runApp(MainApp(restClient: restClient, responseCache: cache));
 }
