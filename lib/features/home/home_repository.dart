@@ -4,6 +4,7 @@ import 'package:sham_cars/api/cache.dart';
 import 'package:sham_cars/api/rest_client.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/questions/models.dart';
+import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
 
@@ -43,20 +44,17 @@ class HomeRepository {
 
       final data = await RestClient.runCached(() async {
         final results = await Future.wait([
-          _carDataRepo.getFeaturedTrims(limit: 10),
-          _carDataRepo.getBodyTypes(),
-          _carDataRepo.getMakes(),
-          _communityRepo.getQuestions(),
-          // _fetchReviews(),
+          _carDataRepo.getTrendingCars(take: 10, skip: 0),
+          _carDataRepo.getHotTopics(take: 10, skip: 0),
+          _communityRepo.getLatestQuestions(),
+          _communityRepo.getLatestReviews(),
         ]);
 
         final homeData = HomeData(
-          featuredTrims: results[0] as List<CarTrimSummary>,
-          bodyTypes: results[1] as List<BodyType>,
-          makes: results[2] as List<CarMake>,
-          latestQuestions: results[3] as List<Question>,
-          // latestReviews: results[4] as List<Review>,
-          latestReviews: [], // empty for now
+          trendingTrims: results[0] as List<CarTrimSummary>,
+          hotTopics: results[1] as List<HotTopic>,
+          latestQuestions: results[2] as List<Question>,
+          latestReviews: results[3] as List<Review>,
         );
 
         _cache.set(_cacheKeyHome, homeData, ttl: const Duration(minutes: 5));

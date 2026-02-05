@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/utils/city_text.dart';
 import 'package:sham_cars/utils/date_time_text.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 class CommunityReviewCard extends StatelessWidget {
   const CommunityReviewCard({super.key, required this.review, this.onTap});
@@ -13,6 +15,7 @@ class CommunityReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final l10n = context.l10n;
 
     final canOpen = review.trimId != null && onTap != null;
 
@@ -30,42 +33,32 @@ class CommunityReviewCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top row: "تجربة" + rating + time
+              // Header: vehicle + rating + time
               Row(
                 children: [
-                  _Pill(
-                    text: 'تجربة',
-                    icon: Icons.rate_review_outlined,
-                    background: cs.secondaryContainer,
-                    foreground: cs.onSecondaryContainer,
+                  const Icon(Icons.rate_review_outlined, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      review.trimDisplayName ?? (review.trimName ?? '—'),
+                      style: tt.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  _Pill(
-                    text: '${review.rating}/5',
-                    icon: Icons.star_rounded,
-                    iconColor: Colors.amber,
-                    background: cs.primaryContainer,
-                    foreground: cs.onPrimaryContainer,
-                  ),
-                  const Spacer(),
-                  Text(
-                    DateTimeText.relativeOrShort(context, review.createdAt),
-                    style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
-                  ),
+                  _RatingPill(text: l10n.reviewsRatingFormat(review.rating)),
                 ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                DateTimeText.relativeOrShort(context, review.createdAt),
+                style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
               ),
 
               const SizedBox(height: 10),
-
-              // Vehicle (headline)
-              Text(
-                review.trimDisplayName ?? (review.trimName ?? '—'),
-                style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w900),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              const SizedBox(height: 6),
 
               // Optional title
               if (review.title?.trim().isNotEmpty ?? false) ...[
@@ -107,12 +100,7 @@ class CommunityReviewCard extends StatelessWidget {
                     ),
                   ),
                   if (review.cityCode case final city?)
-                    _Pill(
-                      text: _cityLabel(city),
-                      icon: Icons.location_city,
-                      background: cs.surfaceContainerHighest,
-                      foreground: cs.onSurfaceVariant,
-                    ),
+                    _CityChip(text: CityText.label(context, city)),
                 ],
               ),
             ],
@@ -121,16 +109,61 @@ class CommunityReviewCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  String _cityLabel(String code) => switch (code) {
-    'damascus' => 'دمشق',
-    'aleppo' => 'حلب',
-    'homs' => 'حمص',
-    'hama' => 'حماة',
-    'latakia' => 'اللاذقية',
-    'tartus' => 'طرطوس',
-    _ => code,
-  };
+class _RatingPill extends StatelessWidget {
+  const _RatingPill({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
+      decoration: BoxDecoration(
+        color: cs.primaryContainer,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: cs.onPrimaryContainer,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CityChip extends StatelessWidget {
+  const _CityChip({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: cs.onSurfaceVariant,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
 }
 
 class _AvatarLetter extends StatelessWidget {
@@ -142,7 +175,7 @@ class _AvatarLetter extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final letter = name.trim().isNotEmpty
         ? name.trim().characters.first.toUpperCase()
-        : '؟';
+        : '?';
 
     return Container(
       width: 28,
@@ -153,47 +186,11 @@ class _AvatarLetter extends StatelessWidget {
         border: Border.all(color: cs.outlineVariant),
       ),
       alignment: Alignment.center,
-      child: Text(letter, style: const TextStyle(fontWeight: FontWeight.w900)),
-    );
-  }
-}
-
-class _Pill extends StatelessWidget {
-  const _Pill({
-    required this.text,
-    required this.icon,
-    required this.background,
-    required this.foreground,
-    this.iconColor,
-  });
-
-  final String text;
-  final IconData icon;
-  final Color background;
-  final Color foreground;
-  final Color? iconColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: iconColor ?? foreground),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: foreground,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
+      child: Text(
+        letter,
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900),
       ),
     );
   }

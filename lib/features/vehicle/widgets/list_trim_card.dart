@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 class TrimListCard extends StatelessWidget {
   const TrimListCard({super.key, required this.trim, required this.onTap});
@@ -24,77 +25,97 @@ class TrimListCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Thumb
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: SizedBox(
-                  width: 92,
-                  height: 72,
-                  child: _TrimImage(imageUrl: trim.imageUrl),
-                ),
-              ),
-              const SizedBox(width: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Thumb
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      width: 92,
+                      height: 72,
+                      child: _TrimImage(imageUrl: trim.imageUrl),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
 
-              // Text
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                  // Text
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Text(
-                            trim.makeName.toUpperCase(),
-                            style: tt.labelSmall?.copyWith(
-                              color: cs.primary,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.8,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                trim.makeName.toUpperCase(),
+                                style: tt.labelSmall?.copyWith(
+                                  color: cs.primary,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.8,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
+                            if (trim.isFeatured)
+                              Icon(
+                                Icons.star_rounded,
+                                size: 16,
+                                color: cs.primary,
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          trim.displayName,
+                          style: tt.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w900,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (trim.yearDisplay?.isNotEmpty ?? false)
+                          Text(
+                            trim.yearDisplay!,
+                            style: tt.labelSmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        if (trim.isFeatured)
-                          Icon(Icons.star_rounded, size: 16, color: cs.primary),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              _SpecsRow(trim: trim),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  if (trim.priceDisplay case final price?)
                     Text(
-                      trim.displayName,
-                      style: tt.titleSmall?.copyWith(
+                      price,
+                      style: tt.labelLarge?.copyWith(
                         fontWeight: FontWeight.w900,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    )
+                  else
+                    Text(
+                      '—',
+                      style: tt.labelLarge?.copyWith(
+                        color: cs.onSurfaceVariant,
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    _SpecsRow(trim: trim),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        if (trim.priceDisplay case final price?)
-                          Text(
-                            price,
-                            style: tt.labelLarge?.copyWith(
-                              fontWeight: FontWeight.w900,
-                            ),
-                          )
-                        else
-                          Text(
-                            '—',
-                            style: tt.labelLarge?.copyWith(
-                              color: cs.onSurfaceVariant,
-                            ),
-                          ),
-                        const Spacer(),
-                        Icon(Icons.chevron_left, size: 20, color: cs.outline),
-                      ],
-                    ),
-                  ],
-                ),
+                  const Spacer(),
+                  Icon(
+                    context.isLTR ? Icons.chevron_left : Icons.chevron_right,
+                    size: 20,
+                    color: cs.outline,
+                  ),
+                ],
               ),
             ],
           ),

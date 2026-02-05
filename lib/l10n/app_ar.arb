@@ -250,5 +250,34 @@
   },
 
   "trimPickerTitle": "اختر النسخة",
-  "trimPickerSearchHint": "ابحث عن نسخة..."
+  "trimPickerSearchHint": "ابحث عن نسخة...",
+
+  "homeSearchHint": "ابحث باسم السيارة أو العلامة",
+  "homeTrendingTitle": "الأكثر رواجاً",
+  "homeHotTopicsTitle": "الأكثر تداولاً",
+  "homeLatestQuestionsTitle": "أحدث الأسئلة",
+  "homeLatestReviewsTitle": "أحدث التجارب",
+  "homeSearchResultsCount": "{count} نتيجة",
+  "@homeSearchResultsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "homeSearchNoResultsTitle": "لا توجد نتائج",
+  "homeSearchNoResultsSubtitle": "جرّب كلمات مختلفة للبحث.",
+  "homeErrorTitle": "حدث خطأ",
+  "homeErrorSubtitle": "يرجى المحاولة مرة أخرى.",
+  "commonFeatured": "مميز",
+
+  "vehicleDetailsSimilarTitle": "سيارات مشابهة",
+  "vehicleDetailsAlsoLikedTitle": "قد تعجبك أيضاً",
+  "vehicleDetailsSpecsTitle": "المواصفات",
+  "vehicleDetailsDescriptionTitle": "الوصف",
+
+  "cityDamascus": "دمشق",
+  "cityAleppo": "حلب",
+  "cityHoms": "حمص",
+  "cityHama": "حماة",
+  "cityLatakia": "اللاذقية",
+  "cityTartus": "طرطوس"
 }

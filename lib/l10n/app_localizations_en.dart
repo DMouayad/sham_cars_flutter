@@ -743,4 +743,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trimPickerSearchHint => 'Search trims...';
+
+  @override
+  String get homeSearchHint => 'Search by model or brand';
+
+  @override
+  String get homeTrendingTitle => 'Trending now';
+
+  @override
+  String get homeHotTopicsTitle => 'Hot topics';
+
+  @override
+  String get homeLatestQuestionsTitle => 'Latest questions';
+
+  @override
+  String get homeLatestReviewsTitle => 'Latest reviews';
+
+  @override
+  String homeSearchResultsCount(int count) {
+    return '$count results';
+  }
+
+  @override
+  String get commonFeatured => 'Featured';
+
+  @override
+  String get homeSearchNoResultsTitle => 'No results';
+
+  @override
+  String get homeSearchNoResultsSubtitle => 'Try a different search term.';
+
+  @override
+  String get homeErrorTitle => 'Something went wrong';
+
+  @override
+  String get homeErrorSubtitle => 'Please try again.';
+
+  @override
+  String get vehicleDetailsSimilarTitle => 'Similar cars';
+
+  @override
+  String get vehicleDetailsAlsoLikedTitle => 'People also liked';
+
+  @override
+  String get vehicleDetailsSpecsTitle => 'Specifications';
+
+  @override
+  String get vehicleDetailsDescriptionTitle => 'Description';
+
+  @override
+  String get cityDamascus => 'Damascus';
+
+  @override
+  String get cityAleppo => 'Aleppo';
+
+  @override
+  String get cityHoms => 'Homs';
+
+  @override
+  String get cityHama => 'Hama';
+
+  @override
+  String get cityLatakia => 'Latakia';
+
+  @override
+  String get cityTartus => 'Tartus';
 }

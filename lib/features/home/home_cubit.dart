@@ -8,6 +8,7 @@ class HomeState {
   final HomeData? data;
   final bool isLoading;
   final Object? error;
+
   final String searchQuery;
   final List<CarTrimSummary> searchResults;
   final bool isSearching;
@@ -41,7 +42,10 @@ class HomeState {
   }
 
   bool get hasData => data != null;
-  bool get showSearchResults => searchQuery.isNotEmpty;
+  bool get showSearchResults => searchQuery.trim().isNotEmpty;
+
+  /// Initial load only (used to show section skeletons)
+  bool get isInitialLoading => isLoading && data == null && !showSearchResults;
 }
 
 class HomeCubit extends Cubit<HomeState> {
@@ -73,25 +77,31 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(searchQuery: query));
 
     if (query.trim().isEmpty) {
-      emit(state.copyWith(searchResults: [], isSearching: false));
+      emit(state.copyWith(searchResults: const [], isSearching: false));
       return;
     }
 
     emit(state.copyWith(isSearching: true));
+
     try {
       final results = await _repo.search(query);
+
       // Only update if query hasn't changed
       if (state.searchQuery == query) {
         emit(state.copyWith(searchResults: results, isSearching: false));
       }
-    } catch (e) {
+    } catch (_) {
       emit(state.copyWith(isSearching: false));
     }
   }
 
   void clearSearch() {
     emit(
-      state.copyWith(searchQuery: '', searchResults: [], isSearching: false),
+      state.copyWith(
+        searchQuery: '',
+        searchResults: const [],
+        isSearching: false,
+      ),
     );
   }
 }

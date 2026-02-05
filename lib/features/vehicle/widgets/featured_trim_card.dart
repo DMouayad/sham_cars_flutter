@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
+import 'package:sham_cars/utils/utils.dart'; // for context.l10n
 
 class FeaturedTrimCard extends StatelessWidget {
   const FeaturedTrimCard({
     super.key,
+    required this.height,
     required this.trim,
     required this.onTap,
     this.width = 260,
@@ -13,20 +15,27 @@ class FeaturedTrimCard extends StatelessWidget {
   final CarTrimSummary trim;
   final VoidCallback onTap;
   final double width;
+  final double height;
+
+  static const double _chipRowHeight = 34; // ✅ enough for chip padding + text
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final l10n = context.l10n;
+
+    // Stable image height based on width and 16/10 aspect ratio
+    final imageHeight = width * (10 / 16);
 
     return SizedBox(
       width: width,
+      height: height,
       child: InkWell(
         onTap: onTap,
         borderRadius: ThemeConstants.cardRadius,
         child: Ink(
           decoration: BoxDecoration(
-            // subtle gradient border feel
             gradient: LinearGradient(
               colors: [
                 cs.primary.withOpacity(0.25),
@@ -45,22 +54,21 @@ class FeaturedTrimCard extends StatelessWidget {
                 borderRadius: ThemeConstants.cardRadius,
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Image header
+                  // Image header (fixed height, no aspect surprises)
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(ThemeConstants.rCard),
                     ),
-                    child: AspectRatio(
-                      aspectRatio: 16 / 10,
+                    child: SizedBox(
+                      height: imageHeight,
+                      width: double.infinity,
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
                           _TrimImage(imageUrl: trim.imageUrl),
 
-                          // scrim
                           Positioned.fill(
                             child: DecoratedBox(
                               decoration: BoxDecoration(
@@ -77,74 +85,82 @@ class FeaturedTrimCard extends StatelessWidget {
                             ),
                           ),
 
-                          // Featured badge
                           PositionedDirectional(
                             top: 10,
                             start: 10,
-                            child: _FeaturedBadge(),
+                            child: _FeaturedBadge(label: l10n.commonFeatured),
                           ),
                         ],
                       ),
                     ),
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          trim.makeName.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: tt.labelSmall?.copyWith(
-                            color: cs.primary,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.7,
+                  // Content area takes remaining height and stays stable
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            trim.makeName.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: tt.labelSmall?.copyWith(
+                              color: cs.primary,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.7,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          trim.displayName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: tt.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
+                          const SizedBox(height: 4),
 
-                        SizedBox(
-                          height: 25, // fixed chip row height
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              if (trim.range.isNotEmpty)
-                                _MiniChip(
-                                  icon: Icons.route,
-                                  color: Colors.green,
-                                  text: trim.range.display,
-                                ),
-                              if (trim.batteryCapacity.isNotEmpty)
-                                _MiniChip(
-                                  icon: Icons.battery_charging_full,
-                                  color: Colors.blue,
-                                  text: trim.batteryCapacity.display,
-                                ),
-                              if (trim.acceleration.isNotEmpty)
-                                _MiniChip(
-                                  icon: Icons.speed,
-                                  color: Colors.orange,
-                                  text: trim.acceleration.display,
-                                ),
-                            ],
+                          Text(
+                            trim.displayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: tt.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 12),
-                        Flexible(
-                          child: Row(
+                          const Spacer(),
+
+                          // Chips row: fixed height, horizontal scroll, with spacing
+                          SizedBox(
+                            height: _chipRowHeight,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                if (trim.range.isNotEmpty) ...[
+                                  _MiniChip(
+                                    icon: Icons.route,
+                                    color: Colors.green,
+                                    text: trim.range.display,
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                                if (trim.batteryCapacity.isNotEmpty) ...[
+                                  _MiniChip(
+                                    icon: Icons.battery_charging_full,
+                                    color: Colors.blue,
+                                    text: trim.batteryCapacity.display,
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                                if (trim.acceleration.isNotEmpty)
+                                  _MiniChip(
+                                    icon: Icons.speed,
+                                    color: Colors.orange,
+                                    text: trim.acceleration.display,
+                                  ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          // Price row: overflow-safe
+                          Row(
                             children: [
                               Expanded(
                                 child: Text(
@@ -165,8 +181,8 @@ class FeaturedTrimCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -208,10 +224,11 @@ class _TrimImage extends StatelessWidget {
 }
 
 class _FeaturedBadge extends StatelessWidget {
+  const _FeaturedBadge({required this.label});
+  final String label;
+
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     return Container(
       padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
       decoration: BoxDecoration(
@@ -225,7 +242,7 @@ class _FeaturedBadge extends StatelessWidget {
           const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
           const SizedBox(width: 6),
           Text(
-            'مميز', // localize later (recommended)
+            label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w900,
@@ -243,6 +260,7 @@ class _MiniChip extends StatelessWidget {
     required this.color,
     required this.text,
   });
+
   final IconData icon;
   final Color color;
   final String text;

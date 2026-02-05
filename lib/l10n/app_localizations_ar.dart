@@ -739,4 +739,69 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trimPickerSearchHint => 'ابحث عن نسخة...';
+
+  @override
+  String get homeSearchHint => 'ابحث باسم السيارة أو العلامة';
+
+  @override
+  String get homeTrendingTitle => 'الأكثر رواجاً';
+
+  @override
+  String get homeHotTopicsTitle => 'الأكثر تداولاً';
+
+  @override
+  String get homeLatestQuestionsTitle => 'أحدث الأسئلة';
+
+  @override
+  String get homeLatestReviewsTitle => 'أحدث التجارب';
+
+  @override
+  String homeSearchResultsCount(int count) {
+    return '$count نتيجة';
+  }
+
+  @override
+  String get commonFeatured => 'مميز';
+
+  @override
+  String get homeSearchNoResultsTitle => 'لا توجد نتائج';
+
+  @override
+  String get homeSearchNoResultsSubtitle => 'جرّب كلمات مختلفة للبحث.';
+
+  @override
+  String get homeErrorTitle => 'حدث خطأ';
+
+  @override
+  String get homeErrorSubtitle => 'يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get vehicleDetailsSimilarTitle => 'سيارات مشابهة';
+
+  @override
+  String get vehicleDetailsAlsoLikedTitle => 'قد تعجبك أيضاً';
+
+  @override
+  String get vehicleDetailsSpecsTitle => 'المواصفات';
+
+  @override
+  String get vehicleDetailsDescriptionTitle => 'الوصف';
+
+  @override
+  String get cityDamascus => 'دمشق';
+
+  @override
+  String get cityAleppo => 'حلب';
+
+  @override
+  String get cityHoms => 'حمص';
+
+  @override
+  String get cityHama => 'حماة';
+
+  @override
+  String get cityLatakia => 'اللاذقية';
+
+  @override
+  String get cityTartus => 'طرطوس';
 }

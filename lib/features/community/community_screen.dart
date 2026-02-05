@@ -18,6 +18,7 @@ import 'models.dart';
 import 'widgets/add_review_sheet.dart';
 import 'widgets/ask_question_sheet.dart';
 import 'widgets/cards.dart';
+import 'widgets/community_review_card_skeleton.dart';
 import 'widgets/search_field.dart';
 import '../questions/models.dart';
 import '../reviews/models.dart';
@@ -102,11 +103,59 @@ class _CommunityScreenState extends State<CommunityScreen> {
           final isEmptyFeed = state.questions.isEmpty && state.reviews.isEmpty;
 
           if (state.isLoading && isEmptyFeed) {
-            return ListView.separated(
-              padding: EdgeInsets.all(ThemeConstants.p),
-              itemCount: 6,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (_, __) => const QuestionCardSkeleton(),
+            return CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: _StatsCard(questionsCount: 0, reviewsCount: 0),
+                ),
+                PinnedHeaderSliver(
+                  child: Container(
+                    color: context.colorScheme.surface,
+                    padding: const EdgeInsets.fromLTRB(
+                      ThemeConstants.p,
+                      8,
+                      ThemeConstants.p,
+                      12,
+                    ),
+                    child: Column(
+                      spacing: 6,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SearchField(
+                          controller: _searchController,
+                          onChanged: (q) =>
+                              context.read<CommunityCubit>().search(q),
+                          onClear: () {
+                            _searchController.clear();
+                            context.read<CommunityCubit>().search('');
+                          },
+                        ),
+                        CommunityFilters(
+                          selected: _filter,
+                          onChanged: (f) => setState(() => _filter = f),
+                          questionsCount: 0,
+                          reviewsCount: 0,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: ThemeConstants.p,
+                  ),
+                  sliver: SliverList.separated(
+                    itemCount: 6,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (_, i) {
+                      if (i.isEven) return const QuestionCardSkeleton();
+                      return const CommunityReviewCardSkeleton();
+                    },
+                  ),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 80)),
+              ],
             );
           }
 
@@ -244,7 +293,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     final returnTo = GoRouterState.of(context).uri.toString();
                     LoginRoute(redirectTo: returnTo).push(context);
                   },
-                  label: const Text('Join to contribute'),
+                  label: Text(context.l10n.communityJoinToContribute),
                   icon: const Icon(Icons.login),
                   backgroundColor: context.colorScheme.secondary,
                 ),

@@ -575,5 +575,33 @@
   },
 
   "trimPickerTitle": "Select a trim",
-  "trimPickerSearchHint": "Search trims..."
+  "trimPickerSearchHint": "Search trims...",
+
+  "homeSearchHint": "Search by model or brand",
+  "homeTrendingTitle": "Trending now",
+  "homeHotTopicsTitle": "Hot topics",
+  "homeLatestQuestionsTitle": "Latest questions",
+  "homeLatestReviewsTitle": "Latest reviews",
+  "homeSearchResultsCount": "{count} results",
+  "@homeSearchResultsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+    "commonFeatured": "Featured",
+  "homeSearchNoResultsTitle": "No results",
+  "homeSearchNoResultsSubtitle": "Try a different search term.",
+  "homeErrorTitle": "Something went wrong",
+  "homeErrorSubtitle": "Please try again.",
+  "vehicleDetailsSimilarTitle": "Similar cars",
+  "vehicleDetailsAlsoLikedTitle": "People also liked",
+  "vehicleDetailsSpecsTitle": "Specifications",
+  "vehicleDetailsDescriptionTitle": "Description",
+
+  "cityDamascus": "Damascus",
+  "cityAleppo": "Aleppo",
+  "cityHoms": "Homs",
+  "cityHama": "Hama",
+  "cityLatakia": "Latakia",
+  "cityTartus": "Tartus"
 }

@@ -1477,6 +1477,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search trims...'**
   String get trimPickerSearchHint;
+
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by model or brand'**
+  String get homeSearchHint;
+
+  /// No description provided for @homeTrendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending now'**
+  String get homeTrendingTitle;
+
+  /// No description provided for @homeHotTopicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot topics'**
+  String get homeHotTopicsTitle;
+
+  /// No description provided for @homeLatestQuestionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest questions'**
+  String get homeLatestQuestionsTitle;
+
+  /// No description provided for @homeLatestReviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest reviews'**
+  String get homeLatestReviewsTitle;
+
+  /// No description provided for @homeSearchResultsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} results'**
+  String homeSearchResultsCount(int count);
+
+  /// No description provided for @commonFeatured.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get commonFeatured;
+
+  /// No description provided for @homeSearchNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get homeSearchNoResultsTitle;
+
+  /// No description provided for @homeSearchNoResultsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term.'**
+  String get homeSearchNoResultsSubtitle;
+
+  /// No description provided for @homeErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get homeErrorTitle;
+
+  /// No description provided for @homeErrorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again.'**
+  String get homeErrorSubtitle;
+
+  /// No description provided for @vehicleDetailsSimilarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar cars'**
+  String get vehicleDetailsSimilarTitle;
+
+  /// No description provided for @vehicleDetailsAlsoLikedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'People also liked'**
+  String get vehicleDetailsAlsoLikedTitle;
+
+  /// No description provided for @vehicleDetailsSpecsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Specifications'**
+  String get vehicleDetailsSpecsTitle;
+
+  /// No description provided for @vehicleDetailsDescriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get vehicleDetailsDescriptionTitle;
+
+  /// No description provided for @cityDamascus.
+  ///
+  /// In en, this message translates to:
+  /// **'Damascus'**
+  String get cityDamascus;
+
+  /// No description provided for @cityAleppo.
+  ///
+  /// In en, this message translates to:
+  /// **'Aleppo'**
+  String get cityAleppo;
+
+  /// No description provided for @cityHoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Homs'**
+  String get cityHoms;
+
+  /// No description provided for @cityHama.
+  ///
+  /// In en, this message translates to:
+  /// **'Hama'**
+  String get cityHama;
+
+  /// No description provided for @cityLatakia.
+  ///
+  /// In en, this message translates to:
+  /// **'Latakia'**
+  String get cityLatakia;
+
+  /// No description provided for @cityTartus.
+  ///
+  /// In en, this message translates to:
+  /// **'Tartus'**
+  String get cityTartus;
 }
 
 class _AppLocalizationsDelegate

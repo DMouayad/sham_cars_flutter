@@ -135,4 +135,12 @@ class CommunityRepository {
       accessToken: accessToken,
     );
   }
+
+  Future<List<Question>> getLatestQuestions({int take = 3}) {
+    return getQuestions(take: take, skip: 0);
+  }
+
+  Future<List<Review>> getLatestReviews({int take = 3}) {
+    return getReviews(take: take, skip: 0);
+  }
 }

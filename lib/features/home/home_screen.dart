@@ -2,17 +2,21 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sham_cars/features/community/widgets/cards.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
-import 'package:sham_cars/features/reviews/widgets/review_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/features/vehicle/widgets/featured_trim_card.dart';
 import 'package:sham_cars/features/vehicle/widgets/list_trim_card.dart';
 import 'package:sham_cars/utils/utils.dart';
+import 'package:sham_cars/widgets/question_card_skeleton.dart';
+import 'package:sham_cars/features/reviews/widgets/review_card_skeleton.dart';
 
 import 'home_cubit.dart';
 import 'models.dart';
 import 'widgets/featured_trim_card_skeleton.dart';
+import 'widgets/hot_topic_card.dart';
+import 'widgets/hot_topic_card_skeleton.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -33,6 +37,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const double _trendingCardHeight = 310;
+
   final _searchController = TextEditingController();
   final _searchFocus = FocusNode();
   final _debouncer = Debouncer(milliseconds: 400);
@@ -47,33 +53,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          if (state.error != null && !state.hasData) {
+          if (state.error != null &&
+              !state.hasData &&
+              !state.showSearchResults) {
             return _ErrorView(
-              error: state.error!,
+              title: l10n.homeErrorTitle,
+              subtitle: l10n.homeErrorSubtitle,
+              retryLabel: l10n.commonRetry,
               onRetry: () => context.read<HomeCubit>().load(),
             );
           }
+
           return RefreshIndicator(
             onRefresh: () => context.read<HomeCubit>().refresh(),
             child: CustomScrollView(
               slivers: [
-                // Search
+                // Search (pinned)
                 PinnedHeaderSliver(
                   child: Container(
                     color: context.colorScheme.surface,
                     padding: const EdgeInsets.all(ThemeConstants.p),
                     child: _SearchField(
+                      hintText: l10n.homeSearchHint,
                       controller: _searchController,
                       focusNode: _searchFocus,
                       isSearching: state.isSearching,
-                      onChanged: (q) {
-                        _debouncer.run(() {
-                          context.read<HomeCubit>().search(q);
-                        });
-                      },
+                      onChanged: (q) => _debouncer.run(() {
+                        context.read<HomeCubit>().search(q);
+                      }),
                       onClear: () {
                         _searchController.clear();
                         context.read<HomeCubit>().clearSearch();
@@ -82,24 +94,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // Show search results OR regular content
+                // Search results OR Home content
                 if (state.showSearchResults)
                   ..._buildSearchResults(state)
-                else if (state.isLoading && !state.hasData)
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 300,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: ThemeConstants.p,
-                        ),
-                        itemCount: 5,
-                        separatorBuilder: (_, _) => const SizedBox(width: 12),
-                        itemBuilder: (_, _) => const FeaturedTrimCardSkeleton(),
-                      ),
-                    ),
-                  )
+                else if (state.isInitialLoading)
+                  ..._buildHomeSkeleton()
                 else if (state.data != null)
                   ..._buildHomeContent(state.data!),
 
@@ -113,9 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Widget> _buildSearchResults(HomeState state) {
+    final l10n = context.l10n;
+
     if (state.isSearching) {
-      return [
-        const SliverToBoxAdapter(
+      return const [
+        SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.all(32),
             child: Center(child: CircularProgressIndicator()),
@@ -127,7 +128,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (state.searchResults.isEmpty) {
       return [
         SliverToBoxAdapter(
-          child: _EmptySearchResults(query: state.searchQuery),
+          child: _EmptyState(
+            title: l10n.homeSearchNoResultsTitle,
+            subtitle: l10n.homeSearchNoResultsSubtitle,
+          ),
         ),
       ];
     }
@@ -137,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
           child: Text(
-            '${state.searchResults.length} نتيجة',
+            l10n.homeSearchResultsCount(state.searchResults.length),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -162,27 +166,111 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
   }
 
-  List<Widget> _buildHomeContent(HomeData data) {
+  List<Widget> _buildHomeSkeleton() {
+    final l10n = context.l10n;
+
     return [
-      // Featured Vehicles
-      if (data.featuredTrims.isNotEmpty) ...[
+      // Trending skeleton
+      SliverToBoxAdapter(
+        child: _SectionHeader(
+          title: l10n.homeTrendingTitle,
+          onTap: widget.onViewAllVehicles,
+        ),
+      ),
+      SliverToBoxAdapter(
+        child: SizedBox(
+          height: _trendingCardHeight,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
+            itemCount: 5,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (_, _) => const FeaturedTrimCardSkeleton(
+              width: 260,
+              height: _trendingCardHeight,
+            ),
+          ),
+        ),
+      ),
+      const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+      // Hot topics skeleton
+      SliverToBoxAdapter(
+        child: _SectionHeader(
+          title: l10n.homeHotTopicsTitle,
+          onTap: widget.onViewAllQuestions,
+        ),
+      ),
+      SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
+        sliver: SliverList.separated(
+          itemCount: 3,
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          itemBuilder: (_, _) => const HotTopicCardSkeleton(),
+        ),
+      ),
+      const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+      // Latest questions skeleton
+      SliverToBoxAdapter(
+        child: _SectionHeader(
+          title: l10n.homeLatestQuestionsTitle,
+          onTap: widget.onViewAllQuestions,
+        ),
+      ),
+      SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
+        sliver: SliverList.separated(
+          itemCount: 3,
+          separatorBuilder: (_, _) => const SizedBox(height: 10),
+          itemBuilder: (_, _) => const QuestionCardSkeleton(),
+        ),
+      ),
+      const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+      // Latest reviews skeleton
+      SliverToBoxAdapter(
+        child: _SectionHeader(
+          title: l10n.homeLatestReviewsTitle,
+          onTap: widget.onViewAllVehicles,
+        ),
+      ),
+      SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
+        sliver: SliverList.separated(
+          itemCount: 3,
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          itemBuilder: (_, _) => const ReviewCardSkeleton(compact: true),
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildHomeContent(HomeData data) {
+    final l10n = context.l10n;
+
+    return [
+      // Trending
+      if (data.trendingTrims.isNotEmpty) ...[
         SliverToBoxAdapter(
           child: _SectionHeader(
-            title: 'سيارات مميزة',
+            title: l10n.homeTrendingTitle,
             onTap: widget.onViewAllVehicles,
           ),
         ),
         SliverToBoxAdapter(
           child: SizedBox(
-            height: 310,
+            height: _trendingCardHeight,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
-              itemCount: data.featuredTrims.length,
+              itemCount: data.trendingTrims.length,
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (_, i) {
-                final trim = data.featuredTrims[i];
+                final trim = data.trendingTrims[i];
                 return FeaturedTrimCard(
+                  width: 260,
+                  height: _trendingCardHeight,
                   trim: trim,
                   onTap: () => widget.onOpenTrim(trim.id, trim),
                 );
@@ -193,11 +281,33 @@ class _HomeScreenState extends State<HomeScreen> {
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
 
+      // Hot Topics
+      if (data.hotTopics.isNotEmpty) ...[
+        SliverToBoxAdapter(
+          child: _SectionHeader(
+            title: l10n.homeHotTopicsTitle,
+            onTap: widget.onViewAllQuestions,
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
+          sliver: SliverList.separated(
+            itemCount: data.hotTopics.take(5).length,
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (_, i) => HotTopicCard(
+              topic: data.hotTopics[i],
+              onTap: widget.onViewAllQuestions,
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+      ],
+
       // Latest Questions
       if (data.latestQuestions.isNotEmpty) ...[
         SliverToBoxAdapter(
           child: _SectionHeader(
-            title: 'أحدث الأسئلة',
+            title: l10n.homeLatestQuestionsTitle,
             onTap: widget.onViewAllQuestions,
           ),
         ),
@@ -223,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (data.latestReviews.isNotEmpty) ...[
         SliverToBoxAdapter(
           child: _SectionHeader(
-            title: 'أحدث التجارب',
+            title: l10n.homeLatestReviewsTitle,
             onTap: widget.onViewAllVehicles,
           ),
         ),
@@ -234,12 +344,93 @@ class _HomeScreenState extends State<HomeScreen> {
             separatorBuilder: (_, _) => const SizedBox(height: 12),
             itemBuilder: (_, i) {
               final r = data.latestReviews[i];
-              return ReviewCard(review: r, onTap: () {});
+              return CommunityReviewCard(review: r, onTap: widget.onOpenTrim);
             },
           ),
         ),
       ],
     ];
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(ThemeConstants.p),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.search_off, size: 56, color: cs.outline),
+            const SizedBox(height: 12),
+            Text(title, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  const _ErrorView({
+    required this.title,
+    required this.subtitle,
+    required this.retryLabel,
+    required this.onRetry,
+  });
+
+  final String title;
+  final String subtitle;
+  final String retryLabel;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(ThemeConstants.p),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.cloud_off, size: 48, color: cs.error),
+            const SizedBox(height: 12),
+            Text(title, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: Text(retryLabel),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -251,6 +442,7 @@ class _SearchField extends StatelessWidget {
     required this.isSearching,
     required this.onChanged,
     required this.onClear,
+    required this.hintText,
   });
 
   final TextEditingController controller;
@@ -258,7 +450,7 @@ class _SearchField extends StatelessWidget {
   final bool isSearching;
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
-
+  final String hintText;
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -268,7 +460,7 @@ class _SearchField extends StatelessWidget {
       focusNode: focusNode,
       onChanged: onChanged,
       decoration: InputDecoration(
-        hintText: 'ابحث عن سيارة...',
+        hintText: hintText,
         prefixIcon: const Icon(Icons.search),
         suffixIcon: isSearching
             ? const Padding(
@@ -316,69 +508,9 @@ class _SectionHeader extends StatelessWidget {
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           const Spacer(),
-          TextButton(onPressed: onTap, child: const Text('عرض الكل')),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptySearchResults extends StatelessWidget {
-  const _EmptySearchResults({required this.query});
-  final String query;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        children: [
-          Icon(Icons.search_off, size: 48, color: cs.outline),
-          const SizedBox(height: 16),
-          Text(
-            'لا توجد نتائج لـ "$query"',
-            style: Theme.of(context).textTheme.titleMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'جرب كلمات بحث مختلفة',
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.error, required this.onRetry});
-
-  final Object error;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.cloud_off,
-            size: 48,
-            color: Theme.of(context).colorScheme.error,
-          ),
-          const SizedBox(height: 16),
-          Text('حدث خطأ', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh),
-            label: const Text('إعادة المحاولة'),
+          TextButton(
+            onPressed: onTap,
+            child: Text(context.l10n.viewAllBtnLabel),
           ),
         ],
       ),

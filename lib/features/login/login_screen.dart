@@ -51,7 +51,7 @@ class LoginScreen extends StatelessWidget {
               break;
           }
         },
-        child: CustomScaffold(body: const LoginForm()),
+        child: const CustomScaffold(body: LoginForm()),
       ),
     );
   }

@@ -4,12 +4,16 @@ import 'package:sham_cars/features/common/data_state.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/router/routes.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 import 'cubits/car_trim_cubit.dart';
 import 'cubits/trim_community_preview_cubit.dart';
+import 'cubits/similar_trims_cubit.dart';
 import 'models.dart';
+import 'repositories/car_data_repository.dart';
 import 'widgets/community_preview.dart';
 import 'widgets/specs.dart';
+import 'widgets/similar_trims_section.dart';
 
 class VehicleDetailsScreen extends StatelessWidget {
   const VehicleDetailsScreen({
@@ -22,10 +26,20 @@ class VehicleDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          TrimCommunityPreviewCubit(context.read<CommunityRepository>())
-            ..load(trimId: trimId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              TrimCommunityPreviewCubit(context.read<CommunityRepository>())
+                ..load(trimId: trimId),
+        ),
+        BlocProvider(
+          create: (_) =>
+              SimilarTrimsCubit(context.read<CarDataRepository>())
+                ..load(trimId),
+        ),
+      ],
+
       child: Scaffold(
         body: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
           builder: (context, state) {
@@ -198,7 +212,6 @@ class _VehicleDetailsView extends StatelessWidget {
                 priceText: vm.priceText,
               ),
               const SizedBox(height: 20),
-              const SizedBox(height: 20),
 
               BlocBuilder<
                 TrimCommunityPreviewCubit,
@@ -214,7 +227,9 @@ class _VehicleDetailsView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (vm.specs.isNotEmpty) ...[
-                          _SectionTitle(title: 'المواصفات'),
+                          _SectionTitle(
+                            title: context.l10n.vehicleDetailsSpecsTitle,
+                          ),
                           const SizedBox(height: 10),
                           GroupedSpecs(specs: vm.specs),
                           const SizedBox(height: 20),
@@ -246,8 +261,13 @@ class _VehicleDetailsView extends StatelessWidget {
 
               const SizedBox(height: 20),
 
+              const SimilarTrimsSection(),
+              const SizedBox(height: 20),
+
               if (vm.description != null) ...[
-                _SectionTitle(title: 'الوصف'),
+                _SectionTitle(
+                  title: context.l10n.vehicleDetailsDescriptionTitle,
+                ),
                 const SizedBox(height: 10),
                 Text(
                   vm.description!,

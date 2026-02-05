@@ -1,4 +1,5 @@
 import 'package:sham_cars/api/rest_client.dart';
+import 'package:sham_cars/features/home/models.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 
 class CarDataRepository {
@@ -50,9 +51,25 @@ class CarDataRepository {
     return getTrims(TrimFilters(search: search, take: take, skip: skip));
   }
 
-  /// Get featured trims for home screen
-  Future<List<CarTrimSummary>> getFeaturedTrims({int limit = 10}) async {
-    return getTrims(TrimFilters(take: limit));
+  Future<List<CarTrimSummary>> getTrendingCars({
+    int take = 10,
+    int skip = 0,
+  }) async {
+    final data = await _client.requestList(
+      HttpMethod.get,
+      '/car-data/trending-cars',
+      query: {'take': '$take', 'skip': '$skip'},
+    );
+    return data.map(CarTrimSummary.fromJson).toList();
+  }
+
+  Future<List<HotTopic>> getHotTopics({int take = 10, int skip = 0}) async {
+    final data = await _client.requestList(
+      HttpMethod.get,
+      '/car-data/hot-topics',
+      query: {'take': '$take', 'skip': '$skip'},
+    );
+    return data.map(HotTopic.fromJson).toList();
   }
 
   /// Search trims
@@ -67,5 +84,31 @@ class CarDataRepository {
   Future<CarTrim> getTrim(int id) async {
     final data = await _client.request(HttpMethod.get, '/car-data/trims/$id');
     return CarTrim.fromJson(data);
+  }
+
+  Future<List<CarTrimSummary>> getSimilarTrims(
+    int trimId, {
+    int take = 5,
+    int skip = 0,
+  }) async {
+    final data = await _client.requestList(
+      HttpMethod.get,
+      '/car-data/trims/$trimId/similar',
+      query: {'take': '$take', 'skip': '$skip'},
+    );
+    return data.map(CarTrimSummary.fromJson).toList();
+  }
+
+  Future<List<CarTrimSummary>> getAlsoLikedTrims(
+    int trimId, {
+    int take = 5,
+    int skip = 0,
+  }) async {
+    final data = await _client.requestList(
+      HttpMethod.get,
+      '/car-data/trims/$trimId/also-liked',
+      query: {'take': '$take', 'skip': '$skip'},
+    );
+    return data.map(CarTrimSummary.fromJson).toList();
   }
 }
