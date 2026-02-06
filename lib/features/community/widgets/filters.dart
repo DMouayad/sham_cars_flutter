@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 import '../models.dart';
 
@@ -25,14 +26,14 @@ class CommunityFilters extends StatelessWidget {
       child: Row(
         children: [
           _FilterChip(
-            label: 'الكل',
+            label: context.l10n.communityFilterAll,
             count: questionsCount + reviewsCount,
             isSelected: selected == CommunityFilter.all,
             onTap: () => onChanged(CommunityFilter.all),
           ),
           const SizedBox(width: 8),
           _FilterChip(
-            label: 'الأسئلة',
+            label: context.l10n.communityFilterQuestions,
             icon: Icons.forum_outlined,
             count: questionsCount,
             isSelected: selected == CommunityFilter.questions,
@@ -40,7 +41,7 @@ class CommunityFilters extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           _FilterChip(
-            label: 'التجارب',
+            label: context.l10n.communityFilterReviews,
             icon: Icons.rate_review_outlined,
             count: reviewsCount,
             isSelected: selected == CommunityFilter.reviews,

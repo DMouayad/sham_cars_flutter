@@ -9,7 +9,34 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appName => 'الدليل الشافي';
+  String get appName => 'شام كارز';
+
+  @override
+  String get navbarExploreLabel => 'اكتشف';
+
+  @override
+  String get navbarVehiclesLabel => 'السيارات';
+
+  @override
+  String get navbarCommunityLabel => 'المجتمع';
+
+  @override
+  String get drawerAppearanceTitle => 'المظهر';
+
+  @override
+  String get userGuestTitle => 'زائر';
+
+  @override
+  String get userGuestSubtitle => 'سجل الدخول لعرض الملف الشخصي';
+
+  @override
+  String get themeModeSystem => 'النظام';
+
+  @override
+  String get themeModeLight => 'فاتح';
+
+  @override
+  String get themeModeDark => 'داكن';
 
   @override
   String get loadingBarrierDefaultText => 'الرجاء الانتظار...';
@@ -37,18 +64,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get viewAllBtnLabel => 'عرض الكل';
-
-  @override
-  String get homeGreeting => 'أهلاً بعودتك، نأمل أنك بصحة جيدة';
-
-  @override
-  String get homeSearchBarHint => 'ابحث عن الأطباء ومنشآت العناية الطبية';
-
-  @override
-  String get homeSpecialtiesSectionTitle => 'التخصصات الطبية';
-
-  @override
-  String get homeFacilitiesSectionTitle => 'منشآت طبية قريبة منك';
 
   @override
   String get signedInAs => 'أنت مسجل كـ';
@@ -114,34 +129,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get drawerAboutTheAppTile => 'عن التطبيق';
 
   @override
-  String get searchScreenTitle => 'ابحث في الدليل الشافي';
-
-  @override
-  String get doctorSearchFilter => 'الأطباء';
-
-  @override
-  String get facilitySearchFilter => 'المنشآت الطبية';
-
-  @override
-  String get allSearchFilter => 'الكل';
-
-  @override
-  String get searchFiltersSectionTitle => 'يتم تصفية النتائج حسب:';
-
-  @override
-  String get citySearchFilterPopupLabel => 'المدينة';
-
-  @override
-  String get specialtySearchFilterPopupLabel => 'الاختصاص';
-
-  @override
-  String get categorySearchFilterPopupLabel => 'الفئة';
-
-  @override
-  String get editFiltersBtnLabel => 'تعديل';
-
-  @override
-  String get applyFiltersBtnLabel => 'تطبيق';
+  String get searchScreenTitle => 'Search in Sham Cars';
 
   @override
   String get applyFilters => 'تطبيق';
@@ -150,13 +138,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeFilters => 'مسح الكل';
 
   @override
-  String get aboutDoctorSectionTitle => 'عن الطبيب';
+  String get aboutDoctorSectionTitle => 'About the doctor';
 
   @override
-  String get aboutFacilitySectionTitle => 'عن المنشأة';
+  String get aboutFacilitySectionTitle => 'About the facility';
 
   @override
-  String get locationOnMap => 'الموقع على الخريطة';
+  String get locationOnMap => 'Location on map';
 
   @override
   String get loginFailureDialogTitle => 'فشل تسجيل الدخول!';
@@ -463,37 +451,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signupFailureDialogTitle => 'فشل إنشاء حساب جديد';
 
   @override
-  String get sheetDragUpHint => 'اسحب للأعلى لاستعراض كافة المعلومات';
-
-  @override
-  String get show => 'عرض';
-
-  @override
-  String get hide => 'إخفاء';
-
-  @override
-  String get ophthalmology => 'العينية';
-
-  @override
-  String get neurology => 'العصبية';
-
-  @override
-  String get dentistry => 'السنية';
-
-  @override
-  String get cardiology => 'القلبية';
-
-  @override
-  String get familyMedicine => 'طب الأسرة';
-
-  @override
-  String get prosthetics => 'تعويضات';
-
-  @override
-  String get chooseSignupMethodMessage =>
-      'Please choose how you would like to create your account';
-
-  @override
   String get signupWithEmailMessage =>
       'سنرسل رمز تحقق على البريد الإلكتروني الخاص بك:';
 
@@ -567,6 +524,12 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get show => 'عرض';
+
+  @override
+  String get hide => 'إخفاء';
+
+  @override
   String get commonRetry => 'إعادة المحاولة';
 
   @override
@@ -588,10 +551,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonClear => 'مسح';
 
   @override
+  String get commonResults => 'النتائج';
+
+  @override
   String get commonViewAll => 'عرض الكل';
 
   @override
   String get commonLoadingMore => 'جاري تحميل المزيد...';
+
+  @override
+  String get vechilesListFilterButton => 'الفلاتر';
 
   @override
   String get communityTitle => 'المجتمع';
@@ -625,6 +594,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get communityNoResultsSubtitle => 'جرّب كلمات بحث مختلفة.';
+
+  @override
+  String get communitySearchHint => 'ابحث في المجتمع';
 
   @override
   String get communityQuestionsCountLabel => 'سؤال';
@@ -764,16 +736,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonFeatured => 'مميز';
 
   @override
-  String get homeSearchNoResultsTitle => 'لا توجد نتائج';
+  String get vehiclesSearchNoResultsTitle => 'لا توجد نتائج';
 
   @override
-  String get homeSearchNoResultsSubtitle => 'جرّب كلمات مختلفة للبحث.';
+  String get vehiclesSearchNoResultsSubtitle => 'جرّب كلمات مختلفة للبحث.';
 
   @override
   String get homeErrorTitle => 'حدث خطأ';
 
   @override
   String get homeErrorSubtitle => 'يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get vehicleDetailsRange => 'المدى';
+
+  @override
+  String get vehicleDetailsBattery => 'البطارية';
+
+  @override
+  String get vehicleDetailsPrice => 'السعر';
 
   @override
   String get vehicleDetailsSimilarTitle => 'سيارات مشابهة';
@@ -846,4 +827,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileBrowseCommunityCta => 'تصفح المجتمع';
+
+  @override
+  String get specGroupBatteryRange => 'البطارية والمدى';
+
+  @override
+  String get specGroupCharging => 'الشحن';
+
+  @override
+  String get specGroupPerformanceDrive => 'الأداء والدفع';
+
+  @override
+  String get specGroupDimensionsPractical => 'الأبعاد والعملية';
+
+  @override
+  String get specGroupEngineFuel => 'المحرك والوقود';
+
+  @override
+  String get specGroupChassisTransmission => 'الهيكل وناقل الحركة';
+
+  @override
+  String get specGroupOther => 'أخرى';
 }

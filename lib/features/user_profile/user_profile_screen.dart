@@ -6,7 +6,6 @@ import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/theme/app_theme.dart';
 import 'package:sham_cars/features/user/models.dart';
-import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:sham_cars/widgets/dialogs/error_dialog.dart';
@@ -77,12 +76,6 @@ class _UserProfileScreenContent extends StatelessWidget {
               ),
               textDirection: TextDirection.ltr,
             ),
-          ),
-          gap,
-          _CustomListTile(
-            icon: Icons.history,
-            title: context.l10n.profileMyActivityTitle,
-            onTap: () => const ProfileActivityRoute().push(context),
           ),
           gap,
           ListTile(

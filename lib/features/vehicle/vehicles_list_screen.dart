@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 import 'cubits/vehicles_list_cubit.dart';
 import 'models.dart';
@@ -95,7 +96,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
 
                       Row(
                         children: [
-                          FilledButton.tonalIcon(
+                          OutlinedButton.icon(
                             onPressed: () => _showFiltersSheet(context, state),
                             icon: Badge(
                               isLabelVisible:
@@ -103,7 +104,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                               label: Text('${state.filters.activeFilterCount}'),
                               child: const Icon(Icons.tune),
                             ),
-                            label: const Text('الفلاتر'),
+                            label: Text(context.l10n.vechilesListFilterButton),
                           ),
                           const SizedBox(width: 8),
 
@@ -116,7 +117,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                                     .clearFilters();
                                 setState(() {});
                               },
-                              child: const Text('مسح'),
+                              child: Text(context.l10n.removeFilters),
                             ),
 
                           const Spacer(),
@@ -138,7 +139,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                       if (!state.isLoading && state.filters.hasFilters) ...[
                         const SizedBox(height: 6),
                         Text(
-                          'النتائج: ${state.trims.length}',
+                          '${context.l10n.commonResults} ${state.trims.length}',
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
                                 color: cs.onSurfaceVariant,
@@ -162,17 +163,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                   ),
                 )
               else if (!state.isLoading && isEmpty)
-                SliverFillRemaining(
+                const SliverFillRemaining(
                   hasScrollBody: false,
-                  child: _EmptyView(
-                    onClear: state.filters.hasFilters
-                        ? () {
-                            _searchController.clear();
-                            context.read<VehiclesListCubit>().clearFilters();
-                            setState(() {});
-                          }
-                        : null,
-                  ),
+                  child: _EmptyView(),
                 )
               else
                 SliverPadding(
@@ -180,7 +173,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                   sliver: SliverList.separated(
                     itemCount:
                         state.trims.length + (state.isLoadingMore ? 1 : 0),
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (_, i) {
                       if (i >= state.trims.length) {
                         return const Center(
@@ -247,13 +240,17 @@ class _SearchField extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       decoration: InputDecoration(
-        hintText: 'ابحث عن سيارة...',
+        hintText: context.l10n.homeSearchHint,
         isDense: true,
         prefixIcon: const Icon(Icons.search),
         suffixIcon: controller.text.isNotEmpty
             ? IconButton(icon: const Icon(Icons.close), onPressed: onClear)
             : null,
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(ThemeConstants.rCard),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: context.colorScheme.outline),
           borderRadius: BorderRadius.circular(ThemeConstants.rCard),
         ),
         filled: true,
@@ -370,13 +367,13 @@ class _FiltersSheetState extends State<_FiltersSheet> {
             child: Row(
               children: [
                 Text(
-                  'الفلاتر',
+                  context.l10n.vechilesListFilterButton,
                   style: tt.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 TextButton(
                   onPressed: () => setState(() => _filters = _filters.clear()),
-                  child: const Text('مسح الكل'),
+                  child: Text(context.l10n.removeFilters),
                 ),
               ],
             ),
@@ -493,7 +490,7 @@ class _FiltersSheetState extends State<_FiltersSheet> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: () => widget.onApply(_filters),
-                child: const Text('تطبيق'),
+                child: Text(context.l10n.applyFilters),
               ),
             ),
           ),
@@ -531,8 +528,7 @@ class _FilterSection extends StatelessWidget {
 }
 
 class _EmptyView extends StatelessWidget {
-  const _EmptyView({this.onClear});
-  final VoidCallback? onClear;
+  const _EmptyView();
 
   @override
   Widget build(BuildContext context) {
@@ -547,26 +543,19 @@ class _EmptyView extends StatelessWidget {
             Icon(Icons.directions_car_outlined, size: 64, color: cs.outline),
             const SizedBox(height: 16),
             Text(
-              'لا توجد سيارات',
+              context.l10n.vehiclesSearchNoResultsTitle,
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 8),
             Text(
-              'جرّب تغيير الفلاتر أو البحث',
+              context.l10n.vehiclesSearchNoResultsSubtitle,
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: cs.outline),
               textAlign: TextAlign.center,
             ),
-            if (onClear != null) ...[
-              const SizedBox(height: 14),
-              FilledButton.tonal(
-                onPressed: onClear,
-                child: const Text('مسح الفلاتر'),
-              ),
-            ],
           ],
         ),
       ),
@@ -592,12 +581,15 @@ class _ErrorView extends StatelessWidget {
             color: Theme.of(context).colorScheme.error,
           ),
           const SizedBox(height: 16),
-          Text('حدث خطأ', style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            context.l10n.serverError,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('إعادة المحاولة'),
+            label: Text(context.l10n.commonRetry),
           ),
         ],
       ),

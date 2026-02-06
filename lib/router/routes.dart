@@ -118,7 +118,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return LoginScreen(redirectTo: redirectTo ?? RoutePath.profile);
+    return LoginScreen(redirectTo: redirectTo ?? RoutePath.profileActivity);
   }
 }
 

@@ -4,6 +4,25 @@
     "@appName": {
         "description": "The name of our app"
     },
+    "navbarExploreLabel" : "Explore",
+    "navbarVehiclesLabel" : "Vehicles",
+    "navbarCommunityLabel" : "Community",
+
+    "drawerAppearanceTitle": "Appearance",
+    "@drawerAppearanceTitle": {
+        "description": "The title for the appearance section in the drawer"
+    },
+    "userGuestTitle": "Guest",
+    "@userGuestTitle": {
+        "description": "The display name for a user who is not logged in"
+    },
+    "userGuestSubtitle": "Sign in to view profile",
+    "@userGuestSubtitle": {
+        "description": "The subtitle prompting a guest user to log in"
+    },
+    "themeModeSystem": "System",
+    "themeModeLight": "Light",
+    "themeModeDark": "Dark",
     "loadingBarrierDefaultText": "Please wait...",
     "@loadingBarrierDefaultText": {
         "description": "A default message displayed over the loading barrier"
@@ -38,14 +57,6 @@
     },
     "viewAllBtnLabel": "view all",
     "@viewAllBtnLabel": {},
-    "homeGreeting": "Welcome back! we hope you are well",
-    "@homeGreeting": {},
-    "homeSearchBarHint": "search for a doctor, hospital or any medical care facility",
-    "@homeSearchBarHint": {},
-    "homeSpecialtiesSectionTitle": "Medical specialties",
-    "@homeSpecialtiesSectionTitle": {},
-    "homeFacilitiesSectionTitle": "Facilities near you",
-    "@homeFacilitiesSectionTitle": {},
     "signedInAs": "You're signed in as",
     "signedInWith": "You're signed in with",
     "logoutBtnLabel": "Logout",
@@ -69,15 +80,7 @@
     "publicProfileSettingsTileLabel": "Personal Info",
     "drawerAboutTheAppTile": "About the app",
     "searchScreenTitle": "Search in Sham Cars",
-    "doctorSearchFilter": "Doctors",
-    "facilitySearchFilter": "Medical Facilities",
-    "allSearchFilter": "All",
-    "searchFiltersSectionTitle": "Filters",
-    "citySearchFilterPopupLabel": "City",
-    "specialtySearchFilterPopupLabel": "Medical specialty",
-    "categorySearchFilterPopupLabel": "Category",
-    "editFiltersBtnLabel": "Edit",
-    "applyFiltersBtnLabel": "Apply",
+   
     "applyFilters": "Apply",
     "removeFilters": "Remove all",
     "aboutDoctorSectionTitle": "About the doctor",
@@ -416,19 +419,6 @@
     "@signupFailureDialogTitle": {
         "description": "The title of an `ErrorDialog` displayed after a failed signup attempt"
     },
-    "sheetDragUpHint": "Swap up to view full information",
-    "show": "Show",
-    "hide": "Hide",
-    "ophthalmology": "Ophthalmology",
-    "neurology": "Neurology",
-    "dentistry": "Dentistry",
-    "cardiology": "Cardiology",
-    "familyMedicine": "Family Medicine",
-    "prosthetics": "Prosthetics",
-    "chooseSignupMethodMessage": "Please choose how you would like to create your account",
-    "@chooseSignupMethodMessage": {
-        "description": "Message shown on signup method selection screen"
-    },
     "signupWithEmailMessage": "We will send a verification code to your email address:",
     "@signupWithEmailMessage": {
         "description": "Message shown on signup method selection screen"
@@ -502,7 +492,8 @@
       "days": { "type": "int" }
     }
   },
-
+    "show": "Show",
+    "hide": "Hide",
   "commonRetry": "Retry",
   "commonCancel": "Cancel",
   "commonClose": "Close",
@@ -510,8 +501,12 @@
   "commonSubmit": "Submit",
   "commonSearch": "Search",
   "commonClear": "Clear",
+  "commonResults": "Results",
   "commonViewAll": "View all",
   "commonLoadingMore": "Loading more...",
+
+  "vechilesListFilterButton": "Filters",
+
 
   "communityTitle": "Community",
   "communityJoinToContribute": "Join to contribute",
@@ -524,7 +519,7 @@
   "communityNoContentSubtitle": "Start the conversation!",
   "communityNoResultsTitle": "No results",
   "communityNoResultsSubtitle": "Try different keywords.",
-
+"communitySearchHint" : "Search the community",
   "communityQuestionsCountLabel": "Questions",
   "communityReviewsCountLabel": "Reviews",
 
@@ -589,10 +584,14 @@
     }
   },
     "commonFeatured": "Featured",
-  "homeSearchNoResultsTitle": "No results",
-  "homeSearchNoResultsSubtitle": "Try a different search term.",
+  "vehiclesSearchNoResultsTitle": "No results",
+  "vehiclesSearchNoResultsSubtitle": "Try a different search term.",
   "homeErrorTitle": "Something went wrong",
   "homeErrorSubtitle": "Please try again.",
+
+  "vehicleDetailsRange": "Range",
+  "vehicleDetailsBattery": "Battery",
+  "vehicleDetailsPrice": "Price",
   "vehicleDetailsSimilarTitle": "Similar cars",
   "vehicleDetailsAlsoLikedTitle": "People also liked",
   "vehicleDetailsSpecsTitle": "Specifications",
@@ -620,5 +619,12 @@
 
   "profileBrowseCarsCta": "Browse cars",
   "profileAskQuestionCta": "Ask a question",
-  "profileBrowseCommunityCta": "Browse community"
+  "profileBrowseCommunityCta": "Browse community",
+  "specGroupBatteryRange": "Battery & Range",
+  "specGroupCharging": "Charging",
+  "specGroupPerformanceDrive": "Performance & Drivetrain",
+  "specGroupDimensionsPractical": "Dimensions & Practicality",
+  "specGroupEngineFuel": "Engine & Fuel",
+  "specGroupChassisTransmission": "Chassis & Transmission",
+  "specGroupOther": "Other"
 }

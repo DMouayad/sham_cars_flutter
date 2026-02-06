@@ -553,7 +553,7 @@ class _ErrorBanner extends StatelessWidget {
               ).textTheme.bodyMedium?.copyWith(color: cs.onErrorContainer),
             ),
           ),
-          TextButton(onPressed: onRetry, child: const Text('إعادة')),
+          TextButton(onPressed: onRetry, child: Text(context.l10n.commonRetry)),
         ],
       ),
     );
@@ -578,11 +578,16 @@ class _KeySpecsRow extends StatelessWidget {
 
     final specs = <_KeySpec>[
       if (rangeText.isNotEmpty)
-        _KeySpec(Icons.route, 'المدى', rangeText, Colors.green),
+        _KeySpec(
+          Icons.route,
+          context.l10n.vehicleDetailsRange,
+          rangeText,
+          Colors.green,
+        ),
       if (batteryText.isNotEmpty)
         _KeySpec(
           Icons.battery_charging_full,
-          'البطارية',
+          context.l10n.vehicleDetailsBattery,
           batteryText,
           Colors.blue,
         ),
@@ -621,7 +626,7 @@ class _KeySpecsRow extends StatelessWidget {
                 Icon(Icons.sell_outlined, size: 18, color: cs.onSurfaceVariant),
                 const SizedBox(width: 8),
                 Text(
-                  'السعر',
+                  context.l10n.vehicleDetailsPrice,
                   style: Theme.of(
                     context,
                   ).textTheme.labelMedium?.copyWith(color: cs.onSurfaceVariant),
@@ -707,7 +712,7 @@ class _LoadingMoreSection extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'جاري تحميل المزيد...',
+            context.l10n.commonLoadingMore,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),

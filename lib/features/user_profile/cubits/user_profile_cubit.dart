@@ -33,6 +33,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     _helpers.handleFuture(
       _authRepository.logOut(),
       onSuccess: (value) {
+        emit(UserProfileState(isBusy: false, user: null));
         GetIt.I.get<AuthNotifier>().updateCurrentUser(null);
       },
       onError: (err) => emit(LogoutFailureState(user: state.user, appErr: err)),

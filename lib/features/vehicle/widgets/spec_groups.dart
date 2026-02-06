@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sham_cars/l10n/app_localizations.dart'; // Import this
 
 class SpecItem {
   final String label;
@@ -33,9 +34,9 @@ enum _SpecCat {
 }
 
 List<SpecGroup> groupSpecs(
+  AppLocalizations l10n, // <--- Add this parameter
   Map<String, String> specs, {
-  bool evOnly =
-      false, // set true if you want to hide engine/fuel groups in EV screens
+  bool evOnly = false,
 }) {
   final groups = <_SpecCat, List<SpecItem>>{
     _SpecCat.batteryRange: [],
@@ -62,21 +63,28 @@ List<SpecGroup> groupSpecs(
     }
   }
 
-  // Build in desired order
+  // Pass l10n to _makeGroup
   final result = <SpecGroup?>[
-    _makeGroup(_SpecCat.batteryRange, groups[_SpecCat.batteryRange]!),
-    _makeGroup(_SpecCat.charging, groups[_SpecCat.charging]!),
-    _makeGroup(_SpecCat.performanceDrive, groups[_SpecCat.performanceDrive]!),
+    _makeGroup(l10n, _SpecCat.batteryRange, groups[_SpecCat.batteryRange]!),
+    _makeGroup(l10n, _SpecCat.charging, groups[_SpecCat.charging]!),
     _makeGroup(
+      l10n,
+      _SpecCat.performanceDrive,
+      groups[_SpecCat.performanceDrive]!,
+    ),
+    _makeGroup(
+      l10n,
       _SpecCat.dimensionsPractical,
       groups[_SpecCat.dimensionsPractical]!,
     ),
-    if (!evOnly) _makeGroup(_SpecCat.engineFuel, groups[_SpecCat.engineFuel]!),
+    if (!evOnly)
+      _makeGroup(l10n, _SpecCat.engineFuel, groups[_SpecCat.engineFuel]!),
     _makeGroup(
+      l10n,
       _SpecCat.chassisTransmission,
       groups[_SpecCat.chassisTransmission]!,
     ),
-    _makeGroup(_SpecCat.other, groups[_SpecCat.other]!),
+    _makeGroup(l10n, _SpecCat.other, groups[_SpecCat.other]!),
   ].whereType<SpecGroup>().toList();
 
   return result;
@@ -95,51 +103,55 @@ SpecItem _toItem(String k, String v, _SpecCat cat) {
   return SpecItem(label: k, value: v, icon: icon);
 }
 
-SpecGroup? _makeGroup(_SpecCat cat, List<SpecItem> items) {
+SpecGroup? _makeGroup(
+  AppLocalizations l10n,
+  _SpecCat cat,
+  List<SpecItem> items,
+) {
   if (items.isEmpty) return null;
 
   return switch (cat) {
     _SpecCat.batteryRange => SpecGroup(
-      title: 'البطارية والمدى',
+      title: l10n.specGroupBatteryRange,
       icon: Icons.battery_charging_full,
       items: items,
     ),
     _SpecCat.charging => SpecGroup(
-      title: 'الشحن',
+      title: l10n.specGroupCharging,
       icon: Icons.ev_station,
       items: items,
     ),
     _SpecCat.performanceDrive => SpecGroup(
-      title: 'الأداء والدفع',
+      title: l10n.specGroupPerformanceDrive,
       icon: Icons.speed,
       items: items,
     ),
     _SpecCat.dimensionsPractical => SpecGroup(
-      title: 'الأبعاد والعملية',
+      title: l10n.specGroupDimensionsPractical,
       icon: Icons.straighten,
       items: items,
     ),
     _SpecCat.engineFuel => SpecGroup(
-      title: 'المحرك والوقود',
+      title: l10n.specGroupEngineFuel,
       icon: Icons.local_gas_station,
       items: items,
     ),
     _SpecCat.chassisTransmission => SpecGroup(
-      title: 'الهيكل وناقل الحركة',
+      title: l10n.specGroupChassisTransmission,
       icon: Icons.settings,
       items: items,
     ),
     _SpecCat.other => SpecGroup(
-      title: 'أخرى',
+      title: l10n.specGroupOther,
       icon: Icons.info_outline,
       items: items,
     ),
   };
 }
 
-// ---- classifier ----
-
+// ... _classify and _tokens functions remain exactly the same ...
 _SpecCat _classify(String key, String value) {
+  // ... (Keep existing implementation)
   final k = _tokens(key);
   _tokens(value);
 
@@ -157,7 +169,7 @@ _SpecCat _classify(String key, String value) {
   final hasNm = valueLower.contains('nm') || valueLower.contains('n*m');
   final hasBhp = valueLower.contains('bhp') || valueLower.contains('hp');
 
-  // 1) Battery/Range (strongest signals first)
+  // 1) Battery/Range
   if (hasKwh) return _SpecCat.batteryRange;
   if (kHas({'real', 'world', 'range'}) ||
       key.toLowerCase().contains('real-world range')) {
@@ -167,7 +179,7 @@ _SpecCat _classify(String key, String value) {
     return _SpecCat.batteryRange;
   }
 
-  // 2) Charging (avoid substring traps; tokens only)
+  // 2) Charging
   if (kHas({
     'charging',
     'charge',
@@ -227,14 +239,13 @@ _SpecCat _classify(String key, String value) {
     'mm',
     'kg',
   })) {
-    // special case: "Capacity" + cm3 is engine displacement, not dimensions
     if (k.length == 1 && k.first == 'capacity' && hasCm3) {
       return _SpecCat.engineFuel;
     }
     return _SpecCat.dimensionsPractical;
   }
 
-  // 5) Engine / fuel (ICE/hybrid)
+  // 5) Engine / fuel
   if (hasCm3 ||
       hasRpm ||
       hasLitre ||
@@ -252,11 +263,10 @@ _SpecCat _classify(String key, String value) {
         'euro',
         'emission',
       })) {
-    // Another special case: "Fuel tank capacity" should be engine/fuel even though it's a capacity
     return _SpecCat.engineFuel;
   }
 
-  // 6) Chassis / transmission / brakes / suspension
+  // 6) Chassis / transmission
   if (kHas({
     'gearbox',
     'transmission',

@@ -12,6 +12,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Sham Cars';
 
   @override
+  String get navbarExploreLabel => 'Explore';
+
+  @override
+  String get navbarVehiclesLabel => 'Vehicles';
+
+  @override
+  String get navbarCommunityLabel => 'Community';
+
+  @override
+  String get drawerAppearanceTitle => 'Appearance';
+
+  @override
+  String get userGuestTitle => 'Guest';
+
+  @override
+  String get userGuestSubtitle => 'Sign in to view profile';
+
+  @override
+  String get themeModeSystem => 'System';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
   String get loadingBarrierDefaultText => 'Please wait...';
 
   @override
@@ -37,19 +64,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewAllBtnLabel => 'view all';
-
-  @override
-  String get homeGreeting => 'Welcome back! we hope you are well';
-
-  @override
-  String get homeSearchBarHint =>
-      'search for a doctor, hospital or any medical care facility';
-
-  @override
-  String get homeSpecialtiesSectionTitle => 'Medical specialties';
-
-  @override
-  String get homeFacilitiesSectionTitle => 'Facilities near you';
 
   @override
   String get signedInAs => 'You\'re signed in as';
@@ -116,33 +130,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchScreenTitle => 'Search in Sham Cars';
-
-  @override
-  String get doctorSearchFilter => 'Doctors';
-
-  @override
-  String get facilitySearchFilter => 'Medical Facilities';
-
-  @override
-  String get allSearchFilter => 'All';
-
-  @override
-  String get searchFiltersSectionTitle => 'Filters';
-
-  @override
-  String get citySearchFilterPopupLabel => 'City';
-
-  @override
-  String get specialtySearchFilterPopupLabel => 'Medical specialty';
-
-  @override
-  String get categorySearchFilterPopupLabel => 'Category';
-
-  @override
-  String get editFiltersBtnLabel => 'Edit';
-
-  @override
-  String get applyFiltersBtnLabel => 'Apply';
 
   @override
   String get applyFilters => 'Apply';
@@ -463,37 +450,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signupFailureDialogTitle => 'Signup failure';
 
   @override
-  String get sheetDragUpHint => 'Swap up to view full information';
-
-  @override
-  String get show => 'Show';
-
-  @override
-  String get hide => 'Hide';
-
-  @override
-  String get ophthalmology => 'Ophthalmology';
-
-  @override
-  String get neurology => 'Neurology';
-
-  @override
-  String get dentistry => 'Dentistry';
-
-  @override
-  String get cardiology => 'Cardiology';
-
-  @override
-  String get familyMedicine => 'Family Medicine';
-
-  @override
-  String get prosthetics => 'Prosthetics';
-
-  @override
-  String get chooseSignupMethodMessage =>
-      'Please choose how you would like to create your account';
-
-  @override
   String get signupWithEmailMessage =>
       'We will send a verification code to your email address:';
 
@@ -569,6 +525,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get show => 'Show';
+
+  @override
+  String get hide => 'Hide';
+
+  @override
   String get commonRetry => 'Retry';
 
   @override
@@ -590,10 +552,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonClear => 'Clear';
 
   @override
+  String get commonResults => 'Results';
+
+  @override
   String get commonViewAll => 'View all';
 
   @override
   String get commonLoadingMore => 'Loading more...';
+
+  @override
+  String get vechilesListFilterButton => 'Filters';
 
   @override
   String get communityTitle => 'Community';
@@ -627,6 +595,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityNoResultsSubtitle => 'Try different keywords.';
+
+  @override
+  String get communitySearchHint => 'Search the community';
 
   @override
   String get communityQuestionsCountLabel => 'Questions';
@@ -768,16 +739,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonFeatured => 'Featured';
 
   @override
-  String get homeSearchNoResultsTitle => 'No results';
+  String get vehiclesSearchNoResultsTitle => 'No results';
 
   @override
-  String get homeSearchNoResultsSubtitle => 'Try a different search term.';
+  String get vehiclesSearchNoResultsSubtitle => 'Try a different search term.';
 
   @override
   String get homeErrorTitle => 'Something went wrong';
 
   @override
   String get homeErrorSubtitle => 'Please try again.';
+
+  @override
+  String get vehicleDetailsRange => 'Range';
+
+  @override
+  String get vehicleDetailsBattery => 'Battery';
+
+  @override
+  String get vehicleDetailsPrice => 'Price';
 
   @override
   String get vehicleDetailsSimilarTitle => 'Similar cars';
@@ -850,4 +830,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileBrowseCommunityCta => 'Browse community';
+
+  @override
+  String get specGroupBatteryRange => 'Battery & Range';
+
+  @override
+  String get specGroupCharging => 'Charging';
+
+  @override
+  String get specGroupPerformanceDrive => 'Performance & Drivetrain';
+
+  @override
+  String get specGroupDimensionsPractical => 'Dimensions & Practicality';
+
+  @override
+  String get specGroupEngineFuel => 'Engine & Fuel';
+
+  @override
+  String get specGroupChassisTransmission => 'Chassis & Transmission';
+
+  @override
+  String get specGroupOther => 'Other';
 }

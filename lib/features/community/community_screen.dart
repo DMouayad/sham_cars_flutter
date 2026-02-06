@@ -17,7 +17,7 @@ import 'community_cubit.dart';
 import 'models.dart';
 import 'widgets/add_review_sheet.dart';
 import 'widgets/ask_question_sheet.dart';
-import 'widgets/cards.dart';
+import 'widgets/community_review_card.dart';
 import 'widgets/community_review_card_skeleton.dart';
 import 'widgets/search_field.dart';
 import '../questions/models.dart';
@@ -124,6 +124,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       children: [
                         SearchField(
                           controller: _searchController,
+                          hintText: context.l10n.communitySearchHint,
                           onChanged: (q) =>
                               context.read<CommunityCubit>().search(q),
                           onClear: () {
@@ -380,7 +381,7 @@ class _StatsCard extends StatelessWidget {
             child: _StatItem(
               icon: Icons.forum_outlined,
               value: questionsCount,
-              label: 'سؤال',
+              label: context.l10n.questionTypeLabel,
               color: cs.onPrimaryContainer,
             ),
           ),
@@ -393,7 +394,7 @@ class _StatsCard extends StatelessWidget {
             child: _StatItem(
               icon: Icons.rate_review_outlined,
               value: reviewsCount,
-              label: 'تجربة',
+              label: context.l10n.reviewTypeLabel,
               color: cs.onPrimaryContainer,
             ),
           ),
@@ -500,7 +501,7 @@ class _CommunitySpeedDialState extends State<_CommunitySpeedDial>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               _SpeedDialOption(
-                label: 'اطرح سؤالاً',
+                label: context.l10n.communityAskQuestion,
                 icon: Icons.help_outline,
                 color: cs.tertiaryContainer,
                 onColor: cs.onTertiaryContainer,
@@ -511,7 +512,7 @@ class _CommunitySpeedDialState extends State<_CommunitySpeedDial>
               ),
               const SizedBox(height: 12),
               _SpeedDialOption(
-                label: 'أضف تجربة',
+                label: context.l10n.communityAddReview,
                 icon: Icons.rate_review_outlined,
                 color: cs.secondaryContainer,
                 onColor: cs.onSecondaryContainer,

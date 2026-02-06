@@ -10,15 +10,20 @@ import 'package:sham_cars/router/routes.dart';
 
 FutureOr<String?> redirectHelper(BuildContext context, GoRouterState state) {
   final authNotifier = GetIt.I.get<AuthNotifier>();
-  if (!authNotifier.isLoggedIn && state.isProtectedRoute) {
-    return RoutePath.login;
-  }
 
+  if (!authNotifier.isLoggedIn && state.isProtectedRoute) {
+    final fromLocation = state.uri.toString();
+
+    return LoginRoute(redirectTo: fromLocation).location;
+  }
   return null;
 }
 
 extension on GoRouterState {
   bool get isProtectedRoute {
-    return [RoutePath.profile].contains(matchedLocation);
+    return [
+      RoutePath.profile,
+      RoutePath.profileActivity,
+    ].contains(matchedLocation);
   }
 }

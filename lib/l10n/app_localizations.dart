@@ -104,6 +104,60 @@ abstract class AppLocalizations {
   /// **'Sham Cars'**
   String get appName;
 
+  /// No description provided for @navbarExploreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get navbarExploreLabel;
+
+  /// No description provided for @navbarVehiclesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicles'**
+  String get navbarVehiclesLabel;
+
+  /// No description provided for @navbarCommunityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get navbarCommunityLabel;
+
+  /// The title for the appearance section in the drawer
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get drawerAppearanceTitle;
+
+  /// The display name for a user who is not logged in
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get userGuestTitle;
+
+  /// The subtitle prompting a guest user to log in
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to view profile'**
+  String get userGuestSubtitle;
+
+  /// No description provided for @themeModeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeModeSystem;
+
+  /// No description provided for @themeModeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeModeLight;
+
+  /// No description provided for @themeModeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeModeDark;
+
   /// A default message displayed over the loading barrier
   ///
   /// In en, this message translates to:
@@ -157,30 +211,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'view all'**
   String get viewAllBtnLabel;
-
-  /// No description provided for @homeGreeting.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome back! we hope you are well'**
-  String get homeGreeting;
-
-  /// No description provided for @homeSearchBarHint.
-  ///
-  /// In en, this message translates to:
-  /// **'search for a doctor, hospital or any medical care facility'**
-  String get homeSearchBarHint;
-
-  /// No description provided for @homeSpecialtiesSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Medical specialties'**
-  String get homeSpecialtiesSectionTitle;
-
-  /// No description provided for @homeFacilitiesSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Facilities near you'**
-  String get homeFacilitiesSectionTitle;
 
   /// No description provided for @signedInAs.
   ///
@@ -313,60 +343,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search in Sham Cars'**
   String get searchScreenTitle;
-
-  /// No description provided for @doctorSearchFilter.
-  ///
-  /// In en, this message translates to:
-  /// **'Doctors'**
-  String get doctorSearchFilter;
-
-  /// No description provided for @facilitySearchFilter.
-  ///
-  /// In en, this message translates to:
-  /// **'Medical Facilities'**
-  String get facilitySearchFilter;
-
-  /// No description provided for @allSearchFilter.
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get allSearchFilter;
-
-  /// No description provided for @searchFiltersSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Filters'**
-  String get searchFiltersSectionTitle;
-
-  /// No description provided for @citySearchFilterPopupLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'City'**
-  String get citySearchFilterPopupLabel;
-
-  /// No description provided for @specialtySearchFilterPopupLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Medical specialty'**
-  String get specialtySearchFilterPopupLabel;
-
-  /// No description provided for @categorySearchFilterPopupLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Category'**
-  String get categorySearchFilterPopupLabel;
-
-  /// No description provided for @editFiltersBtnLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit'**
-  String get editFiltersBtnLabel;
-
-  /// No description provided for @applyFiltersBtnLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply'**
-  String get applyFiltersBtnLabel;
 
   /// No description provided for @applyFilters.
   ///
@@ -950,66 +926,6 @@ abstract class AppLocalizations {
   /// **'Signup failure'**
   String get signupFailureDialogTitle;
 
-  /// No description provided for @sheetDragUpHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Swap up to view full information'**
-  String get sheetDragUpHint;
-
-  /// No description provided for @show.
-  ///
-  /// In en, this message translates to:
-  /// **'Show'**
-  String get show;
-
-  /// No description provided for @hide.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide'**
-  String get hide;
-
-  /// No description provided for @ophthalmology.
-  ///
-  /// In en, this message translates to:
-  /// **'Ophthalmology'**
-  String get ophthalmology;
-
-  /// No description provided for @neurology.
-  ///
-  /// In en, this message translates to:
-  /// **'Neurology'**
-  String get neurology;
-
-  /// No description provided for @dentistry.
-  ///
-  /// In en, this message translates to:
-  /// **'Dentistry'**
-  String get dentistry;
-
-  /// No description provided for @cardiology.
-  ///
-  /// In en, this message translates to:
-  /// **'Cardiology'**
-  String get cardiology;
-
-  /// No description provided for @familyMedicine.
-  ///
-  /// In en, this message translates to:
-  /// **'Family Medicine'**
-  String get familyMedicine;
-
-  /// No description provided for @prosthetics.
-  ///
-  /// In en, this message translates to:
-  /// **'Prosthetics'**
-  String get prosthetics;
-
-  /// Message shown on signup method selection screen
-  ///
-  /// In en, this message translates to:
-  /// **'Please choose how you would like to create your account'**
-  String get chooseSignupMethodMessage;
-
   /// Message shown on signup method selection screen
   ///
   /// In en, this message translates to:
@@ -1136,6 +1052,18 @@ abstract class AppLocalizations {
   /// **'{days} days ago'**
   String timeDaysAgo(int days);
 
+  /// No description provided for @show.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get show;
+
+  /// No description provided for @hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get hide;
+
   /// No description provided for @commonRetry.
   ///
   /// In en, this message translates to:
@@ -1178,6 +1106,12 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get commonClear;
 
+  /// No description provided for @commonResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get commonResults;
+
   /// No description provided for @commonViewAll.
   ///
   /// In en, this message translates to:
@@ -1189,6 +1123,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading more...'**
   String get commonLoadingMore;
+
+  /// No description provided for @vechilesListFilterButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get vechilesListFilterButton;
 
   /// No description provided for @communityTitle.
   ///
@@ -1255,6 +1195,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try different keywords.'**
   String get communityNoResultsSubtitle;
+
+  /// No description provided for @communitySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the community'**
+  String get communitySearchHint;
 
   /// No description provided for @communityQuestionsCountLabel.
   ///
@@ -1520,17 +1466,17 @@ abstract class AppLocalizations {
   /// **'Featured'**
   String get commonFeatured;
 
-  /// No description provided for @homeSearchNoResultsTitle.
+  /// No description provided for @vehiclesSearchNoResultsTitle.
   ///
   /// In en, this message translates to:
   /// **'No results'**
-  String get homeSearchNoResultsTitle;
+  String get vehiclesSearchNoResultsTitle;
 
-  /// No description provided for @homeSearchNoResultsSubtitle.
+  /// No description provided for @vehiclesSearchNoResultsSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Try a different search term.'**
-  String get homeSearchNoResultsSubtitle;
+  String get vehiclesSearchNoResultsSubtitle;
 
   /// No description provided for @homeErrorTitle.
   ///
@@ -1543,6 +1489,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please try again.'**
   String get homeErrorSubtitle;
+
+  /// No description provided for @vehicleDetailsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Range'**
+  String get vehicleDetailsRange;
+
+  /// No description provided for @vehicleDetailsBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery'**
+  String get vehicleDetailsBattery;
+
+  /// No description provided for @vehicleDetailsPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get vehicleDetailsPrice;
 
   /// No description provided for @vehicleDetailsSimilarTitle.
   ///
@@ -1681,6 +1645,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Browse community'**
   String get profileBrowseCommunityCta;
+
+  /// No description provided for @specGroupBatteryRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery & Range'**
+  String get specGroupBatteryRange;
+
+  /// No description provided for @specGroupCharging.
+  ///
+  /// In en, this message translates to:
+  /// **'Charging'**
+  String get specGroupCharging;
+
+  /// No description provided for @specGroupPerformanceDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance & Drivetrain'**
+  String get specGroupPerformanceDrive;
+
+  /// No description provided for @specGroupDimensionsPractical.
+  ///
+  /// In en, this message translates to:
+  /// **'Dimensions & Practicality'**
+  String get specGroupDimensionsPractical;
+
+  /// No description provided for @specGroupEngineFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine & Fuel'**
+  String get specGroupEngineFuel;
+
+  /// No description provided for @specGroupChassisTransmission.
+  ///
+  /// In en, this message translates to:
+  /// **'Chassis & Transmission'**
+  String get specGroupChassisTransmission;
+
+  /// No description provided for @specGroupOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get specGroupOther;
 }
 
 class _AppLocalizationsDelegate

@@ -5,6 +5,7 @@ import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/router/routes.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 class SectionHeaderRow extends StatelessWidget {
   const SectionHeaderRow({
@@ -27,7 +28,10 @@ class SectionHeaderRow extends StatelessWidget {
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
         const Spacer(),
-        TextButton(onPressed: onViewAll, child: const Text('عرض الكل')),
+        TextButton(
+          onPressed: onViewAll,
+          child: Text(context.l10n.viewAllBtnLabel),
+        ),
       ],
     );
   }
@@ -47,8 +51,8 @@ class ReviewsPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     if (items.isEmpty) {
       return _EmptyBox(
-        title: 'لا توجد تجارب بعد',
-        buttonText: 'عرض الكل',
+        title: context.l10n.trimCommunityNoReviews,
+        buttonText: context.l10n.viewAllBtnLabel,
         onPressed: onViewAll,
       );
     }
@@ -56,7 +60,10 @@ class ReviewsPreview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeaderRow(title: 'التجارب', onViewAll: onViewAll),
+        SectionHeaderRow(
+          title: context.l10n.trimCommunityReviewsTab,
+          onViewAll: onViewAll,
+        ),
         const SizedBox(height: 10),
         ...items.map(
           (r) => Padding(
@@ -83,8 +90,8 @@ class QuestionsPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     if (items.isEmpty) {
       return _EmptyBox(
-        title: 'لا توجد أسئلة بعد',
-        buttonText: 'عرض الكل',
+        title: context.l10n.trimCommunityNoQuestions,
+        buttonText: context.l10n.viewAllBtnLabel,
         onPressed: onViewAll,
       );
     }
@@ -92,7 +99,10 @@ class QuestionsPreview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeaderRow(title: 'سؤال وجواب', onViewAll: onViewAll),
+        SectionHeaderRow(
+          title: context.l10n.trimCommunityQaTab,
+          onViewAll: onViewAll,
+        ),
         const SizedBox(height: 10),
         ...items.map(
           (q) => Padding(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/home/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 class HotTopicCard extends StatelessWidget {
   const HotTopicCard({super.key, required this.topic, this.onTap});
@@ -50,7 +51,7 @@ class HotTopicCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${topic.questionsCount} سؤال • ${topic.answersCount} إجابة',
+                      '${topic.questionsCount} ${context.l10n.questionTypeLabel}• ${topic.answersCount} ${context.l10n.answerTypeLabel}',
                       style: TextStyle(color: cs.onSurfaceVariant),
                     ),
                   ],

@@ -184,6 +184,12 @@ class _SpecsRow extends StatelessWidget {
             text: trim.acceleration.display,
             color: Colors.orange,
           ),
+        if (trim.batteryCapacity.isNotEmpty)
+          _SpecChip(
+            icon: Icons.battery_charging_full,
+            text: trim.batteryCapacity.display,
+            color: Colors.blue,
+          ),
         if (trim.bodyType.isNotEmpty)
           _SpecChip(
             icon: Icons.directions_car_outlined,

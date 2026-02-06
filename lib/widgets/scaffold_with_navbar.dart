@@ -43,28 +43,30 @@ class ScaffoldWithNavBar extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () => ProfileRoute().push(context),
+            onPressed: () => const ProfileActivityRoute().push(context),
             icon: const Icon(Icons.person),
           ),
         ],
         centerTitle: true,
       ),
-      // extendBodyBehindAppBar: true,
       body: navigationShell, // The current active branch's content
       drawer: const CustomDrawer(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: navigationShell.currentIndex,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
-            label: 'Explore',
+            icon: const Icon(Icons.explore_outlined),
+            label: context.l10n.navbarExploreLabel,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.drive_eta),
-            label: 'Vehicles',
+            icon: const Icon(Icons.drive_eta),
+            label: context.l10n.navbarVehiclesLabel,
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Community'),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.people),
+            label: context.l10n.navbarCommunityLabel,
+          ),
         ],
         onTap: (index) => _onTap(context, index),
       ),

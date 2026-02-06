@@ -3,7 +3,6 @@ import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/utils/city_text.dart';
 import 'package:sham_cars/utils/date_time_text.dart';
-import 'package:sham_cars/utils/utils.dart';
 
 class CommunityReviewCard extends StatelessWidget {
   const CommunityReviewCard({super.key, required this.review, this.onTap});
@@ -15,7 +14,7 @@ class CommunityReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final l10n = context.l10n;
+    final accentColor = cs.primary;
 
     final canOpen = review.trimId != null && onTap != null;
 
@@ -29,61 +28,79 @@ class CommunityReviewCard extends StatelessWidget {
       child: InkWell(
         onTap: canOpen ? () => onTap!(review.trimId!) : null,
         child: Padding(
-          padding: const EdgeInsets.all(ThemeConstants.pSm),
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header: vehicle + rating + time
+              // --- HEADER: Icon + Car Name + Rating + Date ---
               Row(
                 children: [
-                  const Icon(Icons.rate_review_outlined, size: 18),
+                  Icon(
+                    Icons.rate_review_outlined,
+                    size: 16,
+                    color: accentColor,
+                  ),
+
                   const SizedBox(width: 8),
+
+                  // Car Name (takes available space)
                   Expanded(
                     child: Text(
                       review.trimDisplayName ?? (review.trimName ?? '—'),
-                      style: tt.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
+                      style: tt.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: cs.primary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+
                   const SizedBox(width: 8),
-                  _RatingPill(text: l10n.reviewsRatingFormat(review.rating)),
+
+                  // Rating (Fixed width)
+                  _HeaderRatingBadge(rating: review.rating.toDouble()),
+
+                  const SizedBox(width: 8),
+
+                  // Date (Fixed width)
+                  Text(
+                    DateTimeText.relativeOrShort(context, review.createdAt),
+                    style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
                 ],
               ),
 
               const SizedBox(height: 10),
 
-              // Optional title
+              // --- BODY: Title (Optional) + Comment ---
               if (review.title?.trim().isNotEmpty ?? false) ...[
                 Text(
                   review.title!.trim(),
-                  style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w800),
+                  style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w900),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
               ],
 
-              // Comment
               Text(
                 review.comment,
-                style: tt.bodySmall?.copyWith(
+                style: tt.bodyMedium?.copyWith(
                   color: cs.onSurfaceVariant,
-                  height: 1.55,
+                  height: 1.5,
                 ),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
-              // Footer: user + city
+              // --- FOOTER: User + City ---
               Row(
                 children: [
                   _AvatarLetter(name: review.userName),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       review.userName,
@@ -95,11 +112,10 @@ class CommunityReviewCard extends StatelessWidget {
                     ),
                   ),
                   if (review.cityCode case final city?)
-                    _CityChip(text: CityText.label(context, city)),
-                  Text(
-                    DateTimeText.relativeOrShort(context, review.createdAt),
-                    style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
-                  ),
+                    _InfoChip(
+                      icon: Icons.location_on_outlined,
+                      text: CityText.label(context, city),
+                    ),
                 ],
               ),
             ],
@@ -110,56 +126,69 @@ class CommunityReviewCard extends StatelessWidget {
   }
 }
 
-class _RatingPill extends StatelessWidget {
-  const _RatingPill({required this.text});
-  final String text;
+class _HeaderRatingBadge extends StatelessWidget {
+  const _HeaderRatingBadge({required this.rating});
+  final double rating;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    // Determine color intensity based on rating if desired,
+    // or stick to static Amber for consistency.
     return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: cs.primaryContainer,
-        borderRadius: BorderRadius.circular(999),
+        color: Colors.amber.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.amber.withOpacity(0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
-          const SizedBox(width: 6),
           Text(
-            text,
+            rating.toString(),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: cs.onPrimaryContainer,
               fontWeight: FontWeight.w900,
+              color: Colors.orange[900],
+              height: 1, // Fix alignment
             ),
           ),
+          const SizedBox(width: 2),
+          const Icon(Icons.star_rounded, size: 12, color: Colors.amber),
         ],
       ),
     );
   }
 }
 
-class _CityChip extends StatelessWidget {
-  const _CityChip({required this.text});
+class _InfoChip extends StatelessWidget {
+  const _InfoChip({this.icon, required this.text});
+  final IconData? icon;
   final String text;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
+      padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: cs.onSurfaceVariant,
-          fontWeight: FontWeight.w800,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 12, color: cs.onSurfaceVariant),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            text,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: cs.onSurfaceVariant,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -181,15 +210,16 @@ class _AvatarLetter extends StatelessWidget {
       height: 28,
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: cs.outlineVariant),
+        shape: BoxShape.circle,
+        border: Border.all(color: cs.outlineVariant.withOpacity(0.5)),
       ),
       alignment: Alignment.center,
       child: Text(
         letter,
-        style: Theme.of(
-          context,
-        ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w900,
+          color: cs.onSurfaceVariant,
+        ),
       ),
     );
   }

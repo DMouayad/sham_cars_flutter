@@ -83,10 +83,10 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
                 padding: const EdgeInsets.all(ThemeConstants.p),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    _QuestionCard(question: q),
-                    const SizedBox(height: 12),
-
                     _RelatedVehicleCard(question: q),
+                    const SizedBox(height: 12),
+                    _QuestionCard(question: q),
+
                     const SizedBox(height: 16),
                     _SectionTitle(title: 'الإجابات (${q.answers.length})'),
                     const SizedBox(height: 10),
@@ -193,11 +193,10 @@ class _RelatedVehicleCard extends StatelessWidget {
     ].join(' • ');
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest,
         borderRadius: ThemeConstants.cardRadius,
-        border: Border.all(color: cs.outlineVariant),
       ),
       child: Row(
         children: [

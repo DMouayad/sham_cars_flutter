@@ -15,13 +15,8 @@ class QuestionCard extends StatelessWidget {
 
   final Question question;
   final VoidCallback? onTap;
-
-  /// compact=true is best for vehicle details previews (latest 2).
   final bool compact;
-
-  /// show model/trim context if provided by API (useful in global questions list).
   final bool showContext;
-
   final bool showQuestionBadge;
 
   @override
@@ -34,101 +29,100 @@ class QuestionCard extends StatelessWidget {
         ((question.modelName?.isNotEmpty ?? false) ||
             (question.trimName?.isNotEmpty ?? false));
 
-    final card = Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: cs.surface,
+    return Material(
+      color: cs.surface,
+      shape: RoundedRectangleBorder(
         borderRadius: ThemeConstants.cardRadius,
-        border: Border.all(color: cs.outlineVariant),
+        side: BorderSide(color: cs.outlineVariant),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 8,
-            mainAxisAlignment: MainAxisAlignment.end,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14), // Standardized Padding
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Type badge
-              if (showQuestionBadge) const Icon(Icons.help_outline, size: 18),
-              if (hasContext) ...[
-                Text(
-                  _contextText(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: tt.labelSmall?.copyWith(
-                    color: cs.primary,
-                    fontWeight: FontWeight.w700,
+              // --- HEADER: Badge/Icon + Context + Date ---
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (showQuestionBadge) ...[
+                    Icon(Icons.help_outline, size: 18, color: Colors.green),
+                    const SizedBox(width: 6),
+                  ],
+                  if (hasContext)
+                    Expanded(
+                      child: Text(
+                        _contextText(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: tt.labelMedium?.copyWith(
+                          color: Colors.green,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    )
+                  else
+                    const Spacer(),
+
+                  const SizedBox(width: 8),
+                  Text(
+                    DateTimeText.relativeOrShort(context, question.createdAt),
+                    style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
-                ),
-                const Spacer(),
-              ],
-              Text(
-                DateTimeText.relativeOrShort(context, question.createdAt),
-                style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                ],
               ),
-            ],
-          ),
 
-          const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
-          // Title
-          Text(
-            question.title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w900),
-          ),
+              // --- BODY: Title + Content ---
+              Text(
+                question.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w900),
+              ),
 
-          const SizedBox(height: 8),
+              const SizedBox(height: 6),
 
-          // Body preview
-          Text(
-            question.body,
-            maxLines: compact ? 2 : 5,
-            overflow: TextOverflow.ellipsis,
-            style: tt.bodyMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              height: 1.55,
-            ),
-          ),
+              Text(
+                question.body,
+                maxLines: compact ? 2 : 5,
+                overflow: TextOverflow.ellipsis,
+                style: tt.bodyMedium?.copyWith(
+                  color: cs.onSurfaceVariant,
+                  height: 1.5,
+                ),
+              ),
 
-          const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
-          // Footer: user + answers + date
-          Row(
-            children: [
-              _AvatarLetter(name: question.userName),
-              const SizedBox(width: 10),
-
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+              // --- FOOTER: User + Answers Pill ---
+              Row(
+                children: [
+                  _AvatarLetter(name: question.userName),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
                       question.userName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: tt.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+                      style: tt.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  _StatPill(
+                    icon: Icons.forum_outlined,
+                    count: question.answersCount,
+                  ),
+                ],
               ),
-              _AnswersPill(count: question.answersCount),
             ],
           ),
-        ],
+        ),
       ),
-    );
-
-    if (onTap == null) return card;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: ThemeConstants.cardRadius,
-      child: card,
     );
   }
 
@@ -142,31 +136,30 @@ class QuestionCard extends StatelessWidget {
   }
 }
 
-class _AnswersPill extends StatelessWidget {
-  const _AnswersPill({required this.count});
+class _StatPill extends StatelessWidget {
+  const _StatPill({required this.count, required this.icon});
   final int count;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-
     return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
+      padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
       decoration: BoxDecoration(
-        color: cs.surfaceContainer,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: cs.outlineVariant),
+        color: cs.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.forum_outlined, size: 16, color: cs.onSurfaceVariant),
-          const SizedBox(width: 6),
+          Icon(icon, size: 12, color: cs.onSurfaceVariant),
+          const SizedBox(width: 4),
           Text(
             '$count',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w900,
-              color: cs.onSurface,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: cs.onSurfaceVariant,
             ),
           ),
         ],
@@ -187,19 +180,19 @@ class _AvatarLetter extends StatelessWidget {
         : '?';
 
     return Container(
-      width: 34,
-      height: 34,
+      width: 28, // Standardized Size
+      height: 28,
       decoration: BoxDecoration(
-        // color: cs.surf,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: cs.outlineVariant),
+        color: cs.surfaceContainerHighest,
+        shape: BoxShape.circle,
+        border: Border.all(color: cs.outlineVariant.withOpacity(0.5)),
       ),
       alignment: Alignment.center,
       child: Text(
         letter,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          // color: cs.onPrimaryContainer,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w900,
+          color: cs.onSurfaceVariant,
         ),
       ),
     );

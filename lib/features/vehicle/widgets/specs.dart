@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/utils/utils.dart';
 import 'spec_groups.dart';
 
 class GroupedSpecs extends StatelessWidget {
@@ -9,7 +10,7 @@ class GroupedSpecs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final groups = groupSpecs(specs);
+    final groups = groupSpecs(context.l10n, specs);
     if (groups.isEmpty) return const SizedBox.shrink();
 
     return Container(

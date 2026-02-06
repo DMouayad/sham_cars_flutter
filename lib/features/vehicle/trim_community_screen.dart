@@ -11,6 +11,7 @@ import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/community/widgets/ask_question_sheet.dart';
 import 'package:sham_cars/features/community/widgets/add_review_sheet.dart';
 import 'package:sham_cars/router/routes.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 import 'cubits/trim_community_cubit.dart';
 
@@ -52,10 +53,10 @@ class TrimCommunityScreen extends StatelessWidget {
                         pinned: true,
                         title: Text(trimTitle),
                         forceElevated: innerBoxIsScrolled,
-                        bottom: const TabBar(
+                        bottom: TabBar(
                           tabs: [
-                            Tab(text: 'التجارب'),
-                            Tab(text: 'سؤال وجواب'),
+                            Tab(text: context.l10n.trimCommunityReviewsTab),
+                            Tab(text: context.l10n.trimCommunityQaTab),
                           ],
                         ),
                       ),
@@ -104,7 +105,7 @@ class TrimCommunityScreen extends StatelessWidget {
                         ).uri.toString();
                         LoginRoute(redirectTo: returnTo).push(context);
                       },
-                      label: const Text('Join to contribute'),
+                      label: Text(context.l10n.communityJoinToContribute),
                       icon: const Icon(Icons.login),
                     ),
             );
@@ -183,7 +184,7 @@ class _ReviewsTabState extends State<_ReviewsTab> {
           p.hasMoreReviews != n.hasMoreReviews,
       builder: (context, state) {
         if (state.reviews.isEmpty) {
-          return const Center(child: Text('لا توجد تجارب بعد'));
+          return Center(child: Text(context.l10n.trimCommunityNoReviews));
         }
 
         final count = state.reviews.length + (state.hasMoreReviews ? 1 : 0);
@@ -255,7 +256,7 @@ class _QuestionsTabState extends State<_QuestionsTab> {
           p.hasMoreQuestions != n.hasMoreQuestions,
       builder: (context, state) {
         if (state.questions.isEmpty) {
-          return const Center(child: Text('لا توجد أسئلة بعد'));
+          return Center(child: Text(context.l10n.trimCommunityNoQuestions));
         }
 
         final count = state.questions.length + (state.hasMoreQuestions ? 1 : 0);

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sham_cars/features/community/widgets/cards.dart';
+import 'package:sham_cars/features/community/widgets/community_review_card.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
@@ -129,8 +129,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return [
         SliverToBoxAdapter(
           child: _EmptyState(
-            title: l10n.homeSearchNoResultsTitle,
-            subtitle: l10n.homeSearchNoResultsSubtitle,
+            title: l10n.vehiclesSearchNoResultsTitle,
+            subtitle: l10n.vehiclesSearchNoResultsSubtitle,
           ),
         ),
       ];
@@ -475,6 +475,10 @@ class _SearchField extends StatelessWidget {
             ? IconButton(icon: const Icon(Icons.close), onPressed: onClear)
             : null,
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(ThemeConstants.rCard),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: context.colorScheme.outline),
           borderRadius: BorderRadius.circular(ThemeConstants.rCard),
         ),
         filled: true,
