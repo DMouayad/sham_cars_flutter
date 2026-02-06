@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/theme/app_theme.dart';
 import 'package:sham_cars/features/user/models.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:sham_cars/widgets/dialogs/error_dialog.dart';
@@ -40,6 +41,10 @@ class UserProfileScreen extends StatelessWidget {
               title: context.l10n.logoutFailureDialogTitle,
               errMessage: state.appErr.getMessage(context),
             );
+          }
+          if (state is LogoutSuccessState) {
+            GetIt.I.get<AuthNotifier>().updateCurrentUser(null);
+            const HomeRoute().go(context);
           }
         },
         child: _UserProfileScreenContent(user: user, gap: gap),

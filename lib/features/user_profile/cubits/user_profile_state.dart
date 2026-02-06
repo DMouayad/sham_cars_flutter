@@ -24,3 +24,7 @@ class UserProfileFailureState extends UserProfileState {
 class LogoutFailureState extends UserProfileFailureState {
   const LogoutFailureState({required super.user, required super.appErr});
 }
+
+class LogoutSuccessState extends UserProfileState {
+  const LogoutSuccessState() : super(isBusy: false, user: null);
+}

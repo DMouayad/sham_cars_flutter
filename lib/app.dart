@@ -31,18 +31,20 @@ class MainApp extends StatelessWidget {
   });
   final RestClient restClient;
   final ResponseCache responseCache;
+
+  static final _appRouter = GoRouter(
+    routes: $appRoutes,
+    navigatorKey: rootNavigatorKey,
+    initialLocation: RoutePath.home,
+    debugLogDiagnostics: true,
+    refreshListenable: GetIt.I.get<AuthNotifier>(),
+    redirect: redirectHelper,
+  );
+
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => GoRouter(
-        routes: $appRoutes,
-        navigatorKey: rootNavigatorKey,
-        initialLocation: RoutePath.home,
-        debugLogDiagnostics: true,
-        refreshListenable: GetIt.I.get<AuthNotifier>(),
-        redirect: redirectHelper,
-      ),
-      lazy: false,
+    return RepositoryProvider.value(
+      value: _appRouter,
       child: MultiBlocProvider(
         providers: [
           BlocProvider(lazy: false, create: (_) => ThemeCubit()),

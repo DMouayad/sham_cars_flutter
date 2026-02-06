@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:sham_cars/features/auth/auth_notifier.dart';
 
 import 'package:sham_cars/features/user/models/user.dart';
 import 'package:sham_cars/utils/src/app_error.dart';
@@ -33,8 +32,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     _helpers.handleFuture(
       _authRepository.logOut(),
       onSuccess: (value) {
-        emit(UserProfileState(isBusy: false, user: null));
-        GetIt.I.get<AuthNotifier>().updateCurrentUser(null);
+        emit(const LogoutSuccessState());
       },
       onError: (err) => emit(LogoutFailureState(user: state.user, appErr: err)),
     );

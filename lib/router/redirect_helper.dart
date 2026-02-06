@@ -10,6 +10,9 @@ import 'package:sham_cars/router/routes.dart';
 
 FutureOr<String?> redirectHelper(BuildContext context, GoRouterState state) {
   final authNotifier = GetIt.I.get<AuthNotifier>();
+  print(
+    'Redirect check: Path=${state.uri.path}, LoggedIn=${authNotifier.isLoggedIn}',
+  );
 
   if (!authNotifier.isLoggedIn && state.isProtectedRoute) {
     final fromLocation = state.uri.toString();
@@ -21,9 +24,11 @@ FutureOr<String?> redirectHelper(BuildContext context, GoRouterState state) {
 
 extension on GoRouterState {
   bool get isProtectedRoute {
+    final currentPath = uri.path;
+
     return [
       RoutePath.profile,
       RoutePath.profileActivity,
-    ].contains(matchedLocation);
+    ].any((protectedPath) => currentPath.startsWith(protectedPath));
   }
 }

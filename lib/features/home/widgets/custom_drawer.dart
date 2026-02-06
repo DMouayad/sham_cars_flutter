@@ -64,7 +64,7 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   const _ThemeSettings(),
                   const SizedBox(height: 10),
-                  Flexible(child: const _LanguageTile()),
+                  const _LanguageTile(),
                 ],
               ),
             ),
