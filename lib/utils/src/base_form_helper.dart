@@ -33,7 +33,7 @@ abstract class BaseFormHelper {
 
   List<PasswordValidator> get passwordValidators => [
     (password, context) =>
-        (rule: context.l10n.passwordRuleLength, isValid: password.length >= 8),
+        (rule: context.l10n.passwordRuleLength, isValid: password.isNotEmpty),
   ];
   List<PasswordValidator> get newPasswordValidators => [
     (password, context) =>
