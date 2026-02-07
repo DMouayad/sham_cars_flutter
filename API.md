@@ -11,41 +11,243 @@ Headers:
 
 ## 1. Reference Data
 
+
+
 ### List Body Types
 
 - **Endpoint**: `GET /car-data/body-types`
+
 - **Response**:
+
     ```json
+
     {
+
         "data": [
+
             {
+
                 "id": 1,
+
                 "name": "Sedan",
+
                 "icon": "🚗"
+
             }
+
         ]
+
     }
+
     ```
+
+
 
 ### List Car Makes (Brands)
 
 - **Endpoint**: `GET /car-data/makes`
+
 - **Response**:
+
     ```json
+
     {
+
         "data": [
+
             {
+
                 "id": 1,
+
                 "name": "Tesla",
+
                 "logo_url": "...",
+
                 "country": "USA",
+
                 "website": "..."
+
             }
+
         ]
+
     }
+
     ```
 
-## 2. Car Hierarchy & Details
+
+
+## 2. Authentication
+
+
+
+### User Registration
+
+- **Endpoint**: `POST /register`
+
+- **Body**:
+
+    ```json
+
+    {
+
+        "name": "string",
+
+        "email": "string",
+
+        "phone": "string",
+
+        "password": "string",
+
+        "c_password": "string"
+
+    }
+
+    ```
+
+- **Response**: (On success, an empty response or a user object)
+
+
+
+### User Login
+
+- **Endpoint**: `POST /login`
+
+- **Body**:
+
+    ```json
+
+    {
+
+        "email": "string",
+
+        "password": "string"
+
+    }
+
+    ```
+
+- **Response**:
+
+    ```json
+
+    {
+
+        "token": "string",
+
+        "name": "string"
+
+    }
+
+    ```
+
+
+
+### User Logout
+
+- **Endpoint**: `POST /logout` (Auth Required)
+
+- **Response**: (Success message or empty response)
+
+
+
+### Request Verification Code
+
+- **Endpoint**: `POST /request_otp`
+
+- **Body**:
+
+    ```json
+
+    {
+
+        "email": "string"
+
+    }
+
+    ```
+
+- **Response**: (Success message or empty response)
+
+
+
+### Verify Account
+
+- **Endpoint**: `POST /verify_otp`
+
+- **Body**:
+
+    ```json
+
+    {
+
+        "email": "string",
+
+        "email_otp": "string"
+
+    }
+
+    ```
+
+- **Response**:
+
+    ```json
+
+    {
+
+        "token": "string"
+
+    }
+
+    ```
+
+
+
+### Forgot Password
+
+- **Endpoint**: `POST /forget-password`
+
+- **Body**:
+
+    ```json
+
+    {
+
+        "email": "string"
+
+    }
+
+    ```
+
+- **Response**: (Success message or empty response, indicating email sent)
+
+
+
+### Reset Password
+
+- **Endpoint**: `POST /user/change_password`
+
+- **Body**:
+
+    ```json
+
+    {
+
+        "token": "string",
+
+        "password": "string",
+
+        "password_confirmation": "string"
+
+    }
+
+    ```
+
+- **Response**: (Success message or empty response)
+
+
+
+## 3. Car Hierarchy & Details
 
 ### List Car Models (Filtered)
 
@@ -168,13 +370,61 @@ Headers:
     }
     ```
 
-## 3. Community Features (Reviews & Q&A)
+## 4. Recommendations
+
+### Get Similar Trims (Recommendation)
+
+- **Endpoint**: `GET /car-data/trims/{id}/similar`
+- **Query Params**:
+    - `take` (optional): Page size (default 5)
+    - `skip` (optional): Offset (default 0)
+- **Response**: List of Trim objects (Same structure as List Car Trims)
+
+### Get Also Liked Trims (Collaborative)
+
+- **Endpoint**: `GET /car-data/trims/{id}/also-liked`
+- **Query Params**:
+    - `take` (optional): Page size (default 5)
+    - `skip` (optional): Offset (default 0)
+- **Response**: List of Trim objects (Same structure as List Car Trims)
+
+### Get Trending Cars (Popularity)
+
+- **Endpoint**: `GET /car-data/trending-cars`
+- **Query Params**:
+    - `take` (optional): Page size (default 10)
+    - `skip` (optional): Offset (default 0)
+- **Response**: List of Trim objects (Same structure as List Car Trims)
+
+### Get Hot Topics (Most Asked About)
+
+- **Endpoint**: `GET /car-data/hot-topics`
+- **Query Params**:
+    - `take` (optional): Page size (default 10)
+    - `skip` (optional): Offset (default 0)
+- **Response**:
+    ```json
+    {
+        "data": [
+            {
+                "id": 101,
+                "name": "Model 3",
+                "make_name": "Tesla",
+                "questions_count": 50,
+                "answers_count": 120,
+                "is_hot": true
+            }
+        ]
+    }
+    ```
+
+## 5. Community Features (Reviews & Q&A)
 
 ### Get Car Reviews
 
 - **Endpoint**: `GET /community/reviews`
 - **Query Params**:
-    - `car_trim_id` (required): Filter by Trim
+    - `car_trim_id` (optional): Filter by Trim
     - `take` (optional): Page size (default 15)
     - `skip` (optional): Offset (default 0)
 - **Response**:
@@ -186,7 +436,10 @@ Headers:
                 "user_name": "John Doe",
                 "rating": 5,
                 "comment": "Amazing car!",
-                "created_at": "2024-02-01 10:00:00"
+                "created_at": "2024-02-01 10:00:00",
+                "car_trim_id": 501,
+                "car_trim_name": "Long Range",
+                "car_model_name": "Model 3"
             }
         ]
     }
@@ -265,7 +518,7 @@ Headers:
 - **Body**:
     ```json
     {
-        "car_model_id": 101, // (optional)
+        "car_model_id": 101,
         "car_trim_id": 501,
         "title": "...",
         "body": "..."
@@ -281,3 +534,66 @@ Headers:
         "body": "..."
     }
     ```
+
+## 6. User Profile
+
+### Get User Reviews (My Reviews)
+
+- **Endpoint**: `GET /user/reviews` (Auth Required)
+- **Query Params**:
+    - `limit` (optional): Page size (default 10)
+    - `skip` (optional): Offset (default 0)
+- **Response**:
+    ```json
+    {
+        "data": [
+            {
+                "id": 10,
+                "rating": 5,
+                "comment": "Nice car",
+                "status": "approved",
+                "created_at": "...",
+                "user_name": "John Doe",
+                "car_trim_id": 501,
+                "car_trim_name": "Long Range",
+                "car_model_name": "Model 3",
+                "make_name": "Tesla"
+            }
+        ]
+    }
+    ```
+
+### Get User Questions (My Questions)
+
+- **Endpoint**: `GET /user/questions` (Auth Required)
+- **Query Params**:
+    - `limit` (optional): Page size (default 10)
+    - `skip` (optional): Offset (default 0)
+- **Response**:
+    ```json
+    {
+        "data": [
+            {
+                "id": 101,
+                "title": "Battery Life?",
+                "body": "How long...",
+                "created_at": "...",
+                "answers_count": 5,
+                "user_name": "John Doe",
+                "car_model_id": 202,
+                "car_trim_id": 501,
+                "model_name": "Model 3",
+                "make_name": "Tesla",
+                "trim_name": "Long Range"
+            }
+        ]
+    }
+    ```
+
+### Get User Answered Questions
+
+- **Endpoint**: `GET /user/answered-questions` (Auth Required)
+- **Query Params**:
+    - `limit` (optional): Page size (default 10)
+    - `skip` (optional): Offset (default 0)
+- **Response**: List of questions (same structure as above) that have `answers_count > 0`.

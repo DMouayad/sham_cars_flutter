@@ -1,11 +1,3 @@
-Below is a **single “AI context/design doc” file** you can drop into your repo as something like `GEMINI.md` (or `AI_CONTEXT.md`). It’s written to help *any* AI model (Gemini/Claude/ChatGPT/etc.) quickly understand the project, architecture, and how pieces connect.
-
-You can copy/paste as-is.
-
----
-
-# `GEMINI.md` — Sham Cars / EV Hub Syria (AI Project Context)
-
 ## 0) Project summary (TL;DR)
 **Sham Cars** is a mobile-first EV community hub for Syria built with:
 - **Frontend:** Flutter mobile app (Arabic-first, supports English)
@@ -38,32 +30,47 @@ Primary locale: Arabic (RTL). English also supported. Mobile UX is priority.
 ### Mobile (Flutter)
 - Uses `go_router` typed routes with a bottom navigation shell.
 - Uses **BLoC/Cubit** for state management.
+- Uses `BaseFormHelper` for common form field management, and `IPasswordConfirmationFormHelper` for forms requiring password confirmation. Specific form helpers like `LoginFormHelper`, `SignupFormHelper`, `ForgotPasswordFormHelper`, `PasswordResetFormHelper` extend `BaseFormHelper`.
 - Uses a `RestClient` + `ResponseCache` for HTTP caching.
 - Uses token auth (stored in `ITokensRepository`) + `AuthNotifier` (login status).
-
+- Manages user data and state through `ApiUserRepository` (remote) and `LocalUserRepository` (local cache).
 ---
 
-## 3) Backend data model (high-level)
-Key tables:
-- `users`
-- `vehicles` (official specs + published/featured flags)
-- `brands`, `body_types`, `vehicle_images`
-- `reviews` (belongs_to user + vehicle; uniqueness: one review per user per vehicle)
-- `questions`, `answers`
-- `events` (user action logging; `eventable` polymorphic)
+## 3.5) Client-Side Data Models
 
-Important notes:
-- Ransack is used for search/filtering and requires allowlisting:
-  - `Vehicle.ransackable_attributes` must include filter fields (e.g., `published`, `seats`, etc.)
-- Events are used for: trending/recommendations.
+This section describes key data models used within the Flutter application, primarily for representing API responses and internal state.
 
-Planned v2 model:
-- `usage_reports`: real-world range reports (80%→20%) by city/season/driving mix.
+### HomeData
+- **Purpose**: Aggregates various data points for the `HomeScreen` (trending cars, hot topics, latest questions, latest reviews).
+- **Structure**: Contains `List<CarTrimSummary>`, `List<HotTopic>`, `List<Question>`, `List<Review>`.
+
+### HotTopic
+- **Purpose**: Represents a trending topic, typically a car model with associated community engagement (questions/answers count).
+- **Structure**: `id`, `name`, `makeName`, `questionsCount`, `answersCount`, `isHot`.
+
+### CarTrimSummary
+- **Purpose**: A lightweight summary of a vehicle trim, used for lists and previews (e.g., trending cars, search results, similar cars).
+- **Structure**: `id`, `name`, `modelName`, `makeName`, `bodyType`, `yearStart`, `yearEnd`, `priceMin`, `priceMax`, `currency`, `isFeatured`, `imageUrl`, `range`, `batteryCapacity`, `acceleration` (all `SpecValue`).
+
+### Question
+- **Purpose**: Represents a community question.
+- **Structure**: `id`, `car_trim_id`, `trim_name`, `model_name`, `user_name`, `title`, `body`, `answers_count`, `created_at`.
+
+### Review
+- **Purpose**: Represents a community review for a car trim.
+- **Structure**: `id`, `user_name`, `rating`, `comment`, `created_at`, `car_trim_id`, `car_trim_name`, `car_model_name`.
+
+### User
+- **Purpose**: Represents an authenticated user of the application.
+- **Structure**: `id`, `fullName`, `email`, `phoneNumber`, `role`, `activated`, `emailVerifiedAt`, `phoneNumberVerifiedAt`, `createdAt`, `identityConfirmedAt`.
 
 ---
 
 ## 4) Mobile API contract (current)
 Base: `/api/v1`
+
+**Note on API Endpoint Definition:**
+While `Auth` and `User` related endpoints are centralized in `lib/api/endpoints.dart`, `Car Data` and `Community` endpoints are currently hardcoded directly within their respective repository implementations (`lib/features/vehicle/repositories/car_data_repository.dart` and `lib/features/community/community_repository.dart`). This should be considered for future refactoring to centralize all API endpoint definitions for better maintainability.
 
 ### Reference data
 - `GET /car-data/body-types`
@@ -71,6 +78,21 @@ Base: `/api/v1`
 - `GET /car-data/models`
 - `GET /car-data/trims` (supports `search`, `take`, `skip`, filters)
 - `GET /car-data/trims/{id}` (trim detail + specs)
+
+### Authentication
+- `POST /register`
+- `POST /login`
+- `POST /logout`
+- `POST /request_otp`
+- `POST /verify_otp`
+- `POST /forget-password` (Forgot Password - sends reset link)
+- `POST /user/change_password` (Reset Password)
+
+### Recommendations
+- `GET /car-data/trending-cars` (Popularity) - Returns `List<CarTrimSummary>`
+- `GET /car-data/hot-topics` (Most Asked About) - Returns `List<HotTopic>`
+- `GET /car-data/trims/{id}/similar` (Recommendation) - Returns `List<CarTrimSummary>`
+- `GET /car-data/trims/{id}/also-liked` (Collaborative) - Returns `List<CarTrimSummary>`
 
 ### Community
 All list endpoints use pagination:
@@ -99,16 +121,22 @@ All list endpoints use pagination:
 
 ## 5) Flutter app structure & routing
 ### Routing
-Uses typed `go_router` StatefulShellRoute with bottom navigation:
-- Home: `/home`
-- Vehicles list: `/vehicles`
-- Vehicle details: `/vehicles/:id`
-- Vehicle community screens:
-  - `/vehicles/:id/community/reviews`
-  - `/vehicles/:id/community/qa`
-- Questions list: `/questions`
-- Question details: `/questions/:id`
-- Profile/auth routes
+[GoRouter] Full paths for routes:
+           ├─ (ShellRoute)
+           │ ├─/home (Widget)
+           │ ├─/vehicles (Widget)
+           │ └─/community (Widget)
+           │   └─/community/:id (Widget)
+           ├─/profile/login (Widget)
+           ├─/profile/signup (Widget)
+           ├─/forgot-password (Widget)
+           ├─/reset-password (Widget)
+           ├─/profile/emaill-verification (Widget)
+           ├─/profile (Widget)
+           ├─/vehicles/:id (Widget)
+           │ ├─/vehicles/:id/community/reviews (Widget)
+           │ └─/vehicles/:id/community/qa (Widget)
+           └─/profile/activity (Widget)
 
 ### Key screens
 - **HomeScreen**: discover vehicles + latest community
@@ -117,6 +145,8 @@ Uses typed `go_router` StatefulShellRoute with bottom navigation:
 - **TrimCommunityScreen**: Tabs (Reviews / Q&A), lazy loading, speed dial for posting
 - **CommunityScreen**: Global feed of questions+reviews (filters + search + lazy loading)
 - **QuestionDetailsScreen**: question + answers + link to related trim (vehicle details)
+- **ForgotPasswordScreen**: Screen for users to request a password reset link.
+- **ResetPasswordScreen**: Screen for users to set a new password using a reset token.
 
 ---
 
@@ -132,6 +162,19 @@ Uses typed `go_router` StatefulShellRoute with bottom navigation:
 - `QuestionDetailsCubit`
   - Loads question + answers
   - `submitAnswer()` posts and refreshes
+- `ForgotPasswordCubit`: Handles password reset link requests.
+- `ResetPasswordCubit`: Handles setting a new password using a reset token.
+- `EmailVerificationCubit`: Manages email verification process.
+- `LoginCubit`: Handles user login.
+- `QuestionsCubit`: Manages listing and pagination of questions.
+- `ReviewsCubit`: Manages listing and pagination of reviews.
+- `SignupCubit`: Manages user registration.
+- `UserCubit`: Manages user-specific state and actions.
+- `MyAnsweredQuestionsCubit`: Manages listing of questions answered by the current user.
+- `MyQuestionsCubit`: Manages listing of questions asked by the current user.
+- `MyReviewsCubit`: Manages listing of reviews posted by the current user.
+- `TrimCommunityCubit`: Manages community content (reviews/Q&A) for a specific vehicle trim.
+- `TrimCommunityPreviewCubit`: Manages preview data for community content on vehicle detail pages.
 
 ### Write/actions cubit (shared)
 - `CommunityActionsCubit`
@@ -191,6 +234,16 @@ Important shared helper:
 3) Sheet uses `CommunityActionsCubit` to POST
 4) Parent calls `CommunityCubit.load()` to refresh global feed
 
+### Forgot/Reset Password Flow
+1) User navigates to `ForgotPasswordScreen` (usually from Login).
+2) User enters email and submits.
+3) `ForgotPasswordCubit` calls `IAuthRepository.forgotPassword` to send a reset link to the email.
+4) User receives email with a deep link containing a reset token.
+5) User clicks deep link, navigates to `ResetPasswordScreen` with the `resetToken`.
+6) User enters new password and confirmation.
+7) `ResetPasswordCubit` calls `IAuthRepository.resetPassword` to update the password.
+8) On success, `AuthNotifier.endPasswordResetSession()` is called and user is redirected to Login.
+
 ---
 
 ## 10) Known pitfalls / guardrails (for AI changes)
@@ -199,6 +252,7 @@ Important shared helper:
 - Avoid loading more while `searchQuery` is non-empty (local search).
 - When API date is not ISO8601, normalize before parsing.
 - Ensure review navigation uses `review.trimId`, not `review.id`.
+- When creating new form helpers, always extend `BaseFormHelper` (or `IPasswordConfirmationFormHelper` when applicable) to ensure consistent form management and validation.
 - Backend search via Ransack requires explicit allowlists.
 
 ---
@@ -221,9 +275,3 @@ When editing API/data flow:
 3) Should selection be on-demand (TrimPicker) or preselected/locked?
 4) Which cubit owns this state (read vs write)?
 5) Are strings localized? If not, add ARB keys and use `context.l10n`.
-
----
-
-If you want, I can also generate:
-- a **PlantUML** diagram of module dependencies (Flutter cubits/repos/screens)
-- an **API JSON schema** file for each endpoint to keep client/server aligned.
