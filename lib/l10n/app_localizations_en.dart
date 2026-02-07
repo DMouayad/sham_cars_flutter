@@ -150,6 +150,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginFailureDialogTitle => 'Login Failed!';
 
   @override
+  String get error => 'Error';
+
+  @override
   String get loginBtnLabel => 'Login';
 
   @override
@@ -377,6 +380,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPasswordBtnLabel => 'Forgot password?';
+
+  @override
+  String get processing => 'Processing...';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your email and we\'ll send you a link to reset your password';
+
+  @override
+  String get sendResetLinkBtnLabel => 'Send Reset Link';
+
+  @override
+  String get resetLinkSentMessage =>
+      'A password reset link has been sent to your email.';
+
+  @override
+  String get backToLogin => 'Back to login';
+
+  @override
+  String get resetPasswordTitle => 'Reset Password';
+
+  @override
+  String get resetPasswordBtnLabel => 'Reset Password';
+
+  @override
+  String get passwordResetSuccess =>
+      'Password has been reset successfully. Please login with your new password.';
+
+  @override
+  String get newPasswordLabel => 'New Password';
+
+  @override
+  String get confirmPasswordLabel => 'Confirm New Password';
+
+  @override
+  String get invalidToken => 'Invalid or expired token.';
 
   @override
   String get exitSignupProcessBtnLabel => 'Exit';

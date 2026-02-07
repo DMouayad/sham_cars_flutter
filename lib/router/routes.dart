@@ -8,6 +8,8 @@ import 'package:sham_cars/features/home/home_cubit.dart';
 
 import 'package:sham_cars/features/home/home_screen.dart';
 import 'package:sham_cars/features/login/login_screen.dart';
+import 'package:sham_cars/features/password-reset/forgot_password_screen.dart';
+import 'package:sham_cars/features/password-reset/reset_password_screen.dart';
 import 'package:sham_cars/features/questions/question_details_screen.dart';
 import 'package:sham_cars/features/signup/screens/signup_screen.dart';
 import 'package:sham_cars/features/user_profile/my_activity_screen.dart';
@@ -32,8 +34,8 @@ class RoutePath {
   static const profile = '/profile';
   static const login = '/profile/login';
   static const signup = '/profile/signup';
-  static const forgotPassword = '/profile/forgot-password';
-  static const resetPassword = '/profile/reset-password';
+  static const forgotPassword = '/forgot-password';
+  static const resetPassword = '/reset-password';
   static const profileActivity = '/profile/activity';
   static const questionDetails = ':id';
   static const vehicles = '/vehicles';
@@ -106,6 +108,8 @@ class HomeRoute extends GoRouteData with $HomeRoute {
             StatefulNavigationShell.of(context).goBranch(1),
         onViewAllQuestions: () =>
             StatefulNavigationShell.of(context).goBranch(2),
+        onViewHotTopic: () {},
+        // onViewHotTopic: ()=>TrimCommunityScreen(trimId: trimId, initialTab: initialTab, trimTitle: trimTitle)
       ),
     );
   }
@@ -130,6 +134,33 @@ class SignupRoute extends GoRouteData with $SignupRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return SignupScreen();
+  }
+}
+
+@TypedGoRoute<ForgotPasswordRoute>(
+  path: RoutePath.forgotPassword,
+  name: 'forgot_password',
+)
+class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
+  const ForgotPasswordRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const ForgotPasswordScreen();
+  }
+}
+
+@TypedGoRoute<ResetPasswordRoute>(
+  path: RoutePath.resetPassword,
+  name: 'reset_password',
+)
+class ResetPasswordRoute extends GoRouteData with $ResetPasswordRoute {
+  final String? token;
+  const ResetPasswordRoute({this.token});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return ResetPasswordScreen(resetToken: token);
   }
 }
 

@@ -74,6 +74,8 @@ enum AppError implements BaseAppError {
   confirmIdentity(code: 'CONFIRM_IDENTITY'),
   resourceAlreadyExists(code: 'RESOURCE_ALREADY_EXISTS'),
   rateLimitExceeded(code: 'RATE_LIMIT_EXCEEDED'),
+  passwordMismatch,
+  invalidToken,
   // Misc
   notFound,
   decodingJsonFailed,
@@ -128,6 +130,8 @@ enum AppError implements BaseAppError {
       AppError.expiredOtp => context.l10n.expiredOTP,
       AppError.confirmIdentity => context.l10n.confirmIdentity,
       AppError.rateLimitExceeded => context.l10n.rateLimitExceeded,
+      AppError.passwordMismatch => context.l10n.passwordConfirmationMismatch,
+      AppError.invalidToken => context.l10n.invalidToken,
       AppError.invalidApiRequest ||
       AppError.serverError ||
       AppError.unknownApiError ||

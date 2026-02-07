@@ -207,7 +207,7 @@ class _TrimImage extends StatelessWidget {
       return Image.network(
         imageUrl!,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _placeholder(cs),
+        errorBuilder: (context, error, stackTrace) => _placeholder(cs),
       );
     }
     return _placeholder(cs);

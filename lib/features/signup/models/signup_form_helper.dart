@@ -4,7 +4,8 @@ import 'package:sham_cars/api/config.dart';
 import 'package:sham_cars/utils/src/validators.dart';
 import 'package:sham_cars/utils/utils.dart';
 
-class SignupFormHelper extends BaseFormHelper {
+class SignupFormHelper extends BaseFormHelper
+    implements IPasswordConfirmationFormHelper {
   static final _translator = {'#': RegExp(r'[0-9]{0,3}')};
   static const kPhoneNumberMask = '0 9## ### ###';
 
@@ -24,6 +25,7 @@ class SignupFormHelper extends BaseFormHelper {
 
   final TextEditingController phoneNoController;
   final TextEditingController nameController;
+  @override
   final TextEditingController passwordConfirmationController;
 
   bool isMale = true;
@@ -51,6 +53,7 @@ class SignupFormHelper extends BaseFormHelper {
     return null;
   }
 
+  @override
   String? passwordConfirmationValidator(String? value, BuildContext context) {
     if (value?.isEmpty ?? true) {
       return context.l10n.passwordConfirmationIsRequired;

@@ -6,6 +6,8 @@ class ApiRoutes {
     logout: '/logout',
     requestVerificationCode: '/request_otp',
     verifyAccount: '/verify_otp',
+    forgotPassword: '/forget-password',
+    resetPassword: '/user/change_password',
   );
 
   // User Routes

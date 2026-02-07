@@ -109,6 +109,32 @@ final class AuthRepository extends IAuthRepository {
     );
   }
 
+  @override
+  Future<void> forgotPassword(String email) async {
+    await _client.request(
+      HttpMethod.post,
+      ApiRoutes.authRoutes.forgotPassword,
+      body: {'email': email},
+    );
+  }
+
+  @override
+  Future<void> resetPassword(
+    String token,
+    String password,
+    String passwordConfirmation,
+  ) async {
+    await _client.request(
+      HttpMethod.post,
+      ApiRoutes.authRoutes.resetPassword,
+      body: {
+        'token': token,
+        'password': password,
+        'password_c': passwordConfirmation,
+      },
+    );
+  }
+
   (String username, String token) _decodeLoginResponse(JsonObject value) {
     if (value case {'token': String token, 'name': String username}) {
       return (username, token);

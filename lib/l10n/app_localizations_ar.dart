@@ -150,6 +150,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginFailureDialogTitle => 'فشل تسجيل الدخول!';
 
   @override
+  String get error => 'خطأ';
+
+  @override
   String get loginBtnLabel => 'تسجيل الدخول';
 
   @override
@@ -381,6 +384,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPasswordBtnLabel => 'نسيت كلمة المرور؟';
+
+  @override
+  String get processing => 'جار المعالجة...';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور';
+
+  @override
+  String get sendResetLinkBtnLabel => 'إرسال رابط إعادة تعيين';
+
+  @override
+  String get resetLinkSentMessage =>
+      'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني';
+
+  @override
+  String get backToLogin => 'العودة لتسجيل الدخول';
+
+  @override
+  String get resetPasswordTitle => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get resetPasswordBtnLabel => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get passwordResetSuccess =>
+      'تمت إعادة تعيين كلمة المرور بنجاح. يرجى تسجيل الدخول بكلمة المرور الجديدة';
+
+  @override
+  String get newPasswordLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get confirmPasswordLabel => 'تأكيد كلمة المرور الجديدة';
+
+  @override
+  String get invalidToken => 'الرمز غير صالح أو منتهي الصلاحية.';
 
   @override
   String get exitSignupProcessBtnLabel => 'الخروج من عملية التسجيل';

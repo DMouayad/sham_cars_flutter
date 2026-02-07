@@ -54,8 +54,8 @@ class _MyReviewsTabState extends State<MyReviewsTab> {
           return ListView.separated(
             padding: const EdgeInsets.all(ThemeConstants.p),
             itemCount: 6,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, __) => const ReviewCardSkeleton(),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (_, _) => const ReviewCardSkeleton(),
           );
         }
 
@@ -76,8 +76,8 @@ class _MyReviewsTabState extends State<MyReviewsTab> {
             controller: _scroll,
             padding: const EdgeInsets.all(ThemeConstants.p),
             itemCount: count,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, i) {
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemBuilder: (context, i) {
               if (i == state.items.length) {
                 return Center(
                   child: state.loadingMore
@@ -143,8 +143,8 @@ class _MyQuestionsTabState extends State<MyQuestionsTab> {
           return ListView.separated(
             padding: const EdgeInsets.all(ThemeConstants.p),
             itemCount: 6,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, __) => const QuestionCardSkeleton(),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (_, _) => const QuestionCardSkeleton(),
           );
         }
 
@@ -165,8 +165,8 @@ class _MyQuestionsTabState extends State<MyQuestionsTab> {
             controller: _scroll,
             padding: const EdgeInsets.all(ThemeConstants.p),
             itemCount: count,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, i) {
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemBuilder: (context, i) {
               if (i == state.items.length) {
                 return Center(
                   child: state.loadingMore
@@ -231,8 +231,8 @@ class _MyAnsweredQuestionsTabState extends State<MyAnsweredQuestionsTab> {
           return ListView.separated(
             padding: const EdgeInsets.all(ThemeConstants.p),
             itemCount: 6,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, __) => const QuestionCardSkeleton(),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (_, _) => const QuestionCardSkeleton(),
           );
         }
 
@@ -253,8 +253,8 @@ class _MyAnsweredQuestionsTabState extends State<MyAnsweredQuestionsTab> {
             controller: _scroll,
             padding: const EdgeInsets.all(ThemeConstants.p),
             itemCount: count,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, i) {
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemBuilder: (context, i) {
               if (i == state.items.length) {
                 return Center(
                   child: state.loadingMore

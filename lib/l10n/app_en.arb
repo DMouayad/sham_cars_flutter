@@ -90,6 +90,7 @@
     "@loginFailureDialogTitle": {
         "description": "The title of the `ErrorDialog` shown after a failed login attempt"
     },
+    "error": "Error",
     "loginBtnLabel": "Login",
     "@loginBtnLabel": {
         "description": "The label of a login button"
@@ -349,6 +350,17 @@
     "@forgotPasswordBtnLabel": {
         "description": "The label of the forgot password button"
     },
+    "processing": "Processing...",
+    "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset your password",
+    "sendResetLinkBtnLabel": "Send Reset Link",
+    "resetLinkSentMessage": "A password reset link has been sent to your email.",
+    "backToLogin": "Back to login",
+    "resetPasswordTitle": "Reset Password",
+    "resetPasswordBtnLabel": "Reset Password",
+    "passwordResetSuccess": "Password has been reset successfully. Please login with your new password.",
+    "newPasswordLabel": "New Password",
+    "confirmPasswordLabel": "Confirm New Password",
+    "invalidToken": "Invalid or expired token.",
     "exitSignupProcessBtnLabel": "Exit",
     "@exitSignupProcessBtnLabel": {
         "description": "The label of the exit button in the signup process"

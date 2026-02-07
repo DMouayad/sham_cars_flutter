@@ -12,6 +12,7 @@ import 'src/validators.dart';
 part 'src/context_extensions.dart';
 part 'src/bloc_observer.dart';
 part 'src/base_form_helper.dart';
+part 'src/i_password_confirmation_form_helper.dart';
 
 /// A logger with simple output printer
 final sLogger = Logger(printer: SimplePrinter());

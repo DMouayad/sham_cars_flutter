@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sham_cars/widgets/custom_scaffold.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:sham_cars/widgets/page_loader.dart';
-import 'package:sham_cars/api/config.dart';
 import 'package:sham_cars/features/login/cubit/login_cubit.dart';
 import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
@@ -172,12 +170,7 @@ class ForgotPasswordButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () async {
-        final Uri url = Uri.parse(
-          ApiConfig.baseUrl + ApiConfig.forgotPasswordPageURL,
-        );
-        await launchUrl(url);
-      },
+      onPressed: () => const ForgotPasswordRoute().push(context),
       child: Text(context.l10n.forgotPasswordBtnLabel),
     );
   }
