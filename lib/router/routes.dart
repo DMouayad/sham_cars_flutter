@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/community/community_screen.dart';
+import 'package:sham_cars/features/community/cubits/model_questions_cubit.dart';
+import 'package:sham_cars/features/community/model_questions_screen.dart';
 import 'package:sham_cars/features/email_verification/email_verification_screen.dart';
 import 'package:sham_cars/features/home/home_cubit.dart';
 
 import 'package:sham_cars/features/home/home_screen.dart';
+import 'package:sham_cars/features/hot_topics/hot_topics_cubit.dart';
+import 'package:sham_cars/features/hot_topics/hot_topics_screen.dart';
 import 'package:sham_cars/features/login/login_screen.dart';
 import 'package:sham_cars/features/password-reset/forgot_password_screen.dart';
 import 'package:sham_cars/features/password-reset/reset_password_screen.dart';
@@ -44,6 +49,8 @@ class RoutePath {
   static const vehicleCommunityQuestions = 'community/qa';
   static const compare = '/compare';
   static const community = '/community';
+  static const hotTopics = '/hot-topics';
+  static const hotTopicDetails = '/hot-topics/:id';
 }
 
 @TypedStatefulShellRoute<MainScaffoldRoute>(
@@ -105,8 +112,13 @@ class HomeRoute extends GoRouteData with $HomeRoute {
             StatefulNavigationShell.of(context).goBranch(1),
         onViewAllQuestions: () =>
             StatefulNavigationShell.of(context).goBranch(2),
-        // onViewHotTopic: () {},
-        // onViewHotTopic: ()=>TrimCommunityScreen(trimId: trimId, initialTab: initialTab, trimTitle: trimTitle)
+        onOpenHotTopic: (topic) {
+          HotTopicDetailsRoute(
+            id: topic.id,
+            title: '${topic.makeName} ${topic.name}',
+          ).push(context);
+        },
+        onViewAllHotTopics: () => const HotTopicsRoute().push(context),
       ),
     );
   }
@@ -302,5 +314,45 @@ class ProfileActivityRoute extends GoRouteData with $ProfileActivityRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const MyActivityScreen();
+  }
+}
+
+@TypedGoRoute<HotTopicsRoute>(path: RoutePath.hotTopics)
+class HotTopicsRoute extends GoRouteData with $HotTopicsRoute {
+  const HotTopicsRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return BlocProvider(
+      create: (context) =>
+          HotTopicsCubit(context.read<CarDataRepository>())..loadInitial(),
+      child: HotTopicsScreen(
+        onTopicTap: (topic) {
+          HotTopicDetailsRoute(
+            id: topic.id,
+            title: '${topic.makeName} ${topic.name}',
+          ).push(context);
+        },
+      ),
+    );
+  }
+}
+
+@TypedGoRoute<HotTopicDetailsRoute>(path: RoutePath.hotTopicDetails)
+class HotTopicDetailsRoute extends GoRouteData with $HotTopicDetailsRoute {
+  const HotTopicDetailsRoute({required this.id, this.title});
+
+  final int id;
+  final String? title;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    final effectiveTitle = title ?? context.l10n.commonHotTopics;
+
+    return BlocProvider(
+      create: (context) =>
+          ModelQuestionsCubit(context.read<CommunityRepository>())
+            ..load(modelId: id),
+      child: ModelQuestionsScreen(modelId: id, title: effectiveTitle),
+    );
   }
 }

@@ -516,6 +516,7 @@
   "commonResults": "Results",
   "commonViewAll": "View all",
   "commonLoadingMore": "Loading more...",
+  "commonHotTopics": "Hot topics",
 
   "vechilesListFilterButton": "Filters",
 
@@ -586,7 +587,6 @@
 
   "homeSearchHint": "Search by model or brand",
   "homeTrendingTitle": "Trending now",
-  "homeHotTopicsTitle": "Hot topics",
   "homeLatestQuestionsTitle": "Latest questions",
   "homeLatestReviewsTitle": "Latest reviews",
   "homeSearchResultsCount": "{count} results",
@@ -638,5 +638,15 @@
   "specGroupDimensionsPractical": "Dimensions & Practicality",
   "specGroupEngineFuel": "Engine & Fuel",
   "specGroupChassisTransmission": "Chassis & Transmission",
-  "specGroupOther": "Other"
+  "specGroupOther": "Other",
+  "hotTopicsEmpty": "No hot topics right now.",
+  "hotTopicsScreenSubtitle": "Most asked about models",
+  "hotTopicsSearchHint": "Search by make or model",
+  "hotTopicsAll": "All",
+  "hotTopicsHotOnly": "Hot only",
+  "hotTopicsEmpty": "No hot topics right now.",
+  "modelQuestionsEmpty": "No questions for this model yet.",
+  "hotTopicsTop3Label": "Top trending",
+  "hotLabel": "Hot"
+
 }

@@ -193,6 +193,7 @@
   "commonResults": "النتائج",
   "commonViewAll": "عرض الكل",
   "commonLoadingMore": "جاري تحميل المزيد...",
+  "commonHotTopics": "الأكثر تداولاً",
 
   "communityTitle": "المجتمع",
   "communityJoinToContribute": "انضم للمشاركة",
@@ -260,7 +261,6 @@
 
   "homeSearchHint": "ابحث باسم السيارة أو العلامة",
   "homeTrendingTitle": "الأكثر رواجاً",
-  "homeHotTopicsTitle": "الأكثر تداولاً",
   "homeLatestQuestionsTitle": "أحدث الأسئلة",
   "homeLatestReviewsTitle": "أحدث التجارب",
   "homeSearchResultsCount": "{count} نتيجة",
@@ -313,5 +313,14 @@
   "specGroupDimensionsPractical": "الأبعاد والعملية",
   "specGroupEngineFuel": "المحرك والوقود",
   "specGroupChassisTransmission": "الهيكل وناقل الحركة",
-  "specGroupOther": "أخرى"
+  "specGroupOther": "أخرى",
+
+  "hotTopicsScreenSubtitle": "أكثر الموديلات تداولاً بالأسئلة",
+  "hotTopicsSearchHint": "ابحث حسب الشركة أو الموديل",
+  "hotTopicsAll": "الكل",
+  "hotTopicsHotOnly": "الرائج فقط",
+  "hotTopicsEmpty": "لا توجد مواضيع متداولة حالياً.",
+  "modelQuestionsEmpty": "لا توجد أسئلة لهذا الموديل بعد.",
+  "hotTopicsTop3Label": "الأكثر سؤالاً",
+  "hotLabel": "رائج"
 }

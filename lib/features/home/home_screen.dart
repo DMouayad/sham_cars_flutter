@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:sham_cars/features/community/widgets/community_review_card.dart';
+import 'package:sham_cars/features/hot_topics/featured_hot_topic_card.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
@@ -15,8 +17,7 @@ import 'package:sham_cars/features/reviews/widgets/review_card_skeleton.dart';
 import 'home_cubit.dart';
 import 'models.dart';
 import 'widgets/featured_trim_card_skeleton.dart';
-import 'widgets/hot_topic_card.dart';
-import 'widgets/hot_topic_card_skeleton.dart';
+import 'widgets/section_header.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -25,12 +26,16 @@ class HomeScreen extends StatefulWidget {
     required this.onOpenQuestion,
     required this.onViewAllVehicles,
     required this.onViewAllQuestions,
+    required this.onViewAllHotTopics,
+    required this.onOpenHotTopic,
   });
 
   final void Function(int trimId, [CarTrimSummary? summary]) onOpenTrim;
   final void Function(int questionId) onOpenQuestion;
   final VoidCallback onViewAllVehicles;
   final VoidCallback onViewAllQuestions;
+  final VoidCallback onViewAllHotTopics;
+  final void Function(HotTopic) onOpenHotTopic;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -172,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       // Trending skeleton
       SliverToBoxAdapter(
-        child: _SectionHeader(
+        child: SectionHeader(
           title: l10n.homeTrendingTitle,
           onTap: widget.onViewAllVehicles,
         ),
@@ -196,8 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Hot topics skeleton
       SliverToBoxAdapter(
-        child: _SectionHeader(
-          title: l10n.homeHotTopicsTitle,
+        child: SectionHeader(
+          title: l10n.commonHotTopics,
           onTap: widget.onViewAllQuestions,
         ),
       ),
@@ -206,14 +211,14 @@ class _HomeScreenState extends State<HomeScreen> {
         sliver: SliverList.separated(
           itemCount: 3,
           separatorBuilder: (_, _) => const SizedBox(height: 12),
-          itemBuilder: (_, _) => const HotTopicCardSkeleton(),
+          itemBuilder: (_, _) => const FeaturedTrimCardSkeleton(height: 132),
         ),
       ),
       const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
       // Latest questions skeleton
       SliverToBoxAdapter(
-        child: _SectionHeader(
+        child: SectionHeader(
           title: l10n.homeLatestQuestionsTitle,
           onTap: widget.onViewAllQuestions,
         ),
@@ -230,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Latest reviews skeleton
       SliverToBoxAdapter(
-        child: _SectionHeader(
+        child: SectionHeader(
           title: l10n.homeLatestReviewsTitle,
           onTap: widget.onViewAllVehicles,
         ),
@@ -253,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Trending
       if (data.trendingTrims.isNotEmpty) ...[
         SliverToBoxAdapter(
-          child: _SectionHeader(
+          child: SectionHeader(
             title: l10n.homeTrendingTitle,
             onTap: widget.onViewAllVehicles,
           ),
@@ -284,19 +289,27 @@ class _HomeScreenState extends State<HomeScreen> {
       // Hot Topics
       if (data.hotTopics.isNotEmpty) ...[
         SliverToBoxAdapter(
-          child: _SectionHeader(
-            title: l10n.homeHotTopicsTitle,
-            onTap: widget.onViewAllQuestions,
+          child: SectionHeader(
+            title: l10n.commonHotTopics,
+            onTap: widget.onViewAllHotTopics,
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
-          sliver: SliverList.separated(
-            itemCount: data.hotTopics.take(5).length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (_, i) => HotTopicCard(
-              topic: data.hotTopics[i],
-              onTap: widget.onViewAllQuestions,
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: 132,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
+              scrollDirection: Axis.horizontal,
+              itemCount: data.hotTopics.take(10).length,
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
+              itemBuilder: (_, i) => SizedBox(
+                width: 260,
+                child: HotTopicFeaturedCard(
+                  topic: data.hotTopics[i],
+                  rank: i + 1,
+                  onTap: () => widget.onOpenHotTopic.call(data.hotTopics[i]),
+                ),
+              ),
             ),
           ),
         ),
@@ -306,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Latest Questions
       if (data.latestQuestions.isNotEmpty) ...[
         SliverToBoxAdapter(
-          child: _SectionHeader(
+          child: SectionHeader(
             title: l10n.homeLatestQuestionsTitle,
             onTap: widget.onViewAllQuestions,
           ),
@@ -332,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Latest Reviews
       if (data.latestReviews.isNotEmpty) ...[
         SliverToBoxAdapter(
-          child: _SectionHeader(
+          child: SectionHeader(
             title: l10n.homeLatestReviewsTitle,
             onTap: widget.onViewAllVehicles,
           ),
@@ -483,40 +496,6 @@ class _SearchField extends StatelessWidget {
         ),
         filled: true,
         fillColor: cs.surfaceContainerHighest,
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, required this.onTap});
-
-  final String title;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        ThemeConstants.p,
-        0,
-        ThemeConstants.p,
-        12,
-      ),
-      child: Row(
-        children: [
-          Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const Spacer(),
-          TextButton(
-            onPressed: onTap,
-            child: Text(context.l10n.viewAllBtnLabel),
-          ),
-        ],
       ),
     );
   }

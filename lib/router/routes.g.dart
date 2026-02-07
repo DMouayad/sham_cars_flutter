@@ -17,6 +17,8 @@ List<RouteBase> get $appRoutes => [
   $vehicleDetailsRoute,
   $questionDetailsRoute,
   $profileActivityRoute,
+  $hotTopicsRoute,
+  $hotTopicDetailsRoute,
 ];
 
 RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
@@ -449,6 +451,66 @@ mixin $ProfileActivityRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/profile/activity');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $hotTopicsRoute => GoRouteData.$route(
+  path: '/hot-topics',
+  factory: $HotTopicsRoute._fromState,
+);
+
+mixin $HotTopicsRoute on GoRouteData {
+  static HotTopicsRoute _fromState(GoRouterState state) =>
+      const HotTopicsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/hot-topics');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $hotTopicDetailsRoute => GoRouteData.$route(
+  path: '/hot-topics/:id',
+  factory: $HotTopicDetailsRoute._fromState,
+);
+
+mixin $HotTopicDetailsRoute on GoRouteData {
+  static HotTopicDetailsRoute _fromState(GoRouterState state) =>
+      HotTopicDetailsRoute(
+        id: int.parse(state.pathParameters['id']!),
+        title: state.uri.queryParameters['title'],
+      );
+
+  HotTopicDetailsRoute get _self => this as HotTopicDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/hot-topics/${Uri.encodeComponent(_self.id.toString())}',
+    queryParams: {if (_self.title != null) 'title': _self.title},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

@@ -599,6 +599,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonLoadingMore => 'جاري تحميل المزيد...';
 
   @override
+  String get commonHotTopics => 'الأكثر تداولاً';
+
+  @override
   String get vechilesListFilterButton => 'الفلاتر';
 
   @override
@@ -758,9 +761,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeTrendingTitle => 'الأكثر رواجاً';
 
   @override
-  String get homeHotTopicsTitle => 'الأكثر تداولاً';
-
-  @override
   String get homeLatestQuestionsTitle => 'أحدث الأسئلة';
 
   @override
@@ -887,4 +887,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get specGroupOther => 'أخرى';
+
+  @override
+  String get hotTopicsEmpty => 'لا توجد مواضيع متداولة حالياً.';
+
+  @override
+  String get hotTopicsScreenSubtitle => 'أكثر الموديلات تداولاً بالأسئلة';
+
+  @override
+  String get hotTopicsSearchHint => 'ابحث حسب الشركة أو الموديل';
+
+  @override
+  String get hotTopicsAll => 'الكل';
+
+  @override
+  String get hotTopicsHotOnly => 'الرائج فقط';
+
+  @override
+  String get modelQuestionsEmpty => 'لا توجد أسئلة لهذا الموديل بعد.';
+
+  @override
+  String get hotTopicsTop3Label => 'الأكثر سؤالاً';
+
+  @override
+  String get hotLabel => 'رائج';
 }

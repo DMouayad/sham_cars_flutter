@@ -1196,6 +1196,12 @@ abstract class AppLocalizations {
   /// **'Loading more...'**
   String get commonLoadingMore;
 
+  /// No description provided for @commonHotTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot topics'**
+  String get commonHotTopics;
+
   /// No description provided for @vechilesListFilterButton.
   ///
   /// In en, this message translates to:
@@ -1508,12 +1514,6 @@ abstract class AppLocalizations {
   /// **'Trending now'**
   String get homeTrendingTitle;
 
-  /// No description provided for @homeHotTopicsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Hot topics'**
-  String get homeHotTopicsTitle;
-
   /// No description provided for @homeLatestQuestionsTitle.
   ///
   /// In en, this message translates to:
@@ -1759,6 +1759,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other'**
   String get specGroupOther;
+
+  /// No description provided for @hotTopicsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No hot topics right now.'**
+  String get hotTopicsEmpty;
+
+  /// No description provided for @hotTopicsScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Most asked about models'**
+  String get hotTopicsScreenSubtitle;
+
+  /// No description provided for @hotTopicsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by make or model'**
+  String get hotTopicsSearchHint;
+
+  /// No description provided for @hotTopicsAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get hotTopicsAll;
+
+  /// No description provided for @hotTopicsHotOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot only'**
+  String get hotTopicsHotOnly;
+
+  /// No description provided for @modelQuestionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions for this model yet.'**
+  String get modelQuestionsEmpty;
+
+  /// No description provided for @hotTopicsTop3Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Top trending'**
+  String get hotTopicsTop3Label;
+
+  /// No description provided for @hotLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hot'**
+  String get hotLabel;
 }
 
 class _AppLocalizationsDelegate

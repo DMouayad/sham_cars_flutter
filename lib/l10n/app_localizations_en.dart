@@ -600,6 +600,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonLoadingMore => 'Loading more...';
 
   @override
+  String get commonHotTopics => 'Hot topics';
+
+  @override
   String get vechilesListFilterButton => 'Filters';
 
   @override
@@ -761,9 +764,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTrendingTitle => 'Trending now';
 
   @override
-  String get homeHotTopicsTitle => 'Hot topics';
-
-  @override
   String get homeLatestQuestionsTitle => 'Latest questions';
 
   @override
@@ -890,4 +890,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get specGroupOther => 'Other';
+
+  @override
+  String get hotTopicsEmpty => 'No hot topics right now.';
+
+  @override
+  String get hotTopicsScreenSubtitle => 'Most asked about models';
+
+  @override
+  String get hotTopicsSearchHint => 'Search by make or model';
+
+  @override
+  String get hotTopicsAll => 'All';
+
+  @override
+  String get hotTopicsHotOnly => 'Hot only';
+
+  @override
+  String get modelQuestionsEmpty => 'No questions for this model yet.';
+
+  @override
+  String get hotTopicsTop3Label => 'Top trending';
+
+  @override
+  String get hotLabel => 'Hot';
 }

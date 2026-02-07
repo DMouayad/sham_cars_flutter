@@ -22,7 +22,9 @@ Primary locale: Arabic (RTL). English also supported. Mobile UX is priority.
   - **Review**: rating + text comment
   - **Question**: title + body
   - **Answer**: belongs to a question
-
+- **Hot Topic**: 
+  - trending car model based on community Q&A volume
+  - HotTopic.id = car_model_id (model-level, not trim-level)
 ---
 
 ## 2) System architecture overview
@@ -45,7 +47,8 @@ This section describes key data models used within the Flutter application, prim
 - **Structure**: Contains `List<CarTrimSummary>`, `List<HotTopic>`, `List<Question>`, `List<Review>`.
 
 ### HotTopic
-- **Purpose**: Represents a trending topic, typically a car model with associated community engagement (questions/answers count).
+- **Purpose**: Represents a trending car model topic based on community engagement (questions/answers).
+- ID meaning: id is car_model_id.
 - **Structure**: `id`, `name`, `makeName`, `questionsCount`, `answersCount`, `isHot`.
 
 ### CarTrimSummary
@@ -108,8 +111,11 @@ All list endpoints use pagination:
 
 #### Questions
 - `GET /community/questions`
-  - supports `car_trim_id` optional (trim-scoped Q&A)
+  - supports filtering through:
+    car_model_id optional (model-scoped Q&A)
+    car_trim_id optional (trim-scoped Q&A)
   - returns: `id, car_trim_id, trim_name, model_name, user_name, title, body, answers_count, created_at`
+  - pagination: take, skip.
 - `GET /community/questions/{id}` returns question with answers
 - `POST /community/questions` (auth required)
   - backend supports either model/trim; current app uses trim-based posting
@@ -137,6 +143,11 @@ All list endpoints use pagination:
            │ ├─/vehicles/:id/community/reviews (Widget)
            │ └─/vehicles/:id/community/qa (Widget)
            └─/profile/activity (Widget)
+            /hot-topics (Widget) — HotTopicsScreen
+            /hot-topics/:id (Widget) — ModelQuestionsScreen (model-scoped Q&A list)
+            :id = car_model_id
+            optional query param: ?title=... (used for AppBar title; preferred over extra for deep links)
+
 
 ### Key screens
 - **HomeScreen**: discover vehicles + latest community
@@ -147,6 +158,8 @@ All list endpoints use pagination:
 - **QuestionDetailsScreen**: question + answers + link to related trim (vehicle details)
 - **ForgotPasswordScreen**: Screen for users to request a password reset link.
 - **ResetPasswordScreen**: Screen for users to set a new password using a reset token.
+- HotTopicsScreen: View-all hot topics list with pagination + local search
+- ModelQuestionsScreen: Questions list filtered by model (car_model_id)
 
 ---
 
@@ -175,6 +188,9 @@ All list endpoints use pagination:
 - `MyReviewsCubit`: Manages listing of reviews posted by the current user.
 - `TrimCommunityCubit`: Manages community content (reviews/Q&A) for a specific vehicle trim.
 - `TrimCommunityPreviewCubit`: Manages preview data for community content on vehicle detail pages.
+- HotTopicsCubit: Loads /car-data/hot-topics with take/skip pagination. Local search filters loaded items. Guardrail: avoid loadMore() while searchQuery is non-empty (local search)
+- ModelQuestionsCubit: Paginated questions list for a model using car_model_id.
+  Reuses QuestionCard + same lazy loading pattern as trim-scoped lists.
 
 ### Write/actions cubit (shared)
 - `CommunityActionsCubit`
@@ -208,6 +224,15 @@ Trim specs are a `Map<String, String>`. UI groups specs into categories using to
 - other
 
 Classification avoids substring bugs (e.g., “acceleration” should not match “ac”).
+
+### Hot Topics UI
+- Home Hot Topics uses HotTopicFeaturedCard (more visual hierarchy; safe in horizontal list)
+“View all” Hot Topics uses:
+  - Top-ranked items can use HotTopicFeaturedCard
+  - Remaining items use a compact list card (no Spacer() in unbounded vertical constraints)
+- Skeletons:
+  - HotTopicFeaturedCardSkeleton for featured cards
+  - HotTopicCardSkeleton for compact list rows and load-more footer
 
 ---
 
@@ -254,7 +279,11 @@ Important shared helper:
 - Ensure review navigation uses `review.trimId`, not `review.id`.
 - When creating new form helpers, always extend `BaseFormHelper` (or `IPasswordConfirmationFormHelper` when applicable) to ensure consistent form management and validation.
 - Backend search via Ransack requires explicit allowlists.
-
+- Avoid Spacer() / Expanded() inside Column when the widget can receive unbounded height  (common in slivers). This caused:
+  RenderFlex children have non-zero flex but incoming height constraints are unbounded
+- For featured cards in lists, either:
+  wrap in a fixed-height SizedBox(height: ...), or
+  use layouts that don’t require flexible height.
 ---
 
 ## 11) Roadmap (next)

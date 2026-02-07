@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 
-class HotTopicCardSkeleton extends StatelessWidget {
-  const HotTopicCardSkeleton({super.key});
+class HotTopicListTileSkeleton extends StatelessWidget {
+  const HotTopicListTileSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +19,10 @@ class HotTopicCardSkeleton extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: const Padding(
-          padding: EdgeInsets.all(12),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           child: Row(
             children: [
-              Bone.square(size: 40),
+              Bone.square(size: 34),
               SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -30,10 +30,11 @@ class HotTopicCardSkeleton extends StatelessWidget {
                   children: [
                     Bone.text(words: 3),
                     SizedBox(height: 8),
-                    Bone.text(words: 2),
+                    Bone.text(words: 4),
                   ],
                 ),
               ),
+              SizedBox(width: 12),
               Bone.square(size: 18),
             ],
           ),
