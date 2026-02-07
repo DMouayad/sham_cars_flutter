@@ -10,7 +10,7 @@ class QuestionCard extends StatelessWidget {
     this.onTap,
     this.compact = true,
     this.showContext = true,
-    this.showQuestionBadge = false,
+    this.showQuestionBadge = true,
   });
 
   final Question question;
