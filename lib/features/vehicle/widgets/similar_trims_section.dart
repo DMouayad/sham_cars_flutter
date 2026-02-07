@@ -52,7 +52,7 @@ class _SimilarTrimsSectionState extends State<SimilarTrimsSection> {
               _Title(text: l10n.vehicleDetailsSimilarTitle),
               const SizedBox(height: 10),
               SizedBox(
-                height: 240,
+                height: 250,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(

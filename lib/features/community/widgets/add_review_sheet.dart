@@ -294,7 +294,7 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                                           cityCode: _cityCode,
                                         );
 
-                                    if (ok && mounted) {
+                                    if (ok && context.mounted) {
                                       Navigator.pop(context, true);
                                     }
                                   },
