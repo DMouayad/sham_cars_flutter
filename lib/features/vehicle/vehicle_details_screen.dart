@@ -263,9 +263,6 @@ class _VehicleDetailsView extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              const SimilarTrimsSection(),
-              const SizedBox(height: 20),
-
               if (vm.description != null) ...[
                 _SectionTitle(
                   title: context.l10n.vehicleDetailsDescriptionTitle,
@@ -280,8 +277,11 @@ class _VehicleDetailsView extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
               ],
-
               if (loadingMore) const _LoadingMoreSection(),
+
+              const SimilarTrimsSection(),
+              const SizedBox(height: 20),
+
               const SizedBox(height: 24),
             ]),
           ),
