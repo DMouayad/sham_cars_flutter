@@ -37,7 +37,7 @@ class RoutePath {
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
   static const profileActivity = '/profile/activity';
-  static const questionDetails = ':id';
+  static const questionDetails = '/questions/:id';
   static const vehicles = '/vehicles';
   static const vehicleDetails = '/vehicles/:id';
   static const vehicleCommunityReviews = 'community/reviews';
@@ -61,9 +61,6 @@ class RoutePath {
         TypedGoRoute<CommunityRoute>(
           path: RoutePath.community,
           name: 'community',
-          routes: [
-            TypedGoRoute<QuestionDetailsRoute>(path: RoutePath.questionDetails),
-          ],
         ),
       ],
     ),
@@ -108,7 +105,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
             StatefulNavigationShell.of(context).goBranch(1),
         onViewAllQuestions: () =>
             StatefulNavigationShell.of(context).goBranch(2),
-        onViewHotTopic: () {},
+        // onViewHotTopic: () {},
         // onViewHotTopic: ()=>TrimCommunityScreen(trimId: trimId, initialTab: initialTab, trimTitle: trimTitle)
       ),
     );
@@ -271,6 +268,7 @@ class VehicleCommunityQuestionsRoute extends GoRouteData
   }
 }
 
+@TypedGoRoute<QuestionDetailsRoute>(path: RoutePath.questionDetails)
 @immutable
 class QuestionDetailsRoute extends GoRouteData with $QuestionDetailsRoute {
   const QuestionDetailsRoute(this.id);

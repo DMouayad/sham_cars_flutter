@@ -15,6 +15,7 @@ List<RouteBase> get $appRoutes => [
   $accountVerificationRoute,
   $profileRoute,
   $vehicleDetailsRoute,
+  $questionDetailsRoute,
   $profileActivityRoute,
 ];
 
@@ -45,12 +46,6 @@ RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
           path: '/community',
           name: 'community',
           factory: $CommunityRoute._fromState,
-          routes: [
-            GoRouteData.$route(
-              path: ':id',
-              factory: $QuestionDetailsRoute._fromState,
-            ),
-          ],
         ),
       ],
     ),
@@ -108,31 +103,6 @@ mixin $CommunityRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/community');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-mixin $QuestionDetailsRoute on GoRouteData {
-  static QuestionDetailsRoute _fromState(GoRouterState state) =>
-      QuestionDetailsRoute(int.parse(state.pathParameters['id']!));
-
-  QuestionDetailsRoute get _self => this as QuestionDetailsRoute;
-
-  @override
-  String get location => GoRouteData.$location(
-    '/community/${Uri.encodeComponent(_self.id.toString())}',
-  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -421,6 +391,36 @@ mixin $VehicleCommunityQuestionsRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/vehicles/${Uri.encodeComponent(_self.id.toString())}/community/qa',
     queryParams: {'title': _self.title},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $questionDetailsRoute => GoRouteData.$route(
+  path: '/questions/:id',
+  factory: $QuestionDetailsRoute._fromState,
+);
+
+mixin $QuestionDetailsRoute on GoRouteData {
+  static QuestionDetailsRoute _fromState(GoRouterState state) =>
+      QuestionDetailsRoute(int.parse(state.pathParameters['id']!));
+
+  QuestionDetailsRoute get _self => this as QuestionDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/questions/${Uri.encodeComponent(_self.id.toString())}',
   );
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/router/routes.dart';
@@ -41,6 +42,7 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      endDrawer: const CustomDrawer(),
       body: BlocConsumer<QuestionDetailsCubit, QuestionDetailsState>(
         listenWhen: (p, c) =>
             p.submitError != c.submitError && c.submitError != null,

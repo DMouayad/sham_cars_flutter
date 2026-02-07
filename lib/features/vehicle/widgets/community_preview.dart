@@ -106,6 +106,7 @@ class QuestionsPreview extends StatelessWidget {
         const SizedBox(height: 10),
         ...items.map(
           (q) => Padding(
+            key: ValueKey(q.id),
             padding: const EdgeInsets.only(bottom: 10),
             child: QuestionCard(
               question: q,

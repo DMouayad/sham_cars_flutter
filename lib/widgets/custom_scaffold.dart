@@ -12,6 +12,7 @@ class CustomScaffold extends StatelessWidget {
     this.appBarActions,
     this.title,
     this.showBackButton = true,
+    this.bottomNavigationBar,
     required this.body,
   });
   final Widget body;
@@ -19,12 +20,14 @@ class CustomScaffold extends StatelessWidget {
   final List<Widget>? appBarActions;
   final String? title;
   final bool showBackButton;
+  final Widget? bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
       endDrawer: const CustomDrawer(),
+      bottomNavigationBar: bottomNavigationBar,
       appBar: AppBar(
         backgroundColor: context.colorScheme.surface,
         surfaceTintColor: context.colorScheme.surface,

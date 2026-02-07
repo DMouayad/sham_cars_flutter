@@ -126,7 +126,7 @@ All list endpoints use pagination:
            │ ├─/home (Widget)
            │ ├─/vehicles (Widget)
            │ └─/community (Widget)
-           │   └─/community/:id (Widget)
+           ├─/questions/:id (Widget)
            ├─/profile/login (Widget)
            ├─/profile/signup (Widget)
            ├─/forgot-password (Widget)
@@ -275,3 +275,4 @@ When editing API/data flow:
 3) Should selection be on-demand (TrimPicker) or preselected/locked?
 4) Which cubit owns this state (read vs write)?
 5) Are strings localized? If not, add ARB keys and use `context.l10n`.
+6) Update `GEMINI.md` if needed after completing a task.
