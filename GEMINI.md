@@ -67,6 +67,13 @@ This section describes key data models used within the Flutter application, prim
 - **Purpose**: Represents an authenticated user of the application.
 - **Structure**: `id`, `fullName`, `email`, `phoneNumber`, `role`, `activated`, `emailVerifiedAt`, `phoneNumberVerifiedAt`, `createdAt`, `identityConfirmedAt`.
 
+### AppSupport
+- Purpose: Public support content loaded from `GET /settings` and surfaced via Drawer (FAQ + Contact).
+- Structure: `contactPhone`, `contactEmail`, `contactAddress`, `faq: List<FaqItem>`.
+
+### FaqItem
+- Purpose: One FAQ entry.
+- Structure: `question`, `answer`.
 ---
 
 ## 4) Mobile API contract (current)
@@ -121,6 +128,13 @@ All list endpoints use pagination:
   - backend supports either model/trim; current app uses trim-based posting
 - `POST /community/questions/{id}/answers` (auth required)
 
+### Settings / Support
+- `GET /settings`
+  - Purpose: returns public support content (Contact info + FAQ)
+  - Response envelope: `{ data: {...}, message: ... }`
+  - Data fields:
+    - `contact_phone`, `contact_email`, `contact_address`
+    - `faq[]: { question, answer }`
 **Date format note:** API may return `"YYYY-MM-DD HH:MM:SS"`. Flutter normalizes to ISO by replacing space with `T` before `DateTime.parse`.
 
 ---
@@ -148,6 +162,7 @@ All list endpoints use pagination:
             :id = car_model_id
             optional query param: ?title=... (used for AppBar title; preferred over extra for deep links)
 
+- Support content (FAQ + Contact) is presented via modal bottom sheets triggered from the Drawer (no dedicated route).
 
 ### Key screens
 - **HomeScreen**: discover vehicles + latest community
@@ -233,6 +248,13 @@ Classification avoids substring bugs (e.g., “acceleration” should not match 
 - Skeletons:
   - HotTopicFeaturedCardSkeleton for featured cards
   - HotTopicCardSkeleton for compact list rows and load-more footer
+
+### Support (FAQ + Contact) UI
+- Drawer provides quick links for:
+  - FAQ (opens modal bottom sheet)
+  - Contact info (opens modal bottom sheet)
+- FAQ is displayed using accordion/ExpansionTile for readability.
+- Phone/email values should render LTR even in Arabic locale.
 
 ---
 

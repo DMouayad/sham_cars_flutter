@@ -10,6 +10,7 @@ import 'package:sham_cars/api/rest_client.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/home/home_repository.dart';
+import 'package:sham_cars/features/support/support_repository.dart';
 import 'package:sham_cars/features/theme/app_theme.dart';
 import 'package:sham_cars/features/localization/cubit/localization_cubit.dart';
 import 'package:sham_cars/features/theme/theme_cubit.dart';
@@ -50,7 +51,12 @@ class MainApp extends StatelessWidget {
           BlocProvider(lazy: false, create: (_) => ThemeCubit()),
           BlocProvider(lazy: false, create: (_) => LocalizationCubit()),
           RepositoryProvider(
+            lazy: true,
             create: (ctx) => UserActivityRepository(restClient),
+          ),
+          RepositoryProvider(
+            lazy: true,
+            create: (ctx) => SupportRepository(restClient, responseCache),
           ),
           RepositoryProvider(
             create: (_) => CommunityRepository(restClient, responseCache),

@@ -11,6 +11,8 @@ import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/app_name.dart';
 
+import 'support_overlays.dart';
+
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
@@ -37,22 +39,40 @@ class CustomDrawer extends StatelessWidget {
 
             if (showProfileTile(context)) ...[
               const _UserProfileTile(),
+
+              // Account links (depends on auth state)
+              const _AccountSection(),
               divider,
             ],
 
-            // Account links (depends on auth state)
-            const _AccountSection(),
-            divider,
-
             // Support
             _SectionLabel(title: context.l10n.drawerSupportSectionTitle),
+
             ListTile(
-              leading: const Icon(Icons.mail_outline),
+              leading: const Icon(Icons.help_outline_rounded),
               style: ListTileStyle.drawer,
-              title: Text(context.l10n.contactUsTileLabel),
+              title: Text(context.l10n.supportFaqSectionTitle),
               onTap: () {
+                final rootCtx = Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).context;
                 Navigator.pop(context);
-                // TODO: open email/whatsapp/etc
+                Future.microtask(() => SupportOverlays.showFaq(rootCtx));
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.support_agent_outlined),
+              style: ListTileStyle.drawer,
+              title: Text(context.l10n.supportContactSectionTitle),
+              onTap: () {
+                final rootCtx = Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).context;
+                Navigator.pop(context);
+                Future.microtask(() => SupportOverlays.showContact(rootCtx));
               },
             ),
 
@@ -79,14 +99,21 @@ class _AccountSection extends StatelessWidget {
     return ListenableBuilder(
       listenable: GetIt.I<AuthNotifier>(),
       builder: (context, _) {
+        final divider = Divider(
+          thickness: .8,
+          color: context.colorScheme.outline,
+        );
+
         final auth = GetIt.I<AuthNotifier>();
         final isLoggedIn = auth.isLoggedIn;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _SectionLabel(title: context.l10n.drawerAccountSectionTitle),
-            if (isLoggedIn)
+        if (isLoggedIn) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              divider,
+
+              _SectionLabel(title: context.l10n.drawerAccountSectionTitle),
               ListTile(
                 leading: const Icon(Icons.insights_outlined),
                 style: ListTileStyle.drawer,
@@ -95,19 +122,11 @@ class _AccountSection extends StatelessWidget {
                   Navigator.pop(context);
                   const ProfileActivityRoute().push(context);
                 },
-              )
-            else
-              ListTile(
-                leading: const Icon(Icons.login_rounded),
-                style: ListTileStyle.drawer,
-                title: Text(context.l10n.loginBtnLabel),
-                onTap: () {
-                  Navigator.pop(context);
-                  const LoginRoute().push(context);
-                },
               ),
-          ],
-        );
+            ],
+          );
+        }
+        return const SizedBox.shrink();
       },
     );
   }

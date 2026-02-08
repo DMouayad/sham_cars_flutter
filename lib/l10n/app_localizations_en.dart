@@ -939,8 +939,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawerSupportSectionTitle => 'Support';
 
   @override
+  String get drawerSupportTileLabel => 'Support & contact';
+
+  @override
   String get drawerPreferencesSectionTitle => 'Preferences';
 
   @override
   String get drawerMyActivityTileLabel => 'My Activity';
+
+  @override
+  String get supportScreenTitle => 'Support';
+
+  @override
+  String get supportContactSectionTitle => 'Contact';
+
+  @override
+  String get supportFaqSectionTitle => 'FAQ';
+
+  @override
+  String get supportFaqEmpty => 'No FAQ items available right now.';
+
+  @override
+  String get supportPhoneLabel => 'Phone';
+
+  @override
+  String get supportEmailLabel => 'Email';
+
+  @override
+  String get supportAddressLabel => 'Address';
+
+  @override
+  String get supportCopyAction => 'Copy';
+
+  @override
+  String get supportCopiedMessage => 'Copied';
+
+  @override
+  String get supportCallAction => 'Call';
+
+  @override
+  String get supportSendEmailAction => 'Email';
 }

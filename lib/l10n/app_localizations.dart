@@ -1850,6 +1850,12 @@ abstract class AppLocalizations {
   /// **'Support'**
   String get drawerSupportSectionTitle;
 
+  /// No description provided for @drawerSupportTileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Support & contact'**
+  String get drawerSupportTileLabel;
+
   /// No description provided for @drawerPreferencesSectionTitle.
   ///
   /// In en, this message translates to:
@@ -1861,6 +1867,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My Activity'**
   String get drawerMyActivityTileLabel;
+
+  /// No description provided for @supportScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportScreenTitle;
+
+  /// No description provided for @supportContactSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get supportContactSectionTitle;
+
+  /// No description provided for @supportFaqSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get supportFaqSectionTitle;
+
+  /// No description provided for @supportFaqEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No FAQ items available right now.'**
+  String get supportFaqEmpty;
+
+  /// No description provided for @supportPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get supportPhoneLabel;
+
+  /// No description provided for @supportEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get supportEmailLabel;
+
+  /// No description provided for @supportAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get supportAddressLabel;
+
+  /// No description provided for @supportCopyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get supportCopyAction;
+
+  /// No description provided for @supportCopiedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get supportCopiedMessage;
+
+  /// No description provided for @supportCallAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get supportCallAction;
+
+  /// No description provided for @supportSendEmailAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get supportSendEmailAction;
 }
 
 class _AppLocalizationsDelegate

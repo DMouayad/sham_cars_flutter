@@ -655,7 +655,20 @@
   "hotLabel": "Hot",
   "drawerAccountSectionTitle":"Account",
   "drawerSupportSectionTitle": "Support",
+  "drawerSupportTileLabel" : "Support & contact",
   "drawerPreferencesSectionTitle": "Preferences",
-  "drawerMyActivityTileLabel" : "My Activity"
+  "drawerMyActivityTileLabel" : "My Activity",
+
+  "supportScreenTitle": "Support",
+  "supportContactSectionTitle": "Contact",
+  "supportFaqSectionTitle": "FAQ",
+  "supportFaqEmpty": "No FAQ items available right now.",
+  "supportPhoneLabel": "Phone",
+  "supportEmailLabel": "Email",
+  "supportAddressLabel": "Address",
+  "supportCopyAction": "Copy",
+  "supportCopiedMessage": "Copied",
+  "supportCallAction": "Call",
+  "supportSendEmailAction": "Email"
 
 }

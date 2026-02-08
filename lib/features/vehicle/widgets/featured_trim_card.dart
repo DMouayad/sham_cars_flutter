@@ -167,10 +167,6 @@ class FeaturedTrimCard extends StatelessWidget {
                                   trim.priceDisplay ?? '—',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: tt.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 0.1,
-                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),

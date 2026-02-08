@@ -35,7 +35,8 @@ class LoginCubit extends Cubit<LoginState> {
         password: formHelper.passwordValue,
       )),
       onError: (exception) {
-        if (exception == AppError.unauthenticated) {
+        if (exception == AppError.unauthenticated ||
+            exception == AppError.notFound) {
           emit(const LoginFailureState(AppError.invalidLoginCredential));
         } else if (exception case ApiError apiErr
             when apiErr.statusCode == 403) {

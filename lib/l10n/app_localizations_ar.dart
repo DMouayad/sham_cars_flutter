@@ -936,8 +936,44 @@ class AppLocalizationsAr extends AppLocalizations {
   String get drawerSupportSectionTitle => 'الدعم';
 
   @override
+  String get drawerSupportTileLabel => 'Support & contact';
+
+  @override
   String get drawerPreferencesSectionTitle => 'التفضيلات';
 
   @override
   String get drawerMyActivityTileLabel => 'نشاطي';
+
+  @override
+  String get supportScreenTitle => 'الدعم';
+
+  @override
+  String get supportContactSectionTitle => 'معلومات التواصل';
+
+  @override
+  String get supportFaqSectionTitle => 'الأسئلة الشائعة';
+
+  @override
+  String get supportFaqEmpty => 'لا توجد أسئلة شائعة حالياً.';
+
+  @override
+  String get supportPhoneLabel => 'الهاتف';
+
+  @override
+  String get supportEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get supportAddressLabel => 'العنوان';
+
+  @override
+  String get supportCopyAction => 'نسخ';
+
+  @override
+  String get supportCopiedMessage => 'تم النسخ';
+
+  @override
+  String get supportCallAction => 'اتصال';
+
+  @override
+  String get supportSendEmailAction => 'إرسال بريد';
 }
