@@ -351,16 +351,21 @@
         "description": "The label of the forgot password button"
     },
     "processing": "Processing...",
-    "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset your password",
-    "sendResetLinkBtnLabel": "Send Reset Link",
-    "resetLinkSentMessage": "A password reset link has been sent to your email.",
+    "forgotPasswordOtpSubtitle": "Enter your email and we'll send you an OTP to reset your password.",
+    "sendOtpBtnLabel": "Send OTP",
+    "otpSentMessage": "An OTP has been sent to your email.",
     "backToLogin": "Back to login",
     "resetPasswordTitle": "Reset Password",
     "resetPasswordBtnLabel": "Reset Password",
     "passwordResetSuccess": "Password has been reset successfully. Please login with your new password.",
+    "passwordResetExpired" : "Your password reset token has expired, please request a new one.",
     "newPasswordLabel": "New Password",
     "confirmPasswordLabel": "Confirm New Password",
     "invalidToken": "Invalid or expired token.",
+    "otpPasswordResetScreenTitle": "Verify your identity",
+    "otpPasswordResetScreenSubtitle": "Enter the 4-digit code sent to your email to verify your identity and reset your password.",
+    "otpVerificationSuccess": "Identity verified. You can now reset your password.",
+    "changeEmail": "Change Email",
     "exitSignupProcessBtnLabel": "Exit",
     "@exitSignupProcessBtnLabel": {
         "description": "The label of the exit button in the signup process"
@@ -647,6 +652,10 @@
   "hotTopicsEmpty": "No hot topics right now.",
   "modelQuestionsEmpty": "No questions for this model yet.",
   "hotTopicsTop3Label": "Top trending",
-  "hotLabel": "Hot"
+  "hotLabel": "Hot",
+  "drawerAccountSectionTitle":"Account",
+  "drawerSupportSectionTitle": "Support",
+  "drawerPreferencesSectionTitle": "Preferences",
+  "drawerMyActivityTileLabel" : "My Activity"
 
 }

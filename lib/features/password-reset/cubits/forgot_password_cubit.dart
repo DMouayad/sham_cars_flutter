@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:sham_cars/features/auth/repositories.dart';
 import 'package:sham_cars/utils/src/app_error.dart';
 import 'package:sham_cars/utils/src/bloc_helpers.dart';
-import 'package:sham_cars/features/password-reset/forgot_password_form_helper.dart';
+import 'package:sham_cars/features/password-reset/utils/forgot_password_form_helper.dart';
 
 part 'forgot_password_state.dart';
 
@@ -33,7 +33,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
     _helpers.handleFuture(
       GetIt.I.get<IAuthRepository>().forgotPassword(formHelper.emailValue),
       onSuccess: (_) {
-        emit(const ForgotPasswordSuccessState());
+        emit(ForgotPasswordSuccessState(formHelper.emailValue));
       },
     );
   }

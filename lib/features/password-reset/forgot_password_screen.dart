@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:sham_cars/widgets/page_loader.dart';
 import 'package:sham_cars/utils/utils.dart';
@@ -27,11 +28,10 @@ class ForgotPasswordScreen extends StatelessWidget {
           }
 
           if (state is ForgotPasswordSuccessState) {
-            // Show success and maybe navigate to verify code or login
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(context.l10n.resetLinkSentMessage)),
+              SnackBar(content: Text(context.l10n.otpSentMessage)),
             );
-            context.pop(); // Go back to login
+            OtpPasswordResetRoute(state.email).go(context);
           } else if (state is ForgotPasswordFailureState) {
             showErrorDialog(
               context,
@@ -79,9 +79,7 @@ class _ForgotPasswordForm extends StatelessWidget {
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    context
-                        .l10n
-                        .forgotPasswordSubtitle, // "Enter your email..."
+                    context.l10n.forgotPasswordOtpSubtitle,
                     textAlign: TextAlign.center,
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: context.colorScheme.secondary,
@@ -102,7 +100,7 @@ class _ForgotPasswordForm extends StatelessWidget {
                   style: const ButtonStyle(
                     minimumSize: WidgetStatePropertyAll(Size.fromHeight(48)),
                   ),
-                  child: Text(context.l10n.sendResetLinkBtnLabel),
+                  child: Text(context.l10n.sendOtpBtnLabel),
                 ),
 
                 const SizedBox(height: 24),

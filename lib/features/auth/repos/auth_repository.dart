@@ -9,5 +9,6 @@ abstract class IAuthRepository {
   Future<void> logOut();
   Future<void> resendVerificationCode(String email);
   Future<void> forgotPassword(String email);
-  Future<void> resetPassword(String token, String password, String passwordConfirmation);
+  Future<void> verifyOtpForPasswordReset(String email, String otp);
+  Future<void> resetPassword(String password, String passwordConfirmation);
 }

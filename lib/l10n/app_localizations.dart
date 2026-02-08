@@ -812,23 +812,23 @@ abstract class AppLocalizations {
   /// **'Processing...'**
   String get processing;
 
-  /// No description provided for @forgotPasswordSubtitle.
+  /// No description provided for @forgotPasswordOtpSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter your email and we\'ll send you a link to reset your password'**
-  String get forgotPasswordSubtitle;
+  /// **'Enter your email and we\'ll send you an OTP to reset your password.'**
+  String get forgotPasswordOtpSubtitle;
 
-  /// No description provided for @sendResetLinkBtnLabel.
+  /// No description provided for @sendOtpBtnLabel.
   ///
   /// In en, this message translates to:
-  /// **'Send Reset Link'**
-  String get sendResetLinkBtnLabel;
+  /// **'Send OTP'**
+  String get sendOtpBtnLabel;
 
-  /// No description provided for @resetLinkSentMessage.
+  /// No description provided for @otpSentMessage.
   ///
   /// In en, this message translates to:
-  /// **'A password reset link has been sent to your email.'**
-  String get resetLinkSentMessage;
+  /// **'An OTP has been sent to your email.'**
+  String get otpSentMessage;
 
   /// No description provided for @backToLogin.
   ///
@@ -854,6 +854,12 @@ abstract class AppLocalizations {
   /// **'Password has been reset successfully. Please login with your new password.'**
   String get passwordResetSuccess;
 
+  /// No description provided for @passwordResetExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password reset token has expired, please request a new one.'**
+  String get passwordResetExpired;
+
   /// No description provided for @newPasswordLabel.
   ///
   /// In en, this message translates to:
@@ -871,6 +877,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid or expired token.'**
   String get invalidToken;
+
+  /// No description provided for @otpPasswordResetScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your identity'**
+  String get otpPasswordResetScreenTitle;
+
+  /// No description provided for @otpPasswordResetScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 4-digit code sent to your email to verify your identity and reset your password.'**
+  String get otpPasswordResetScreenSubtitle;
+
+  /// No description provided for @otpVerificationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity verified. You can now reset your password.'**
+  String get otpVerificationSuccess;
+
+  /// No description provided for @changeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Email'**
+  String get changeEmail;
 
   /// The label of the exit button in the signup process
   ///
@@ -1807,6 +1837,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hot'**
   String get hotLabel;
+
+  /// No description provided for @drawerAccountSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get drawerAccountSectionTitle;
+
+  /// No description provided for @drawerSupportSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get drawerSupportSectionTitle;
+
+  /// No description provided for @drawerPreferencesSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get drawerPreferencesSectionTitle;
+
+  /// No description provided for @drawerMyActivityTileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'My Activity'**
+  String get drawerMyActivityTileLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sham_cars/features/signup/widgets/signup_form_fields.dart';
+import 'package:sham_cars/utils/src/app_error.dart';
 import 'package:sham_cars/widgets/custom_scaffold.dart';
 import 'package:sham_cars/widgets/page_loader.dart';
 import 'package:sham_cars/utils/utils.dart';
@@ -12,15 +13,12 @@ import 'package:sham_cars/features/password-reset/cubits/reset_password_cubit.da
 import 'package:sham_cars/router/routes.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
-  /// The token usually obtained from the deep link query params
-  final String? resetToken;
-
-  const ResetPasswordScreen({super.key, this.resetToken});
+  const ResetPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ResetPasswordCubit(token: resetToken),
+      create: (context) => ResetPasswordCubit(),
       child: BlocListener<ResetPasswordCubit, ResetPasswordState>(
         listener: (context, state) {
           final pageLoader = PageLoader.of(context);
@@ -31,12 +29,19 @@ class ResetPasswordScreen extends StatelessWidget {
           }
 
           if (state is ResetPasswordSuccessState) {
-            // Navigate to login or home
+            // Navigate to login
             context.go(RoutePath.login);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(context.l10n.passwordResetSuccess)),
             );
           } else if (state is ResetPasswordFailureState) {
+            if (state.appError == AppError.unauthenticated) {
+              const ForgotPasswordRoute().go(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(context.l10n.passwordResetExpired)),
+              );
+              return;
+            }
             showErrorDialog(
               context,
               title: context.l10n.error,

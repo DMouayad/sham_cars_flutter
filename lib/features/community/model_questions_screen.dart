@@ -31,8 +31,10 @@ class _ModelQuestionsScreenState extends State<ModelQuestionsScreen> {
     _controller = ScrollController()..addListener(_onScroll);
 
     // load
-    Future.microtask(() {
-      context.read<ModelQuestionsCubit>().load(modelId: widget.modelId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        context.read<ModelQuestionsCubit>().load(modelId: widget.modelId);
+      }
     });
   }
 

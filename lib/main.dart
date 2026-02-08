@@ -9,6 +9,7 @@ import 'package:sham_cars/api/cache.dart';
 
 import 'package:sham_cars/api/rest_client.dart';
 import 'package:sham_cars/features/auth/auth_notifier.dart';
+import 'package:sham_cars/features/password-reset/password_reset_token_repository.dart';
 import 'package:sham_cars/features/user/api_user_repository.dart';
 import 'package:sham_cars/features/user/local_user_repository.dart';
 
@@ -24,12 +25,16 @@ import 'api/http_client_factory.dart'
 void _bootstrap(RestClient restClient) {
   GetIt.I.registerSingleton<LocalUserRepository>(LocalUserRepository());
   GetIt.I.registerSingleton<ITokensRepository>(TokensRepository());
+  GetIt.I.registerSingleton<IPasswordResetTokenRepository>(
+    PasswordResetTokenRepository(),
+  );
   GetIt.I.registerSingleton<ApiUserRepository>(ApiUserRepository(restClient));
 
   GetIt.I.registerSingleton<IAuthRepository>(
     AuthRepository(
       restClient,
       GetIt.I.get<ITokensRepository>(),
+      GetIt.I.get<IPasswordResetTokenRepository>(),
       GetIt.I.get<LocalUserRepository>(),
       GetIt.I.get<ApiUserRepository>(),
     ),

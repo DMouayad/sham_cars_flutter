@@ -15,61 +15,119 @@ class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
   bool showProfileTile(BuildContext context) {
-    final String currentLocation = GoRouterState.of(context).uri.toString();
-
-    if (currentLocation.startsWith(RoutePath.login)) {
-      return false;
-    }
-    return true;
+    final loc = GoRouterState.of(context).uri.toString();
+    return !loc.startsWith(RoutePath.login);
   }
 
   @override
   Widget build(BuildContext context) {
-    const divider = Divider(thickness: .8);
+    final cs = Theme.of(context).colorScheme;
+    final divider = Divider(thickness: .8, color: context.colorScheme.outline);
+
     return Drawer(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
+      child: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           children: [
-            Container(
-              height: 100,
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: AppName(color: context.colorScheme.primary),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Center(child: AppName(color: cs.primary)),
             ),
+
             if (showProfileTile(context)) ...[
               const _UserProfileTile(),
               divider,
             ],
-            Flexible(
-              child: ListView(
-                children: [
-                  // ------------------------
-                  ListTile(
-                    leading: const Icon(Icons.info_outline),
-                    style: ListTileStyle.drawer,
-                    title: Text(context.l10n.fAQTileLabel),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.mail_outline),
-                    style: ListTileStyle.drawer,
-                    title: Text(context.l10n.contactUsTileLabel),
-                    onTap: () {},
-                  ),
-                  divider,
-                  ListTile(
-                    leading: const Icon(Icons.color_lens_outlined, size: 18),
-                    title: Text(context.l10n.drawerAppearanceTitle),
-                    dense: true,
-                  ),
-                  const _ThemeSettings(),
-                  const SizedBox(height: 10),
-                  const _LanguageTile(),
-                ],
-              ),
+
+            // Account links (depends on auth state)
+            const _AccountSection(),
+            divider,
+
+            // Support
+            _SectionLabel(title: context.l10n.drawerSupportSectionTitle),
+            ListTile(
+              leading: const Icon(Icons.mail_outline),
+              style: ListTileStyle.drawer,
+              title: Text(context.l10n.contactUsTileLabel),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: open email/whatsapp/etc
+              },
             ),
-            // const Spacer(),
+
+            divider,
+
+            // Preferences
+            _SectionLabel(title: context.l10n.drawerPreferencesSectionTitle),
+            const _ThemeSettings(),
+            const SizedBox(height: 6),
+            const _LanguageTile(),
+            const SizedBox(height: 12),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountSection extends StatelessWidget {
+  const _AccountSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: GetIt.I<AuthNotifier>(),
+      builder: (context, _) {
+        final auth = GetIt.I<AuthNotifier>();
+        final isLoggedIn = auth.isLoggedIn;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _SectionLabel(title: context.l10n.drawerAccountSectionTitle),
+            if (isLoggedIn)
+              ListTile(
+                leading: const Icon(Icons.insights_outlined),
+                style: ListTileStyle.drawer,
+                title: Text(context.l10n.drawerMyActivityTileLabel),
+                onTap: () {
+                  Navigator.pop(context);
+                  const ProfileActivityRoute().push(context);
+                },
+              )
+            else
+              ListTile(
+                leading: const Icon(Icons.login_rounded),
+                style: ListTileStyle.drawer,
+                title: Text(context.l10n.loginBtnLabel),
+                onTap: () {
+                  Navigator.pop(context);
+                  const LoginRoute().push(context);
+                },
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel({required this.title});
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 8, top: 8, bottom: 4),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: cs.onSurfaceVariant,
+          fontWeight: FontWeight.w800,
+          fontSize: 12,
         ),
       ),
     );
@@ -96,11 +154,7 @@ class _UserProfileTile extends StatelessWidget {
             : context.l10n.userGuestSubtitle;
 
         return ListTile(
-          // isThreeLine: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 0,
-          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           leading: CircleAvatar(
             backgroundColor: context.colorScheme.primaryContainer,
             child: Icon(
@@ -120,11 +174,8 @@ class _UserProfileTile extends StatelessWidget {
             ),
           ),
           onTap: () {
-            Navigator.pop(context); // 1. Close the drawer first
-
-            if (context.mounted) {
-              const ProfileRoute().push(context);
-            }
+            Navigator.pop(context);
+            const ProfileRoute().push(context);
           },
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         );
@@ -138,26 +189,35 @@ class _LanguageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
+    return ExpansionTile(
+      leading: const Icon(Icons.language_outlined, size: 18),
+      tilePadding: const EdgeInsets.symmetric(horizontal: 8),
+      title: Text(
+        context.l10n.drawerLanguageBtnLabel,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      childrenPadding: const EdgeInsetsDirectional.only(
+        start: 8,
+        end: 8,
+        bottom: 8,
+      ),
       children: [
-        ListTile(
-          dense: true,
-          title: Text(
-            context.l10n.drawerLanguageBtnLabel,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...AppLocalizations.supportedLocales.map((locale) {
+              final isSelected = locale == context.locale;
+              return ChoiceChip(
+                onSelected: (_) =>
+                    context.read<LocalizationCubit>().setLocale(locale),
+                selectedColor: context.colorScheme.primary,
+                selected: isSelected,
+                label: Text(context.getLocaleFullName(locale.languageCode)),
+              );
+            }),
+          ],
         ),
-        ...AppLocalizations.supportedLocales.map((locale) {
-          final isSelected = locale == context.locale;
-          return ChoiceChip(
-            onSelected: (_) =>
-                context.read<LocalizationCubit>().setLocale(locale),
-            selectedColor: context.colorScheme.primary,
-            selected: isSelected,
-            label: Text(context.getLocaleFullName(locale.languageCode)),
-          );
-        }),
       ],
     );
   }
@@ -168,27 +228,35 @@ class _ThemeSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
+    return ExpansionTile(
+      tilePadding: const EdgeInsets.symmetric(horizontal: 8),
+      leading: const Icon(Icons.color_lens_outlined, size: 18),
+      title: Text(
+        context.l10n.drawerAppearanceTitle,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      childrenPadding: const EdgeInsetsDirectional.only(
+        start: 8,
+        end: 8,
+        bottom: 8,
+      ),
       children: [
-        ListTile(
-          dense: true,
-          title: Text(
-            context.l10n.drawerThemeModeSwitchTitle,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...ThemeMode.values.map((themeMode) {
+              final isSelected = themeMode == context.watch<ThemeCubit>().state;
+              return ChoiceChip(
+                selected: isSelected,
+                selectedColor: context.colorScheme.primary,
+                onSelected: (_) =>
+                    context.read<ThemeCubit>().setThemeMode(themeMode),
+                label: Text(context.getThemeModeName(themeMode)),
+              );
+            }),
+          ],
         ),
-        ...ThemeMode.values.map((themeMode) {
-          final isSelected = themeMode == context.watch<ThemeCubit>().state;
-          return ChoiceChip(
-            selected: isSelected,
-            selectedColor: context.colorScheme.primary,
-            onSelected: (_) =>
-                context.read<ThemeCubit>().setThemeMode(themeMode),
-            label: Text(context.getThemeModeName(themeMode)),
-          );
-        }),
       ],
     );
   }

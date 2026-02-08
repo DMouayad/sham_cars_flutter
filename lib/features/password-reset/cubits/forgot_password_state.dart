@@ -16,7 +16,10 @@ final class ForgotPasswordBusyState extends ForgotPasswordState {
 }
 
 final class ForgotPasswordSuccessState extends ForgotPasswordState {
-  const ForgotPasswordSuccessState() : super(isBusy: false);
+  final String email;
+  const ForgotPasswordSuccessState(this.email) : super(isBusy: false);
+  @override
+  List<Object?> get props => [email, ...super.props];
 }
 
 final class ForgotPasswordFailureState extends ForgotPasswordState {

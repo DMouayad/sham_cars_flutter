@@ -389,15 +389,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get processing => 'جار المعالجة...';
 
   @override
-  String get forgotPasswordSubtitle =>
-      'أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور';
+  String get forgotPasswordOtpSubtitle =>
+      'أدخل بريدك الإلكتروني وسنرسل لك رمز تحقق لتعيين كلمة المرور.';
 
   @override
-  String get sendResetLinkBtnLabel => 'إرسال رابط إعادة تعيين';
+  String get sendOtpBtnLabel => 'إرسال رمز التحقق';
 
   @override
-  String get resetLinkSentMessage =>
-      'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني';
+  String get otpSentMessage => 'تم إرسال رمز تحقق إلى بريدك الإلكتروني.';
 
   @override
   String get backToLogin => 'العودة لتسجيل الدخول';
@@ -413,6 +412,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'تمت إعادة تعيين كلمة المرور بنجاح. يرجى تسجيل الدخول بكلمة المرور الجديدة';
 
   @override
+  String get passwordResetExpired =>
+      '، يرجى طلب رمز جديد.انتهت صلاحية رمز التحقق المخصص لتغيير كلمة المرور';
+
+  @override
   String get newPasswordLabel => 'كلمة المرور الجديدة';
 
   @override
@@ -420,6 +423,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invalidToken => 'الرمز غير صالح أو منتهي الصلاحية.';
+
+  @override
+  String get otpPasswordResetScreenTitle => 'التحقق من هويتك';
+
+  @override
+  String get otpPasswordResetScreenSubtitle =>
+      'أدخل الرمز المكون من 4 أرقام الذي تم إرساله إلى بريدك الإلكتروني للتحقق من هوية وإعادة تعيين كلمة المرور.';
+
+  @override
+  String get otpVerificationSuccess =>
+      'تم التحقق من الهوية. يمكنك الآن إعادة تعيين كلمة المرور.';
+
+  @override
+  String get changeEmail => 'تغيير البريد الإلكتروني';
 
   @override
   String get exitSignupProcessBtnLabel => 'الخروج من عملية التسجيل';
@@ -911,4 +928,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get hotLabel => 'رائج';
+
+  @override
+  String get drawerAccountSectionTitle => 'الحساب';
+
+  @override
+  String get drawerSupportSectionTitle => 'الدعم';
+
+  @override
+  String get drawerPreferencesSectionTitle => 'التفضيلات';
+
+  @override
+  String get drawerMyActivityTileLabel => 'نشاطي';
 }

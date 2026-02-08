@@ -12,6 +12,7 @@ List<RouteBase> get $appRoutes => [
   $signupRoute,
   $forgotPasswordRoute,
   $resetPasswordRoute,
+  $otpPasswordResetRoute,
   $accountVerificationRoute,
   $profileRoute,
   $vehicleDetailsRoute,
@@ -223,15 +224,10 @@ RouteBase get $resetPasswordRoute => GoRouteData.$route(
 
 mixin $ResetPasswordRoute on GoRouteData {
   static ResetPasswordRoute _fromState(GoRouterState state) =>
-      ResetPasswordRoute(token: state.uri.queryParameters['token']);
-
-  ResetPasswordRoute get _self => this as ResetPasswordRoute;
+      const ResetPasswordRoute();
 
   @override
-  String get location => GoRouteData.$location(
-    '/reset-password',
-    queryParams: {if (_self.token != null) 'token': _self.token},
-  );
+  String get location => GoRouteData.$location('/reset-password');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -245,6 +241,37 @@ mixin $ResetPasswordRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $otpPasswordResetRoute => GoRouteData.$route(
+  path: '/otp-password-reset',
+  name: 'otp_password_reset',
+  factory: $OtpPasswordResetRoute._fromState,
+);
+
+mixin $OtpPasswordResetRoute on GoRouteData {
+  static OtpPasswordResetRoute _fromState(GoRouterState state) =>
+      OtpPasswordResetRoute(state.extra as String);
+
+  OtpPasswordResetRoute get _self => this as OtpPasswordResetRoute;
+
+  @override
+  String get location => GoRouteData.$location('/otp-password-reset');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 RouteBase get $accountVerificationRoute => GoRouteData.$route(

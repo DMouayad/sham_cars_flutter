@@ -4,11 +4,13 @@ final class AuthRepository extends IAuthRepository {
   AuthRepository(
     this._client,
     this._tokensRepository,
+    this._resetTokenRepository,
     this._localUserRepository,
     this._apiUserRepository,
   );
   final LocalUserRepository _localUserRepository;
   final ITokensRepository _tokensRepository;
+  final IPasswordResetTokenRepository _resetTokenRepository;
   final ApiUserRepository _apiUserRepository;
   final RestClient _client;
 
@@ -119,19 +121,36 @@ final class AuthRepository extends IAuthRepository {
   }
 
   @override
+  Future<void> verifyOtpForPasswordReset(String email, String otp) async {
+    final reqBody = {'email': email, 'email_otp': otp};
+    final data = await _client.request(
+      HttpMethod.post,
+      ApiRoutes.authRoutes.verifyAccount,
+      body: reqBody,
+    );
+    final token = data['token'];
+    if (token is! String) {
+      throw AppError
+          .undefined; // Or a more specific error for invalid token response
+    }
+    final expiresAt = DateTime.now().add(Duration(hours: 3));
+    await _resetTokenRepository.store(PasswordResetSession(token, expiresAt));
+  }
+
+  @override
   Future<void> resetPassword(
-    String token,
     String password,
     String passwordConfirmation,
   ) async {
+    final resetSession = await _resetTokenRepository.get();
+    if (resetSession == null) {
+      throw AppError.unauthenticated;
+    }
     await _client.request(
       HttpMethod.post,
       ApiRoutes.authRoutes.resetPassword,
-      body: {
-        'token': token,
-        'password': password,
-        'password_c': passwordConfirmation,
-      },
+      accessToken: resetSession.token,
+      body: {'password': password, 'c_password': passwordConfirmation},
     );
   }
 

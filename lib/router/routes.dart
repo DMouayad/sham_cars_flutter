@@ -14,6 +14,7 @@ import 'package:sham_cars/features/hot_topics/hot_topics_cubit.dart';
 import 'package:sham_cars/features/hot_topics/hot_topics_screen.dart';
 import 'package:sham_cars/features/login/login_screen.dart';
 import 'package:sham_cars/features/password-reset/forgot_password_screen.dart';
+import 'package:sham_cars/features/password-reset/otp_password_reset_screen.dart';
 import 'package:sham_cars/features/password-reset/reset_password_screen.dart';
 import 'package:sham_cars/features/questions/question_details_screen.dart';
 import 'package:sham_cars/features/signup/screens/signup_screen.dart';
@@ -41,6 +42,7 @@ class RoutePath {
   static const signup = '/profile/signup';
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
+  static const otpPasswordReset = '/otp-password-reset';
   static const profileActivity = '/profile/activity';
   static const questionDetails = '/questions/:id';
   static const vehicles = '/vehicles';
@@ -164,12 +166,25 @@ class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
   name: 'reset_password',
 )
 class ResetPasswordRoute extends GoRouteData with $ResetPasswordRoute {
-  final String? token;
-  const ResetPasswordRoute({this.token});
+  const ResetPasswordRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return ResetPasswordScreen(resetToken: token);
+    return const ResetPasswordScreen();
+  }
+}
+
+@TypedGoRoute<OtpPasswordResetRoute>(
+  path: RoutePath.otpPasswordReset,
+  name: 'otp_password_reset',
+)
+@immutable
+class OtpPasswordResetRoute extends GoRouteData with $OtpPasswordResetRoute {
+  const OtpPasswordResetRoute(this.$extra);
+  final String $extra; // email
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return OtpPasswordResetScreen(email: $extra);
   }
 }
 

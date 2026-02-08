@@ -262,12 +262,14 @@ Important shared helper:
 ### Forgot/Reset Password Flow
 1) User navigates to `ForgotPasswordScreen` (usually from Login).
 2) User enters email and submits.
-3) `ForgotPasswordCubit` calls `IAuthRepository.forgotPassword` to send a reset link to the email.
-4) User receives email with a deep link containing a reset token.
-5) User clicks deep link, navigates to `ResetPasswordScreen` with the `resetToken`.
-6) User enters new password and confirmation.
-7) `ResetPasswordCubit` calls `IAuthRepository.resetPassword` to update the password.
-8) On success, `AuthNotifier.endPasswordResetSession()` is called and user is redirected to Login.
+3) `ForgotPasswordCubit` calls `IAuthRepository.forgotPassword` to request an OTP be sent to the email.
+4) User is redirected to `OtpPasswordResetScreen`, passing the email.
+5) User enters the OTP received in their email on the `OtpPasswordResetScreen`.
+6) `OtpPasswordResetCubit` calls `IAuthRepository.verifyOtpForPasswordReset` to verify the OTP.
+7) On successful OTP verification, a token is received and stored in an `IPasswordResetTokenRepository`, and the user is redirected to `ResetPasswordScreen`.
+8) User enters new password and confirmation.
+9) `ResetPasswordCubit` calls `IAuthRepository.resetPassword` to update the password (this call is authenticated using the token obtained in step 7).
+10) On success, `AuthNotifier.endPasswordResetSession()` is called (and the reset token should be cleared) and user is redirected to Login.
 
 ---
 

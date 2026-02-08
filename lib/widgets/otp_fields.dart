@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:sham_cars/features/theme/app_theme.dart';
 import 'package:sham_cars/utils/utils.dart';
@@ -11,6 +12,7 @@ class OtpFields extends StatefulWidget {
     this.digitFieldDimension = 54,
     this.digitFieldBorder,
   });
+
   final int fieldCount;
   final void Function(int, String) onChanged;
   final double digitFieldDimension;
@@ -22,6 +24,7 @@ class OtpFields extends StatefulWidget {
 
 class _OtpFieldsState extends State<OtpFields> {
   late final List<TextEditingController> controllers;
+  late final List<FocusNode> focusNodes;
 
   @override
   void initState() {
@@ -30,52 +33,77 @@ class _OtpFieldsState extends State<OtpFields> {
       widget.fieldCount,
       (_) => TextEditingController(),
     );
+    focusNodes = List.generate(widget.fieldCount, (_) => FocusNode());
   }
 
   @override
   void dispose() {
-    for (var controller in controllers) {
-      controller.dispose();
+    for (final c in controllers) {
+      c.dispose();
+    }
+    for (final f in focusNodes) {
+      f.dispose();
     }
     super.dispose();
   }
 
   void selectDigitField(int index) {
-    if (index < controllers.length) {
+    if (index < 0 || index >= controllers.length) return;
+
+    focusNodes[index].requestFocus();
+
+    // Post-frame: ensures EditableText has the latest value before selection set.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final len = controllers[index].text.length;
       controllers[index].selection = TextSelection(
         baseOffset: 0,
-        extentOffset: controllers[index].text.length,
+        extentOffset: len.clamp(0, len),
       );
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final fields = List.generate(growable: false, widget.fieldCount, (i) {
-      return Expanded(
-        flex: 0,
+    final fields = List.generate(widget.fieldCount, (i) {
+      return SizedBox(
+        width: widget.digitFieldDimension,
         child: _DigitTextField(
+          autofocus: i == 0,
+          focusNode: focusNodes[i],
           dimension: widget.digitFieldDimension,
           border: widget.digitFieldBorder,
           onTap: () => selectDigitField(i),
           controller: controllers[i],
-          textInputAction: TextInputAction.next,
-          onChanged: (value) async {
+          textInputAction: i == widget.fieldCount - 1
+              ? TextInputAction.done
+              : TextInputAction.next,
+          onChanged: (raw) {
+            // Strong guard: only keep the last digit if something weird gets in
+            final value = raw.isEmpty ? '' : raw.characters.last;
+
+            if (raw != value) {
+              controllers[i].text = value;
+              controllers[i].selection = TextSelection.collapsed(
+                offset: value.length,
+              );
+            }
+
+            widget.onChanged(i, value);
+
             if (value.isNotEmpty) {
               final isLast = i == widget.fieldCount - 1;
-
-              context.isArabicLocale
-                  ? FocusScope.of(context).previousFocus()
-                  : FocusScope.of(context).nextFocus();
-              if (!isLast) {
+              if (isLast) {
+                FocusScope.of(context).unfocus();
+              } else {
                 selectDigitField(i + 1);
               }
             }
-            widget.onChanged(i, value);
           },
         ),
       );
     });
+
     return SizedBox(
       width: 300,
       child: Row(
@@ -93,46 +121,54 @@ class _DigitTextField extends StatelessWidget {
     required this.textInputAction,
     required this.onChanged,
     required this.onTap,
+    required this.focusNode,
+    required this.autofocus,
     this.dimension = 54,
     this.border,
   });
+
   final TextInputAction textInputAction;
   final void Function(String) onChanged;
   final TextEditingController controller;
   final double dimension;
   final InputBorder? border;
   final VoidCallback onTap;
+  final FocusNode focusNode;
+  final bool autofocus;
+
   @override
   Widget build(BuildContext context) {
     final baseBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(4),
       borderSide: const BorderSide(color: AppTheme.lightGreyColor),
     );
+
     return TextFormField(
-      autofocus: true,
+      autofocus: autofocus,
+      focusNode: focusNode,
       controller: controller,
       onChanged: onChanged,
+      onTap: onTap,
       textAlign: TextAlign.center,
       textInputAction: textInputAction,
-      keyboardType: TextInputType.visiblePassword,
-      style: context.textTheme.titleLarge,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(1),
+      ],
       maxLength: 1,
-      onTap: onTap,
-      validator: (value) {
-        if (value?.isEmpty ?? true) {
-          return '';
-        }
-        return null;
-      },
+      maxLengthEnforcement: MaxLengthEnforcement.enforced,
+      style: context.textTheme.titleLarge,
       decoration: InputDecoration(
         counterText: '',
-        constraints: BoxConstraints.loose(Size.fromWidth(dimension)),
+        constraints: BoxConstraints.tightFor(width: dimension),
         border: baseBorder,
+        enabledBorder: border ?? baseBorder,
         errorBorder: baseBorder.copyWith(
           borderSide: BorderSide(color: context.colorScheme.error),
         ),
-        enabledBorder: border ?? baseBorder,
       ),
+      validator: (value) => (value?.isEmpty ?? true) ? '' : null,
     );
   }
 }

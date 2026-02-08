@@ -385,15 +385,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get processing => 'Processing...';
 
   @override
-  String get forgotPasswordSubtitle =>
-      'Enter your email and we\'ll send you a link to reset your password';
+  String get forgotPasswordOtpSubtitle =>
+      'Enter your email and we\'ll send you an OTP to reset your password.';
 
   @override
-  String get sendResetLinkBtnLabel => 'Send Reset Link';
+  String get sendOtpBtnLabel => 'Send OTP';
 
   @override
-  String get resetLinkSentMessage =>
-      'A password reset link has been sent to your email.';
+  String get otpSentMessage => 'An OTP has been sent to your email.';
 
   @override
   String get backToLogin => 'Back to login';
@@ -409,6 +408,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Password has been reset successfully. Please login with your new password.';
 
   @override
+  String get passwordResetExpired =>
+      'Your password reset token has expired, please request a new one.';
+
+  @override
   String get newPasswordLabel => 'New Password';
 
   @override
@@ -416,6 +419,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidToken => 'Invalid or expired token.';
+
+  @override
+  String get otpPasswordResetScreenTitle => 'Verify your identity';
+
+  @override
+  String get otpPasswordResetScreenSubtitle =>
+      'Enter the 4-digit code sent to your email to verify your identity and reset your password.';
+
+  @override
+  String get otpVerificationSuccess =>
+      'Identity verified. You can now reset your password.';
+
+  @override
+  String get changeEmail => 'Change Email';
 
   @override
   String get exitSignupProcessBtnLabel => 'Exit';
@@ -914,4 +931,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hotLabel => 'Hot';
+
+  @override
+  String get drawerAccountSectionTitle => 'Account';
+
+  @override
+  String get drawerSupportSectionTitle => 'Support';
+
+  @override
+  String get drawerPreferencesSectionTitle => 'Preferences';
+
+  @override
+  String get drawerMyActivityTileLabel => 'My Activity';
 }
