@@ -61,7 +61,9 @@ class MainApp extends StatelessWidget {
           RepositoryProvider(
             create: (_) => CommunityRepository(restClient, responseCache),
           ),
-          RepositoryProvider(create: (_) => CarDataRepository(restClient)),
+          RepositoryProvider(
+            create: (_) => CarDataRepository(restClient, cache: responseCache),
+          ),
           RepositoryProvider(
             create: (context) =>
                 HomeRepository(responseCache, context.read(), context.read()),
