@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:sham_cars/features/community/widgets/community_review_card.dart';
 import 'package:sham_cars/features/hot_topics/featured_hot_topic_card.dart';
+import 'package:sham_cars/features/hot_topics/featured_hot_topic_card_skeletopn.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
@@ -29,6 +30,7 @@ class HomeScreen extends StatefulWidget {
     required this.onViewAllHotTopics,
     required this.onOpenHotTopic,
     required this.onViewAllReviews,
+    required this.onViewAllTrending,
   });
 
   final void Function(int trimId, [CarTrimSummary? summary]) onOpenTrim;
@@ -37,6 +39,7 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback onViewAllQuestions;
   final VoidCallback onViewAllReviews;
   final VoidCallback onViewAllHotTopics;
+  final VoidCallback onViewAllTrending;
   final void Function(HotTopic) onOpenHotTopic;
 
   @override
@@ -108,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ..._buildHomeSkeleton()
                 else if (state.data != null)
                   ..._buildHomeContent(state.data!),
-
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
               ],
             ),
@@ -181,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
       SliverToBoxAdapter(
         child: SectionHeader(
           title: l10n.homeTrendingTitle,
-          onTap: widget.onViewAllVehicles,
+          onTap: widget.onViewAllTrending,
         ),
       ),
       SliverToBoxAdapter(
@@ -208,12 +210,17 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: widget.onViewAllQuestions,
         ),
       ),
-      SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
-        sliver: SliverList.separated(
-          itemCount: 3,
-          separatorBuilder: (_, _) => const SizedBox(height: 12),
-          itemBuilder: (_, _) => const FeaturedTrimCardSkeleton(height: 132),
+      SliverToBoxAdapter(
+        child: SizedBox(
+          height: 135,
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
+            itemCount: 3,
+            scrollDirection: Axis.horizontal,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (_, _) =>
+                const HotTopicFeaturedCardSkeleton(width: 260, height: 132),
+          ),
         ),
       ),
       const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -262,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SliverToBoxAdapter(
           child: SectionHeader(
             title: l10n.homeTrendingTitle,
-            onTap: widget.onViewAllVehicles,
+            onTap: widget.onViewAllTrending,
           ),
         ),
         SliverToBoxAdapter(

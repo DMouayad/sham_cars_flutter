@@ -3,15 +3,21 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 
 class HotTopicFeaturedCardSkeleton extends StatelessWidget {
-  const HotTopicFeaturedCardSkeleton({super.key, this.height = 132});
+  const HotTopicFeaturedCardSkeleton({
+    super.key,
+    this.height = 132,
+    required this.width,
+  });
 
   final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
     return SizedBox(
+      width: width,
       height: height, // important for horizontal list usage
       child: Skeletonizer(
         enabled: true,

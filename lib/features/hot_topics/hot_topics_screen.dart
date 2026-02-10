@@ -81,6 +81,7 @@ class HotTopicsScreen extends StatelessWidget {
                         itemBuilder: (_, _) =>
                             const HotTopicFeaturedCardSkeleton(
                               height: _featuredHeight,
+                              width: 260,
                             ),
                       ),
                     ),
