@@ -28,12 +28,14 @@ class HomeScreen extends StatefulWidget {
     required this.onViewAllQuestions,
     required this.onViewAllHotTopics,
     required this.onOpenHotTopic,
+    required this.onViewAllReviews,
   });
 
   final void Function(int trimId, [CarTrimSummary? summary]) onOpenTrim;
   final void Function(int questionId) onOpenQuestion;
   final VoidCallback onViewAllVehicles;
   final VoidCallback onViewAllQuestions;
+  final VoidCallback onViewAllReviews;
   final VoidCallback onViewAllHotTopics;
   final void Function(HotTopic) onOpenHotTopic;
 
@@ -237,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
       SliverToBoxAdapter(
         child: SectionHeader(
           title: l10n.homeLatestReviewsTitle,
-          onTap: widget.onViewAllVehicles,
+          onTap: widget.onViewAllReviews,
         ),
       ),
       SliverPadding(
@@ -347,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SliverToBoxAdapter(
           child: SectionHeader(
             title: l10n.homeLatestReviewsTitle,
-            onTap: widget.onViewAllVehicles,
+            onTap: widget.onViewAllReviews,
           ),
         ),
         SliverPadding(

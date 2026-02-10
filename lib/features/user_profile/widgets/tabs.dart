@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/common/paged_state.dart';
+import 'package:sham_cars/features/community/models.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/reviews/models.dart';
@@ -153,7 +154,9 @@ class _MyQuestionsTabState extends State<MyQuestionsTab> {
             title: l10n.profileEmptyMyQuestionsTitle,
             subtitle: l10n.profileEmptyMyQuestionsSubtitle,
             actionText: l10n.profileAskQuestionCta,
-            onAction: () => const CommunityRoute().go(context),
+            onAction: () => CommunityRoute(
+              filter: CommunityFilter.questions.name,
+            ).go(context),
           );
         }
 
@@ -241,7 +244,9 @@ class _MyAnsweredQuestionsTabState extends State<MyAnsweredQuestionsTab> {
             title: l10n.profileEmptyMyAnsweredTitle,
             subtitle: l10n.profileEmptyMyAnsweredSubtitle,
             actionText: l10n.profileBrowseCommunityCta,
-            onAction: () => const CommunityRoute().go(context),
+            onAction: () => CommunityRoute(
+              filter: CommunityFilter.questions.name,
+            ).go(context),
           );
         }
 

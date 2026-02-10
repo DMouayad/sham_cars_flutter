@@ -102,10 +102,15 @@ mixin $VehiclesRoute on GoRouteData {
 
 mixin $CommunityRoute on GoRouteData {
   static CommunityRoute _fromState(GoRouterState state) =>
-      const CommunityRoute();
+      CommunityRoute(filter: state.uri.queryParameters['filter']);
+
+  CommunityRoute get _self => this as CommunityRoute;
 
   @override
-  String get location => GoRouteData.$location('/community');
+  String get location => GoRouteData.$location(
+    '/community',
+    queryParams: {if (_self.filter != null) 'filter': _self.filter},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

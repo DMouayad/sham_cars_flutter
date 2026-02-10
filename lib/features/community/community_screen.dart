@@ -26,12 +26,14 @@ import '../reviews/models.dart';
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({
     super.key,
+    required this.initialFilter,
     required this.onOpenQuestion,
     required this.onOpenVehicle,
   });
 
   final void Function(int id) onOpenQuestion;
   final void Function(int id) onOpenVehicle;
+  final CommunityFilter initialFilter;
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
@@ -40,7 +42,7 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
-  CommunityFilter _filter = CommunityFilter.all;
+  late CommunityFilter _filter = widget.initialFilter;
   bool _showFab = true;
   late final AuthNotifier _authNotifier;
 
@@ -58,6 +60,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant CommunityScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialFilter != widget.initialFilter) {
+      setState(() {
+        _filter = widget.initialFilter;
+        _searchController.clear();
+      });
+
+      _scrollController.jumpTo(0);
+    }
   }
 
   void _onAuthChanged() {

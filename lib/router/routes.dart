@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:go_router/go_router.dart';
+
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/community/community_screen.dart';
 import 'package:sham_cars/features/community/cubits/model_questions_cubit.dart';
 import 'package:sham_cars/features/community/model_questions_screen.dart';
+import 'package:sham_cars/features/community/models.dart';
 import 'package:sham_cars/features/email_verification/email_verification_screen.dart';
 import 'package:sham_cars/features/home/home_cubit.dart';
-
 import 'package:sham_cars/features/home/home_screen.dart';
 import 'package:sham_cars/features/hot_topics/hot_topics_cubit.dart';
 import 'package:sham_cars/features/hot_topics/hot_topics_screen.dart';
@@ -113,7 +113,10 @@ class HomeRoute extends GoRouteData with $HomeRoute {
         onViewAllVehicles: () =>
             StatefulNavigationShell.of(context).goBranch(1),
         onViewAllQuestions: () =>
-            StatefulNavigationShell.of(context).goBranch(2),
+            CommunityRoute(filter: CommunityFilter.questions.name).go(context),
+        onViewAllReviews: () =>
+            CommunityRoute(filter: CommunityFilter.reviews.name).go(context),
+
         onOpenHotTopic: (topic) {
           HotTopicDetailsRoute(
             id: topic.id,
@@ -308,10 +311,16 @@ class QuestionDetailsRoute extends GoRouteData with $QuestionDetailsRoute {
 
 @immutable
 class CommunityRoute extends GoRouteData with $CommunityRoute {
-  const CommunityRoute();
+  const CommunityRoute({this.filter});
+  final String? filter;
+
   @override
   Widget build(BuildContext context, GoRouterState state) {
+    final initialFilter = filter != null
+        ? CommunityFilter.values.byName(filter!)
+        : CommunityFilter.all;
     return CommunityScreen(
+      initialFilter: initialFilter,
       onOpenVehicle: (id) => VehicleDetailsRoute(id: id).push(context),
       onOpenQuestion: (id) => QuestionDetailsRoute(id).push(context),
     );
