@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
-import 'package:sham_cars/utils/utils.dart'; // for context.l10n
 
 class FeaturedTrimCard extends StatelessWidget {
   const FeaturedTrimCard({
@@ -23,7 +23,6 @@ class FeaturedTrimCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final l10n = context.l10n;
 
     // Stable image height based on width and 16/10 aspect ratio
     final imageHeight = width * (10 / 16);
@@ -83,12 +82,6 @@ class FeaturedTrimCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          ),
-
-                          PositionedDirectional(
-                            top: 10,
-                            start: 10,
-                            child: _FeaturedBadge(label: l10n.commonFeatured),
                           ),
                         ],
                       ),
