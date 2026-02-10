@@ -59,44 +59,41 @@ class HotTopicFeaturedCard extends StatelessWidget {
                   children: [
                     // Header: rank + HOT + arrow
                     Row(
+                      spacing: 8,
                       children: [
                         _RankPill(rank: rank),
-                        const Spacer(),
-                        if (topic.isHot) _HotBadge(text: l10n.hotLabel),
-                        const SizedBox(width: 8),
+                        Text(
+                          '${topic.makeName} ${topic.name}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                height: 1.1,
+                              ),
+                        ),
                         Icon(Icons.chevron_right_rounded, color: cs.outline),
                       ],
                     ),
-
-                    const SizedBox(height: 10),
-
-                    Text(
-                      '${topic.makeName} ${topic.name}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        height: 1.1,
-                      ),
-                    ),
-
                     const Spacer(),
-
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _StatPill(
-                          icon: Icons.help_outline_rounded,
-                          label:
-                              '${topic.questionsCount} ${l10n.questionTypeLabel}',
-                        ),
-                        _StatPill(
-                          icon: Icons.chat_bubble_outline_rounded,
-                          label:
-                              '${topic.answersCount} ${l10n.answerTypeLabel}',
-                        ),
-                      ],
+                    SizedBox(
+                      height: 35,
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          _StatPill(
+                            icon: Icons.help_outline_rounded,
+                            label:
+                                '${topic.questionsCount} ${l10n.questionTypeLabel}',
+                          ),
+                          _StatPill(
+                            icon: Icons.chat_bubble_outline_rounded,
+                            label:
+                                '${topic.answersCount} ${l10n.answerTypeLabel}',
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -129,32 +126,6 @@ class _RankPill extends StatelessWidget {
           color: cs.onSurface,
           fontWeight: FontWeight.w900,
           fontSize: 12,
-        ),
-      ),
-    );
-  }
-}
-
-class _HotBadge extends StatelessWidget {
-  const _HotBadge({required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: cs.errorContainer,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: cs.onErrorContainer,
-          fontWeight: FontWeight.w900,
-          fontSize: 12,
-          letterSpacing: 0.2,
         ),
       ),
     );
