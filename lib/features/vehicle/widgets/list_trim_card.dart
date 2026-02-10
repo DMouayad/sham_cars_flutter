@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
-import 'package:sham_cars/utils/utils.dart';
 
 class TrimListCard extends StatelessWidget {
   const TrimListCard({super.key, required this.trim, required this.onTap});
@@ -110,11 +109,7 @@ class TrimListCard extends StatelessWidget {
                       ),
                     ),
                   const Spacer(),
-                  Icon(
-                    context.isLTR ? Icons.chevron_left : Icons.chevron_right,
-                    size: 20,
-                    color: cs.outline,
-                  ),
+                  Icon(Icons.chevron_right, size: 20, color: cs.outline),
                 ],
               ),
             ],

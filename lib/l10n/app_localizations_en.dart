@@ -979,4 +979,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get supportSendEmailAction => 'Email';
+
+  @override
+  String get trendingCarsScreenTitle => 'Trending cars';
+
+  @override
+  String get trendingCarsEmpty => 'No trending cars right now.';
+
+  @override
+  String get trendingCarsMoreTitle => 'More trending cars';
+
+  @override
+  String get trendingSwitchToGrid => 'Switch to grid';
+
+  @override
+  String get trendingSwitchToDeck => 'Switch to deck';
 }

@@ -1933,6 +1933,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email'**
   String get supportSendEmailAction;
+
+  /// No description provided for @trendingCarsScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending cars'**
+  String get trendingCarsScreenTitle;
+
+  /// No description provided for @trendingCarsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No trending cars right now.'**
+  String get trendingCarsEmpty;
+
+  /// No description provided for @trendingCarsMoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More trending cars'**
+  String get trendingCarsMoreTitle;
+
+  /// No description provided for @trendingSwitchToGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to grid'**
+  String get trendingSwitchToGrid;
+
+  /// No description provided for @trendingSwitchToDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to deck'**
+  String get trendingSwitchToDeck;
 }
 
 class _AppLocalizationsDelegate

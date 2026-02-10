@@ -18,6 +18,8 @@ import 'package:sham_cars/features/password-reset/otp_password_reset_screen.dart
 import 'package:sham_cars/features/password-reset/reset_password_screen.dart';
 import 'package:sham_cars/features/questions/question_details_screen.dart';
 import 'package:sham_cars/features/signup/screens/signup_screen.dart';
+import 'package:sham_cars/features/trending_cars/trending_cars_cubit.dart';
+import 'package:sham_cars/features/trending_cars/trending_cars_screen.dart';
 import 'package:sham_cars/features/user_profile/my_activity_screen.dart';
 import 'package:sham_cars/features/user_profile/user_profile_screen.dart';
 import 'package:sham_cars/features/vehicle/cubits/car_trim_cubit.dart';
@@ -53,6 +55,7 @@ class RoutePath {
   static const community = '/community';
   static const hotTopics = '/hot-topics';
   static const hotTopicDetails = '/hot-topics/:id';
+  static const trendingCars = '/trending-cars';
 }
 
 @TypedStatefulShellRoute<MainScaffoldRoute>(
@@ -116,7 +119,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
             CommunityRoute(filter: CommunityFilter.questions.name).go(context),
         onViewAllReviews: () =>
             CommunityRoute(filter: CommunityFilter.reviews.name).go(context),
-
+        onViewAllTrending: () => const TrendingCarsRoute().push(context),
         onOpenHotTopic: (topic) {
           HotTopicDetailsRoute(
             id: topic.id,
@@ -377,6 +380,22 @@ class HotTopicDetailsRoute extends GoRouteData with $HotTopicDetailsRoute {
           ModelQuestionsCubit(context.read<CommunityRepository>())
             ..load(modelId: id),
       child: ModelQuestionsScreen(modelId: id, title: effectiveTitle),
+    );
+  }
+}
+
+@TypedGoRoute<TrendingCarsRoute>(path: RoutePath.trendingCars)
+class TrendingCarsRoute extends GoRouteData with $TrendingCarsRoute {
+  const TrendingCarsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return BlocProvider(
+      create: (_) =>
+          TrendingCarsCubit(context.read<CarDataRepository>())..loadInitial(),
+      child: TrendingCarsScreen(
+        onOpenVehicle: (id) => VehicleDetailsRoute(id: id).push(context),
+      ),
     );
   }
 }

@@ -53,7 +53,7 @@ This section describes key data models used within the Flutter application, prim
 
 ### CarTrimSummary
 - **Purpose**: A lightweight summary of a vehicle trim, used for lists and previews (e.g., trending cars, search results, similar cars).
-- **Structure**: `id`, `name`, `modelName`, `makeName`, `bodyType`, `yearStart`, `yearEnd`, `priceMin`, `priceMax`, `currency`, `isFeatured`, `imageUrl`, `range`, `batteryCapacity`, `acceleration` (all `SpecValue`).
+- **Structure**: `id`, `name`, `modelName`, `makeName`, `bodyType`, `yearStart`, `yearEnd`, `priceMin`, `priceMax`, `currency`, `isFeatured`, `imageUrl`, `range`, `batteryCapacity`, `acceleration` (all `SpecValue`), `avgRating`, `reviewsCount`.
 
 ### Question
 - **Purpose**: Represents a community question.
@@ -99,7 +99,9 @@ While `Auth` and `User` related endpoints are centralized in `lib/api/endpoints.
 - `POST /user/change_password` (Reset Password)
 
 ### Recommendations
-- `GET /car-data/trending-cars` (Popularity) - Returns `List<CarTrimSummary>`
+- `GET /car-data/trending-cars` (Popularity):
+  - supports pagination: take, skip
+  - returns: List<CarTrimSummary>
 - `GET /car-data/hot-topics` (Most Asked About) - Returns `List<HotTopic>`
 - `GET /car-data/trims/{id}/similar` (Recommendation) - Returns `List<CarTrimSummary>`
 - `GET /car-data/trims/{id}/also-liked` (Collaborative) - Returns `List<CarTrimSummary>`
@@ -157,10 +159,11 @@ All list endpoints use pagination:
            │ ├─/vehicles/:id/community/reviews (Widget)
            │ └─/vehicles/:id/community/qa (Widget)
            └─/profile/activity (Widget)
-            /hot-topics (Widget) — HotTopicsScreen
-            /hot-topics/:id (Widget) — ModelQuestionsScreen (model-scoped Q&A list)
-            :id = car_model_id
-            optional query param: ?title=... (used for AppBar title; preferred over extra for deep links)
+- /hot-topics (Widget) — HotTopicsScreen
+- /hot-topics/:id (Widget) — ModelQuestionsScreen (model-scoped Q&A list)
+  :id = car_model_id
+  optional query param: ?title=... (used for AppBar title; preferred over extra for deep links)
+- /trending-cars (Widget) — TrendingCarsScreen (Deck ↔ Grid toggle)
 
 - Support content (FAQ + Contact) is presented via modal bottom sheets triggered from the Drawer (no dedicated route).
 
@@ -175,7 +178,10 @@ All list endpoints use pagination:
 - **ResetPasswordScreen**: Screen for users to set a new password using a reset token.
 - HotTopicsScreen: View-all hot topics list with pagination + local search
 - ModelQuestionsScreen: Questions list filtered by model (car_model_id)
-
+- TrendingCarsScreen: 
+  - Top swipe deck (PageView) showing top 5 trending trims (hero-style cards)
+  - Vertical ranked list (TrimListCard-style) for remaining trims
+  - Pagination applies to the ranked list (scroll-based loadMore())
 ---
 
 ## 6) Flutter state management (Cubits)
@@ -203,9 +209,13 @@ All list endpoints use pagination:
 - `MyReviewsCubit`: Manages listing of reviews posted by the current user.
 - `TrimCommunityCubit`: Manages community content (reviews/Q&A) for a specific vehicle trim.
 - `TrimCommunityPreviewCubit`: Manages preview data for community content on vehicle detail pages.
-- HotTopicsCubit: Loads /car-data/hot-topics with take/skip pagination. Local search filters loaded items. Guardrail: avoid loadMore() while searchQuery is non-empty (local search)
-- ModelQuestionsCubit: Paginated questions list for a model using car_model_id.
+- `HotTopicsCubit`: Loads /car-data/hot-topics with take/skip pagination. Local search filters loaded items. Guardrail: avoid loadMore() while searchQuery is non-empty (local search)
+- `ModelQuestionsCubit`: Paginated questions list for a model using car_model_id.
   Reuses QuestionCard + same lazy loading pattern as trim-scoped lists.
+- `TrendingCarsCubit`:
+  - paginated fetch via getTrendingCars(take/skip)
+  - used by TrendingCarsScreen for deck (top 5) + ranked list (rest)
+  - list-only pagination (loadMore() triggered by vertical scroll)
 
 ### Write/actions cubit (shared)
 - `CommunityActionsCubit`
@@ -256,6 +266,15 @@ Classification avoids substring bugs (e.g., “acceleration” should not match 
 - FAQ is displayed using accordion/ExpansionTile for readability.
 - Phone/email values should render LTR even in Arabic locale.
 
+### Trending Cars “Show all” UI (updated)
+- Home shows a horizontal preview carousel of trending trims.
+- “Show all” opens TrendingCarsScreen with two card variants:
+  - TrendingDeckCard (hero / image-first)
+  - TrendingTrimListCard (ranked list tile)
+  
+  and Skeletons:
+  - TrendingDeckCardSkeleton
+  - TrendingTrimListCardSkeleton
 ---
 
 ## 8) Localization (Flutter)
@@ -308,6 +327,9 @@ Important shared helper:
 - For featured cards in lists, either:
   wrap in a fixed-height SizedBox(height: ...), or
   use layouts that don’t require flexible height.
+- When combining a PageView deck with a paginated list, pagination should be triggered by the vertical scroll list only (to avoid unexpected network calls while swiping).
+- Keep ranked list cards height/content stable to prevent scroll jank; use skeleton placeholders for load-more.
+
 ---
 
 ## 11) Roadmap (next)

@@ -344,5 +344,11 @@
   "supportCopyAction": "نسخ",
   "supportCopiedMessage": "تم النسخ",
   "supportCallAction": "اتصال",
-  "supportSendEmailAction": "إرسال بريد"
+  "supportSendEmailAction": "إرسال بريد",
+
+
+  "trendingCarsScreenTitle": "السيارات الرائجة",
+  "trendingCarsEmpty": "لا توجد سيارات رائجة حالياً.",
+  "trendingCarsMoreTitle": "المزيد من السيارات الرائجة"
+
 }

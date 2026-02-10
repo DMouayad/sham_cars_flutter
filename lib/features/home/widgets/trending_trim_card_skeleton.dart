@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 
-class FeaturedTrimCardSkeleton extends StatelessWidget {
-  const FeaturedTrimCardSkeleton({
+class TrendingTrimCardSkeleton extends StatelessWidget {
+  const TrendingTrimCardSkeleton({
     super.key,
     this.width = 260,
     this.height = 292,

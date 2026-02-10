@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 
-class FeaturedTrimCard extends StatelessWidget {
-  const FeaturedTrimCard({
+class TrendingTrimCard extends StatelessWidget {
+  const TrendingTrimCard({
     super.key,
     required this.height,
     required this.trim,
     required this.onTap,
     this.width = 260,
+    this.showMetaRow = false,
   });
 
   final CarTrimSummary trim;
   final VoidCallback onTap;
   final double width;
   final double height;
+  final bool showMetaRow;
 
   static const double _chipRowHeight = 34; // ✅ enough for chip padding + text
 
@@ -115,6 +117,23 @@ class FeaturedTrimCard extends StatelessWidget {
                               fontWeight: FontWeight.w900,
                             ),
                           ),
+                          if (showMetaRow) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              [
+                                    if (trim.bodyType.isNotEmpty) trim.bodyType,
+                                    if (trim.yearStart != null)
+                                      '${trim.yearStart}${trim.yearEnd != null ? '–${trim.yearEnd}' : ''}',
+                                  ]
+                                  .where((e) => e.toString().trim().isNotEmpty)
+                                  .join(' • '),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: tt.bodySmall?.copyWith(
+                                color: cs.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
 
                           const Spacer(),
 
@@ -164,7 +183,7 @@ class FeaturedTrimCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 8),
                               Icon(
-                                Icons.chevron_left,
+                                trailingChevron(context),
                                 color: cs.outline,
                                 size: 20,
                               ),
@@ -181,6 +200,11 @@ class FeaturedTrimCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData trailingChevron(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    return isRtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded;
   }
 }
 
@@ -207,37 +231,6 @@ class _TrimImage extends StatelessWidget {
       color: cs.surfaceContainerHighest,
       child: Center(
         child: Icon(Icons.directions_car, size: 48, color: cs.outline),
-      ),
-    );
-  }
-}
-
-class _FeaturedBadge extends StatelessWidget {
-  const _FeaturedBadge({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.35),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withOpacity(0.18)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
       ),
     );
   }

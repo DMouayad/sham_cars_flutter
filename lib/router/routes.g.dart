@@ -20,6 +20,7 @@ List<RouteBase> get $appRoutes => [
   $profileActivityRoute,
   $hotTopicsRoute,
   $hotTopicDetailsRoute,
+  $trendingCarsRoute,
 ];
 
 RouteBase get $mainScaffoldRoute => StatefulShellRouteData.$route(
@@ -543,6 +544,32 @@ mixin $HotTopicDetailsRoute on GoRouteData {
     '/hot-topics/${Uri.encodeComponent(_self.id.toString())}',
     queryParams: {if (_self.title != null) 'title': _self.title},
   );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $trendingCarsRoute => GoRouteData.$route(
+  path: '/trending-cars',
+  factory: $TrendingCarsRoute._fromState,
+);
+
+mixin $TrendingCarsRoute on GoRouteData {
+  static TrendingCarsRoute _fromState(GoRouterState state) =>
+      const TrendingCarsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/trending-cars');
 
   @override
   void go(BuildContext context) => context.go(location);

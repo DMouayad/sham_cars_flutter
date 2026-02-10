@@ -976,4 +976,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get supportSendEmailAction => 'إرسال بريد';
+
+  @override
+  String get trendingCarsScreenTitle => 'السيارات الرائجة';
+
+  @override
+  String get trendingCarsEmpty => 'لا توجد سيارات رائجة حالياً.';
+
+  @override
+  String get trendingCarsMoreTitle => 'المزيد من السيارات الرائجة';
+
+  @override
+  String get trendingSwitchToGrid => 'Switch to grid';
+
+  @override
+  String get trendingSwitchToDeck => 'Switch to deck';
 }

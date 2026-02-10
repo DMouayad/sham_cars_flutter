@@ -36,7 +36,7 @@ class HotTopicFeaturedCard extends StatelessWidget {
               begin: AlignmentDirectional.topStart,
               end: AlignmentDirectional.bottomEnd,
               colors: [
-                cs.secondaryContainer.withValues(alpha: 0.55),
+                cs.secondaryContainer.withValues(alpha: 0.45),
                 cs.surface,
               ],
             ),
@@ -45,11 +45,11 @@ class HotTopicFeaturedCard extends StatelessWidget {
             children: [
               PositionedDirectional(
                 end: -8,
-                top: -10,
+                top: -8,
                 child: Icon(
                   Icons.local_fire_department_rounded,
-                  size: 92,
-                  color: cs.error.withValues(alpha: 0.12),
+                  size: 90,
+                  color: cs.error.withValues(alpha: 0.45),
                 ),
               ),
               Padding(
@@ -72,7 +72,6 @@ class HotTopicFeaturedCard extends StatelessWidget {
                                 height: 1.1,
                               ),
                         ),
-                        Icon(Icons.chevron_right_rounded, color: cs.outline),
                       ],
                     ),
                     const Spacer(),
@@ -113,19 +112,16 @@ class _RankPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: cs.outlineVariant),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
       child: Text(
         '#$rank',
+        maxLines: 1,
         style: TextStyle(
-          color: cs.onSurface,
-          fontWeight: FontWeight.w900,
-          fontSize: 12,
+          decoration: TextDecoration.underline,
+          color: cs.onSurfaceVariant,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
         ),
       ),
     );

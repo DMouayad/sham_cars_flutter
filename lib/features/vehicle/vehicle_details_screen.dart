@@ -53,7 +53,6 @@ class VehicleDetailsScreen extends StatelessWidget {
                     ? _VehicleVm.fromSummary(trimSummary!)
                     : null,
             };
-
             if (vm == null) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -277,11 +276,8 @@ class _VehicleDetailsView extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
               ],
-              if (loadingMore) const _LoadingMoreSection(),
 
               const SimilarTrimsSection(),
-              const SizedBox(height: 20),
-
               const SizedBox(height: 24),
             ]),
           ),

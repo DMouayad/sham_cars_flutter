@@ -9,7 +9,7 @@ import 'package:sham_cars/features/hot_topics/featured_hot_topic_card_skeletopn.
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
-import 'package:sham_cars/features/vehicle/widgets/featured_trim_card.dart';
+import 'package:sham_cars/features/vehicle/widgets/trending_trim_card.dart';
 import 'package:sham_cars/features/vehicle/widgets/list_trim_card.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/question_card_skeleton.dart';
@@ -17,7 +17,7 @@ import 'package:sham_cars/features/reviews/widgets/review_card_skeleton.dart';
 
 import 'home_cubit.dart';
 import 'models.dart';
-import 'widgets/featured_trim_card_skeleton.dart';
+import 'widgets/trending_trim_card_skeleton.dart';
 import 'widgets/section_header.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
             itemCount: 5,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (_, _) => const FeaturedTrimCardSkeleton(
+            itemBuilder: (_, _) => const TrendingTrimCardSkeleton(
               width: 260,
               height: _trendingCardHeight,
             ),
@@ -282,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (_, i) {
                 final trim = data.trendingTrims[i];
-                return FeaturedTrimCard(
+                return TrendingTrimCard(
                   width: 260,
                   height: _trendingCardHeight,
                   trim: trim,

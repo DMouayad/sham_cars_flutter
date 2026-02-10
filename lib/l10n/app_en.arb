@@ -669,6 +669,12 @@
   "supportCopyAction": "Copy",
   "supportCopiedMessage": "Copied",
   "supportCallAction": "Call",
-  "supportSendEmailAction": "Email"
+  "supportSendEmailAction": "Email",
 
+  "trendingCarsScreenTitle": "Trending cars",
+  "trendingCarsEmpty": "No trending cars right now.",
+  "trendingCarsMoreTitle": "More trending cars",
+
+  "trendingSwitchToGrid": "Switch to grid",
+  "trendingSwitchToDeck": "Switch to deck"
 }

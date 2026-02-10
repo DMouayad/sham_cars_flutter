@@ -216,6 +216,16 @@ int? _parseInt(dynamic value) {
   return null;
 }
 
+double? _parseDouble(dynamic value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) {
+    return double.tryParse(value);
+  }
+  return null;
+}
+
 bool? _parseBool(dynamic value) {
   if (value == null) return null;
   if (value is bool) return value;
@@ -240,6 +250,8 @@ class CarTrimSummary {
   final SpecValue range;
   final SpecValue batteryCapacity;
   final SpecValue acceleration;
+  final double? avgRating;
+  final int? reviewsCount;
 
   const CarTrimSummary({
     required this.id,
@@ -257,6 +269,8 @@ class CarTrimSummary {
     required this.range,
     required this.batteryCapacity,
     required this.acceleration,
+    this.avgRating,
+    this.reviewsCount,
   });
 
   factory CarTrimSummary.fromJson(Map<String, dynamic> json) => CarTrimSummary(
@@ -269,6 +283,8 @@ class CarTrimSummary {
     yearEnd: _parseInt(json['year_end']),
     priceMin: _parseInt(json['price_min']),
     priceMax: _parseInt(json['price_max']),
+    reviewsCount: _parseInt(json['reviews_count']),
+    avgRating: _parseDouble(json['avg_rating']),
     currency: json['currency'],
     isFeatured: _parseBool(json['is_featured']) ?? false,
     imageUrl: json['image_url'],
@@ -314,6 +330,11 @@ class CarTrimSummary {
   bool get hasBasicInfo => makeName.isNotEmpty || displayName.isNotEmpty;
   bool get hasSpecs =>
       range.isNotEmpty || acceleration.isNotEmpty || batteryCapacity.isNotEmpty;
+
+  bool get hasRating => (avgRating != null) && (reviewsCount ?? 0) > 0;
+
+  String get ratingDisplay =>
+      avgRating == null ? '' : avgRating!.toStringAsFixed(1);
 }
 
 class SpecValue {
