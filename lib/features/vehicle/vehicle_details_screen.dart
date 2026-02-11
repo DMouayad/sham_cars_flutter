@@ -20,73 +20,6 @@ import 'widgets/community_preview.dart';
 import 'widgets/specs.dart';
 import 'widgets/similar_trims_section.dart';
 
-class VehicleDetailsScreen extends StatelessWidget {
-  const VehicleDetailsScreen({
-    super.key,
-    required this.trimId,
-    this.trimSummary,
-  });
-  final int trimId;
-  final CarTrimSummary? trimSummary;
-
-  @override
-  Widget build(BuildContext context) {
-    final authNotifier = GetIt.I.get<AuthNotifier>();
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => TrimCommunityPreviewCubit(
-            context.read<CommunityRepository>(),
-            context.read<UserActivityRepository>(),
-          )..load(trimId: trimId),
-        ),
-        BlocProvider(
-          create: (_) =>
-              SimilarTrimsCubit(context.read<CarDataRepository>())
-                ..load(trimId),
-        ),
-      ],
-
-      child: Scaffold(
-        endDrawer: const CustomDrawer(),
-        body: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
-          builder: (context, state) {
-            // Build a single VM for both states (summary while loading, trim when loaded)
-            final vm = switch (state) {
-              DataLoaded(:final data) => _VehicleVm.fromTrim(data),
-              _ =>
-                trimSummary != null
-                    ? _VehicleVm.fromSummary(trimSummary!)
-                    : null,
-            };
-            if (vm == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            return switch (state) {
-              DataInitial() || DataLoading() => _VehicleDetailsView(
-                vm: vm,
-                loadingMore: true,
-                onRetry: null,
-              ),
-              DataError() => _VehicleDetailsView(
-                vm: vm,
-                loadingMore: false,
-                onRetry: () => context.read<CarTrimCubit>().load(trimId),
-              ),
-              DataLoaded(:final data) => _VehicleDetailsView(
-                vm: _VehicleVm.fromTrim(data),
-                loadingMore: false,
-                onRetry: null,
-              ),
-            };
-          },
-        ),
-      ),
-    );
-  }
-}
-
 /// View-model to keep UI simple (summary and full trim share same UI)
 class _VehicleVm {
   final int trimId;
@@ -157,6 +90,72 @@ class _VehicleVm {
       accelText: t.acceleration.isNotEmpty ? t.acceleration.display : '',
       specs: t.specs,
       description: (t.description?.isNotEmpty ?? false) ? t.description : null,
+    );
+  }
+}
+
+class VehicleDetailsScreen extends StatelessWidget {
+  const VehicleDetailsScreen({
+    super.key,
+    required this.trimId,
+    this.trimSummary,
+  });
+  final int trimId;
+  final CarTrimSummary? trimSummary;
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => TrimCommunityPreviewCubit(
+            context.read<CommunityRepository>(),
+            context.read<UserActivityRepository>(),
+          )..load(trimId: trimId),
+        ),
+        BlocProvider(
+          create: (_) =>
+              SimilarTrimsCubit(context.read<CarDataRepository>())
+                ..load(trimId),
+        ),
+      ],
+
+      child: Scaffold(
+        endDrawer: const CustomDrawer(),
+        body: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
+          builder: (context, state) {
+            // Build a single VM for both states (summary while loading, trim when loaded)
+            final vm = switch (state) {
+              DataLoaded(:final data) => _VehicleVm.fromTrim(data),
+              _ =>
+                trimSummary != null
+                    ? _VehicleVm.fromSummary(trimSummary!)
+                    : null,
+            };
+            if (vm == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return switch (state) {
+              DataInitial() || DataLoading() => _VehicleDetailsView(
+                vm: vm,
+                loadingMore: true,
+                onRetry: null,
+              ),
+              DataError() => _VehicleDetailsView(
+                vm: vm,
+                loadingMore: false,
+                onRetry: () => context.read<CarTrimCubit>().load(trimId),
+              ),
+              DataLoaded(:final data) => _VehicleDetailsView(
+                vm: _VehicleVm.fromTrim(data),
+                loadingMore: false,
+                onRetry: null,
+              ),
+            };
+          },
+        ),
+      ),
     );
   }
 }
@@ -250,24 +249,38 @@ class _VehicleDetailsView extends StatelessWidget {
                               title: vm.displayName,
                             ).push(context);
                           },
-                          onAdd: () => TrimCommunityScreen.showSheet(
-                            context,
-                            trimId: vm.trimId,
-                            trimTitle: vm.displayName,
-                            isQuestion: false,
-                          ),
+                          onAdd: () async {
+                            final didPost = await TrimCommunityScreen.showSheet(
+                              context,
+                              trimId: vm.trimId,
+                              trimTitle: vm.displayName,
+                              isQuestion: false,
+                            );
+
+                            if (didPost == true && context.mounted) {
+                              context.read<TrimCommunityPreviewCubit>().load(
+                                trimId: vm.trimId,
+                              );
+                            }
+                          },
                         ),
                         const SizedBox(height: 16),
                         QuestionsPreview(
                           myQuestions: data.myQuestions,
                           items: data.questions,
-                          onAddNew: () {
-                            TrimCommunityScreen.showSheet(
+                          onAddNew: () async {
+                            final didPost = await TrimCommunityScreen.showSheet(
                               context,
                               trimTitle: vm.displayName,
                               trimId: vm.trimId,
                               isQuestion: true,
                             );
+
+                            if (didPost == true && context.mounted) {
+                              context.read<TrimCommunityPreviewCubit>().load(
+                                trimId: vm.trimId,
+                              );
+                            }
                           },
                           onViewAll: () {
                             VehicleCommunityQuestionsRoute(

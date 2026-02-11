@@ -67,7 +67,7 @@ class TrimCommunityCubit extends Cubit<TrimCommunityState> {
   static const int _take = 15;
   int? _trimId;
 
-  Future<void> load({required int trimId}) async {
+  Future<void> load({required int trimId, bool refreshCache = false}) async {
     _trimId = trimId;
 
     emit(
@@ -85,8 +85,18 @@ class TrimCommunityCubit extends Cubit<TrimCommunityState> {
 
     try {
       final results = await Future.wait([
-        repo.getReviews(trimId: trimId, take: _take, skip: 0),
-        repo.getQuestions(trimId: trimId, take: _take, skip: 0),
+        repo.getReviews(
+          trimId: trimId,
+          take: _take,
+          skip: 0,
+          refreshCache: refreshCache,
+        ),
+        repo.getQuestions(
+          trimId: trimId,
+          take: _take,
+          skip: 0,
+          refreshCache: refreshCache,
+        ),
       ]);
 
       final reviews = results[0] as List<Review>;

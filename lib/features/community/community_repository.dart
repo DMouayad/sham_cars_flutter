@@ -15,10 +15,12 @@ class CommunityRepository {
     int? trimId,
     int take = 15,
     int skip = 0,
+    bool refreshCache = false,
   }) async {
     final cacheKey = 'reviews_${trimId ?? "null"}_${take}_$skip';
-
-    if (_cache.get<List<Review>>(cacheKey) case final cached?) return cached;
+    if (!refreshCache) {
+      if (_cache.get<List<Review>>(cacheKey) case final cached?) return cached;
+    }
 
     final data = await _client.requestList(
       HttpMethod.get,
@@ -68,11 +70,15 @@ class CommunityRepository {
     int? modelId,
     int take = 15,
     int skip = 0,
+    bool refreshCache = false,
   }) async {
     final cacheKey =
         'questions_${trimId ?? "null"}_${modelId ?? "null"}_${take}_$skip';
-
-    if (_cache.get<List<Question>>(cacheKey) case final cached?) return cached;
+    if (!refreshCache) {
+      if (_cache.get<List<Question>>(cacheKey) case final cached?) {
+        return cached;
+      }
+    }
 
     final query = <String, String>{
       if (trimId != null) 'car_trim_id': '$trimId',
