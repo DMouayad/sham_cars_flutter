@@ -138,7 +138,7 @@
     "passwordRuleUppercase": "Have an uppercase letter",
     "@passwordRuleUppercase": {},
     "passwordRuleLowercase": "Have a lowercase letter",
-    "@passwordRuleLowercase": {},
+    "@passwordLowercase": {},
     "passwordRuleNumber": "Have a number",
     "@passwordRuleNumber": {},
     "passwordRuleSpecialChar": "Have one or more special characters",
@@ -702,5 +702,12 @@
     }
   },
   "fieldQuestionTitleHint": "Example: What's the best charging system?",
-  "fieldQuestionBodyHint": "Explain your question in detail..."
+  "fieldQuestionBodyHint": "Explain your question in detail...",
+
+  "timeMinutesAgo": "{minutes}m ago",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  }
 }

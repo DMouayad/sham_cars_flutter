@@ -2053,6 +2053,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Explain your question in detail...'**
   String get fieldQuestionBodyHint;
+
+  /// No description provided for @timeMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m ago'**
+  String timeMinutesAgo(int minutes);
 }
 
 class _AppLocalizationsDelegate

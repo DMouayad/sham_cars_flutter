@@ -1041,4 +1041,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fieldQuestionBodyHint => 'اشرح سؤالك بالتفصيل...';
+
+  @override
+  String timeMinutesAgo(int minutes) {
+    return 'منذ $minutes د';
+  }
 }

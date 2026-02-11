@@ -377,5 +377,12 @@
     }
   },
   "fieldQuestionTitleHint": "مثال: ما هو أفضل نظام شحن؟",
-  "fieldQuestionBodyHint": "اشرح سؤالك بالتفصيل..."
+  "fieldQuestionBodyHint": "اشرح سؤالك بالتفصيل...",
+
+  "timeMinutesAgo": "منذ {minutes} د",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  }
 }
