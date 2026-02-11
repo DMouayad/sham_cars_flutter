@@ -653,7 +653,6 @@
   "hotTopicsSearchHint": "Search by make or model",
   "hotTopicsAll": "All",
   "hotTopicsHotOnly": "Hot only",
-  "hotTopicsEmpty": "No hot topics right now.",
   "modelQuestionsEmpty": "No questions for this model yet.",
   "hotTopicsTop3Label": "Top trending",
   "hotLabel": "Hot",
@@ -680,5 +679,28 @@
   "trendingCarsMoreTitle": "More trending cars",
 
   "trendingSwitchToGrid": "Switch to grid",
-  "trendingSwitchToDeck": "Switch to deck"
+  "trendingSwitchToDeck": "Switch to deck",
+
+  "sheetAddReviewTrimFallback": "Version #{trimId}",
+  "@sheetAddReviewTrimFallback": {
+    "placeholders": {
+      "trimId": { "type": "int" }
+    }
+  },
+  "fieldReviewRating": "Rating *",
+  "fieldReviewTitleOptional": "Review title (optional)",
+  "fieldReviewTitleHint": "Example: Great experience after a year of use",
+  "fieldReviewBodyRequired": "Review details *",
+  "fieldReviewBodyHint": "Write about your experience with the car...",
+  "validationReviewBodyTooShort": "Details are too short (at least 30 characters)",
+  "fieldCityOptional": "City (optional)",
+
+  "sheetAskQuestionTrimFallback": "Version #{trimId}",
+  "@sheetAskQuestionTrimFallback": {
+    "placeholders": {
+      "trimId": { "type": "int" }
+    }
+  },
+  "fieldQuestionTitleHint": "Example: What's the best charging system?",
+  "fieldQuestionBodyHint": "Explain your question in detail..."
 }

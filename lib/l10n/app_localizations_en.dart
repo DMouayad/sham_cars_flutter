@@ -752,7 +752,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationReviewBodyRequired => 'Please enter review details.';
 
   @override
-  String get validationReviewBodyTooShort => 'Details are too short.';
+  String get validationReviewBodyTooShort =>
+      'Details are too short (at least 30 characters)';
 
   @override
   String get reviewTypeLabel => 'Review';
@@ -1009,4 +1010,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trendingSwitchToDeck => 'Switch to deck';
+
+  @override
+  String sheetAddReviewTrimFallback(int trimId) {
+    return 'Version #$trimId';
+  }
+
+  @override
+  String get fieldReviewRating => 'Rating *';
+
+  @override
+  String get fieldReviewTitleOptional => 'Review title (optional)';
+
+  @override
+  String get fieldReviewTitleHint =>
+      'Example: Great experience after a year of use';
+
+  @override
+  String get fieldReviewBodyRequired => 'Review details *';
+
+  @override
+  String get fieldReviewBodyHint =>
+      'Write about your experience with the car...';
+
+  @override
+  String get fieldCityOptional => 'City (optional)';
+
+  @override
+  String sheetAskQuestionTrimFallback(int trimId) {
+    return 'Version #$trimId';
+  }
+
+  @override
+  String get fieldQuestionTitleHint =>
+      'Example: What\'s the best charging system?';
+
+  @override
+  String get fieldQuestionBodyHint => 'Explain your question in detail...';
 }

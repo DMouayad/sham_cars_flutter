@@ -354,6 +354,28 @@
 
   "trendingCarsScreenTitle": "السيارات الرائجة",
   "trendingCarsEmpty": "لا توجد سيارات رائجة حالياً.",
-  "trendingCarsMoreTitle": "المزيد من السيارات الرائجة"
+  "trendingCarsMoreTitle": "المزيد من السيارات الرائجة",
 
+  "sheetAddReviewTrimFallback": "النسخة #{trimId}",
+  "@sheetAddReviewTrimFallback": {
+    "placeholders": {
+      "trimId": { "type": "int" }
+    }
+  },
+  "fieldReviewRating": "التقييم *",
+  "fieldReviewTitleOptional": "عنوان التجربة (اختياري)",
+  "fieldReviewTitleHint": "مثال: تجربة رائعة بعد سنة من الاستخدام",
+  "fieldReviewBodyRequired": "تفاصيل التجربة *",
+  "fieldReviewBodyHint": "اكتب عن تجربتك مع السيارة...",
+  "validationReviewBodyTooShort": "التفاصيل قصيرة جداً (30 حرف على الأقل)",
+  "fieldCityOptional": "المدينة (اختياري)",
+
+  "sheetAskQuestionTrimFallback": "النسخة #{trimId}",
+  "@sheetAskQuestionTrimFallback": {
+    "placeholders": {
+      "trimId": { "type": "int" }
+    }
+  },
+  "fieldQuestionTitleHint": "مثال: ما هو أفضل نظام شحن؟",
+  "fieldQuestionBodyHint": "اشرح سؤالك بالتفصيل..."
 }

@@ -8,6 +8,7 @@ import 'package:sham_cars/features/community/widgets/trim_picker_sheet.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 class AddReviewSheet extends StatefulWidget {
   const AddReviewSheet({
@@ -36,13 +37,13 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
   int? _trimId;
   String? _trimTitle;
 
-  static const _cities = [
-    ('damascus', 'دمشق'),
-    ('aleppo', 'حلب'),
-    ('homs', 'حمص'),
-    ('hama', 'حماة'),
-    ('latakia', 'اللاذقية'),
-    ('tartus', 'طرطوس'),
+  late final _cities = [
+    ('damascus', context.l10n.cityDamascus),
+    ('aleppo', context.l10n.cityAleppo),
+    ('homs', context.l10n.cityHoms),
+    ('hama', context.l10n.cityHama),
+    ('latakia', context.l10n.cityLatakia),
+    ('tartus', context.l10n.cityTartus),
   ];
 
   @override
@@ -50,8 +51,16 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
     super.initState();
     if (widget.preselectedTrimId != null) {
       _trimId = widget.preselectedTrimId;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.preselectedTrimId != null && _trimTitle == null) {
       _trimTitle =
-          widget.preselectedTrimTitle ?? 'النسخة #${widget.preselectedTrimId}';
+          widget.preselectedTrimTitle ??
+          context.l10n.sheetAddReviewTrimFallback(widget.preselectedTrimId!);
     }
   }
 
@@ -84,6 +93,7 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return BlocProvider(
       create: (_) => CommunityActionsCubit(context.read()),
@@ -131,13 +141,13 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
 
                           // Header
                           Text(
-                            'أضف تجربتك',
+                            l10n.sheetAddReviewTitle,
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'شارك تجربتك مع السيارة لمساعدة الآخرين',
+                            l10n.sheetAddReviewSubtitle,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(color: cs.onSurfaceVariant),
                           ),
@@ -160,7 +170,7 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      'يجب تسجيل الدخول لإضافة تجربة',
+                                      l10n.authRequiredToPostReview,
                                       style: TextStyle(
                                         color: cs.onErrorContainer,
                                       ),
@@ -182,7 +192,7 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
 
                           // Rating
                           Text(
-                            'التقييم *',
+                            l10n.fieldReviewRating,
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           const SizedBox(height: 8),
@@ -197,7 +207,7 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                             initialValue: _cityCode,
                             decoration: InputDecoration(
                               enabled: auth.isLoggedIn,
-                              labelText: 'المدينة (اختياري)',
+                              labelText: l10n.fieldCityOptional,
                               border: const OutlineInputBorder(),
                               prefixIcon: const Icon(Icons.location_city),
                             ),
@@ -218,9 +228,8 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                             controller: _titleController,
                             decoration: InputDecoration(
                               enabled: auth.isLoggedIn,
-                              labelText: 'عنوان التجربة (اختياري)',
-                              hintText:
-                                  'مثال: تجربة رائعة بعد سنة من الاستخدام',
+                              labelText: l10n.fieldReviewTitleOptional,
+                              hintText: l10n.fieldReviewTitleHint,
                               border: const OutlineInputBorder(),
                             ),
                           ),
@@ -232,17 +241,17 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                             maxLines: 5,
                             decoration: InputDecoration(
                               enabled: auth.isLoggedIn,
-                              labelText: 'تفاصيل التجربة *',
-                              hintText: 'اكتب عن تجربتك مع السيارة...',
+                              labelText: l10n.fieldReviewBodyRequired,
+                              hintText: l10n.fieldReviewBodyHint,
                               border: OutlineInputBorder(),
                               alignLabelWithHint: true,
                             ),
                             validator: (v) {
                               if (v == null || v.trim().isEmpty) {
-                                return 'الرجاء كتابة تفاصيل التجربة';
+                                return l10n.validationReviewBodyRequired;
                               }
                               if (v.trim().length < 30) {
-                                return 'التفاصيل قصيرة جداً (30 حرف على الأقل)';
+                                return l10n.validationReviewBodyTooShort;
                               }
                               return null;
                             },
@@ -275,8 +284,10 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('الرجاء اختيار النسخة'),
+                                        SnackBar(
+                                          content: Text(
+                                            l10n.validationSelectTrim,
+                                          ),
                                         ),
                                       );
                                       return;
@@ -309,7 +320,7 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : const Text('نشر التجربة'),
+                                : Text(l10n.buttonPublishReview),
                           ),
                           const SizedBox(height: 10),
                         ],
@@ -340,11 +351,12 @@ class _TrimField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     if (locked) {
       return InputDecorator(
-        decoration: const InputDecoration(
-          labelText: 'السيارة (النسخة)',
+        decoration: InputDecoration(
+          labelText: l10n.fieldTrimLabelOptional,
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.directions_car_sharp),
         ),
@@ -356,14 +368,14 @@ class _TrimField extends StatelessWidget {
       onTap: onPick,
       borderRadius: ThemeConstants.cardRadius,
       child: InputDecorator(
-        decoration: const InputDecoration(
-          labelText: 'السيارة (النسخة) *',
+        decoration: InputDecoration(
+          labelText: l10n.fieldTrimLabelRequired,
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.directions_car_sharp),
         ),
         child: Row(
           children: [
-            Expanded(child: Text(title ?? 'اضغط للاختيار')),
+            Expanded(child: Text(title ?? l10n.fieldTrimTapToSelect)),
             Icon(Icons.expand_more, color: cs.onSurfaceVariant),
           ],
         ),

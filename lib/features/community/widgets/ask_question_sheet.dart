@@ -8,6 +8,7 @@ import 'package:sham_cars/features/community/widgets/trim_picker_sheet.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
 import 'package:sham_cars/features/vehicle/repositories/car_data_repository.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 class AskQuestionSheet extends StatefulWidget {
   const AskQuestionSheet({
@@ -38,8 +39,16 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
     super.initState();
     if (widget.preselectedTrimId != null) {
       _trimId = widget.preselectedTrimId;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.preselectedTrimId != null && _trimTitle == null) {
       _trimTitle =
-          widget.preselectedTrimTitle ?? 'النسخة #${widget.preselectedTrimId}';
+          widget.preselectedTrimTitle ??
+          context.l10n.sheetAskQuestionTrimFallback(widget.preselectedTrimId!);
     }
   }
 
@@ -102,7 +111,7 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                       Row(
                         children: [
                           Text(
-                            'اطرح سؤالاً',
+                            context.l10n.sheetAskQuestionTitle,
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
@@ -131,7 +140,7 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'يجب تسجيل الدخول لطرح سؤال',
+                                  context.l10n.authRequiredToPostQuestion,
                                   style: TextStyle(color: cs.onErrorContainer),
                                 ),
                               ),
@@ -152,15 +161,17 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                         controller: _titleController,
                         decoration: InputDecoration(
                           enabled: auth.isLoggedIn,
-                          labelText: 'عنوان السؤال *',
-                          hintText: 'مثال: ما هو أفضل نظام شحن؟',
+                          labelText: context.l10n.fieldQuestionTitleLabel,
+                          hintText: context.l10n.fieldQuestionTitleHint,
                           border: const OutlineInputBorder(),
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return 'الرجاء إدخال عنوان السؤال';
-                          }
-                          if (v.trim().length < 10) return 'العنوان قصير جداً';
+                                                    if (v == null || v.trim().isEmpty) {
+                                                      return context.l10n.validationQuestionTitleRequired;
+                                                    }
+                                                    if (v.trim().length < 10) {
+                                                      return context.l10n.validationQuestionTitleTooShort;
+                                                    }
                           return null;
                         },
                       ),
@@ -171,17 +182,17 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                         maxLines: 4,
                         decoration: InputDecoration(
                           enabled: auth.isLoggedIn,
-                          labelText: 'تفاصيل السؤال *',
-                          hintText: 'اشرح سؤالك بالتفصيل...',
+                          labelText: context.l10n.fieldQuestionBodyLabel,
+                          hintText: context.l10n.fieldQuestionBodyHint,
                           border: const OutlineInputBorder(),
                           alignLabelWithHint: true,
                         ),
                         validator: (v) {
                           if (v == null || v.trim().isEmpty) {
-                            return 'الرجاء إدخال تفاصيل السؤال';
+                            return context.l10n.validationQuestionBodyRequired;
                           }
                           if (v.trim().length < 20) {
-                            return 'التفاصيل قصيرة جداً';
+                            return context.l10n.validationQuestionBodyTooShort;
                           }
                           return null;
                         },
@@ -205,8 +216,10 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                                 if (!_formKey.currentState!.validate()) return;
                                 if (_trimId == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('الرجاء اختيار النسخة'),
+                                    SnackBar(
+                                      content: Text(
+                                        context.l10n.validationSelectTrim,
+                                      ),
                                     ),
                                   );
                                   return;
@@ -232,7 +245,7 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text('نشر السؤال'),
+                            : Text(context.l10n.buttonPublishQuestion),
                       ),
                     ],
                   );
@@ -260,11 +273,12 @@ class _TrimField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     if (locked) {
       return InputDecorator(
-        decoration: const InputDecoration(
-          labelText: 'السيارة (النسخة)',
+        decoration: InputDecoration(
+          labelText: l10n.fieldTrimLabelOptional,
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.directions_car_sharp),
         ),
@@ -276,14 +290,14 @@ class _TrimField extends StatelessWidget {
       onTap: onPick,
       borderRadius: ThemeConstants.cardRadius,
       child: InputDecorator(
-        decoration: const InputDecoration(
-          labelText: 'السيارة (النسخة) *',
+        decoration: InputDecoration(
+          labelText: l10n.fieldTrimLabelRequired,
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.directions_car_sharp),
         ),
         child: Row(
           children: [
-            Expanded(child: Text(title ?? 'اضغط للاختيار')),
+            Expanded(child: Text(title ?? l10n.fieldTrimTapToSelect)),
             Icon(Icons.expand_more, color: cs.onSurfaceVariant),
           ],
         ),

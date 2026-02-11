@@ -749,7 +749,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get validationReviewBodyRequired => 'الرجاء كتابة تفاصيل التجربة.';
 
   @override
-  String get validationReviewBodyTooShort => 'التفاصيل قصيرة جداً.';
+  String get validationReviewBodyTooShort =>
+      'التفاصيل قصيرة جداً (30 حرف على الأقل)';
 
   @override
   String get reviewTypeLabel => 'تجربة';
@@ -1006,4 +1007,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trendingSwitchToDeck => 'Switch to deck';
+
+  @override
+  String sheetAddReviewTrimFallback(int trimId) {
+    return 'النسخة #$trimId';
+  }
+
+  @override
+  String get fieldReviewRating => 'التقييم *';
+
+  @override
+  String get fieldReviewTitleOptional => 'عنوان التجربة (اختياري)';
+
+  @override
+  String get fieldReviewTitleHint => 'مثال: تجربة رائعة بعد سنة من الاستخدام';
+
+  @override
+  String get fieldReviewBodyRequired => 'تفاصيل التجربة *';
+
+  @override
+  String get fieldReviewBodyHint => 'اكتب عن تجربتك مع السيارة...';
+
+  @override
+  String get fieldCityOptional => 'المدينة (اختياري)';
+
+  @override
+  String sheetAskQuestionTrimFallback(int trimId) {
+    return 'النسخة #$trimId';
+  }
+
+  @override
+  String get fieldQuestionTitleHint => 'مثال: ما هو أفضل نظام شحن؟';
+
+  @override
+  String get fieldQuestionBodyHint => 'اشرح سؤالك بالتفصيل...';
 }

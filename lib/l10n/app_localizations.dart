@@ -1493,7 +1493,7 @@ abstract class AppLocalizations {
   /// No description provided for @validationReviewBodyTooShort.
   ///
   /// In en, this message translates to:
-  /// **'Details are too short.'**
+  /// **'Details are too short (at least 30 characters)'**
   String get validationReviewBodyTooShort;
 
   /// No description provided for @reviewTypeLabel.
@@ -1993,6 +1993,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch to deck'**
   String get trendingSwitchToDeck;
+
+  /// No description provided for @sheetAddReviewTrimFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Version #{trimId}'**
+  String sheetAddReviewTrimFallback(int trimId);
+
+  /// No description provided for @fieldReviewRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating *'**
+  String get fieldReviewRating;
+
+  /// No description provided for @fieldReviewTitleOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Review title (optional)'**
+  String get fieldReviewTitleOptional;
+
+  /// No description provided for @fieldReviewTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: Great experience after a year of use'**
+  String get fieldReviewTitleHint;
+
+  /// No description provided for @fieldReviewBodyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Review details *'**
+  String get fieldReviewBodyRequired;
+
+  /// No description provided for @fieldReviewBodyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write about your experience with the car...'**
+  String get fieldReviewBodyHint;
+
+  /// No description provided for @fieldCityOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'City (optional)'**
+  String get fieldCityOptional;
+
+  /// No description provided for @sheetAskQuestionTrimFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Version #{trimId}'**
+  String sheetAskQuestionTrimFallback(int trimId);
+
+  /// No description provided for @fieldQuestionTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: What\'s the best charging system?'**
+  String get fieldQuestionTitleHint;
+
+  /// No description provided for @fieldQuestionBodyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain your question in detail...'**
+  String get fieldQuestionBodyHint;
 }
 
 class _AppLocalizationsDelegate
