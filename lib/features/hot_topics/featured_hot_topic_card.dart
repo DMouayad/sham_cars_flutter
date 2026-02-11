@@ -35,10 +35,7 @@ class HotTopicFeaturedCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: AlignmentDirectional.topStart,
               end: AlignmentDirectional.bottomEnd,
-              colors: [
-                cs.secondaryContainer.withValues(alpha: 0.45),
-                cs.surface,
-              ],
+              colors: [cs.surfaceContainer.withValues(alpha: 0.75), cs.surface],
             ),
           ),
           child: Stack(
@@ -49,7 +46,7 @@ class HotTopicFeaturedCard extends StatelessWidget {
                 child: Icon(
                   Icons.local_fire_department_rounded,
                   size: 90,
-                  color: cs.error.withValues(alpha: 0.45),
+                  color: cs.error.withValues(alpha: 0.75),
                 ),
               ),
               Padding(
@@ -77,15 +74,15 @@ class HotTopicFeaturedCard extends StatelessWidget {
                     const Spacer(),
                     SizedBox(
                       height: 35,
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
                         children: [
                           _StatPill(
                             icon: Icons.help_outline_rounded,
                             label:
                                 '${topic.questionsCount} ${l10n.questionTypeLabel}',
                           ),
+                          const SizedBox(width: 8),
                           _StatPill(
                             icon: Icons.chat_bubble_outline_rounded,
                             label:

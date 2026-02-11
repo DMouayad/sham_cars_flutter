@@ -613,7 +613,11 @@
   "vehicleDetailsAlsoLikedTitle": "People also liked",
   "vehicleDetailsSpecsTitle": "Specifications",
   "vehicleDetailsDescriptionTitle": "Description",
-
+  "vehicleDetailsWriteReview": "Write a review",
+  "vehicleDetailsAskQuestion": "Ask question",
+  "yourQuestionsSectionTitle": "Your questions",
+  "yourQuestionLabel": "Your question",
+  "yourReviewLabel": "Your review",
   "cityDamascus": "Damascus",
   "cityAleppo": "Aleppo",
   "cityHoms": "Homs",

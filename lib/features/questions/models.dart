@@ -33,6 +33,24 @@ class Question implements CommunityItem {
     this.trimImageUrl,
     this.trimRange,
   });
+  Question copyWith({String? userName}) {
+    return Question(
+      id: id,
+      trimId: trimId,
+      makeName: makeName,
+      answers: answers,
+      modelId: modelId,
+      modelName: modelName,
+      trimName: trimName,
+      trimRange: trimRange,
+      trimImageUrl: trimImageUrl,
+      userName: userName ?? this.userName,
+      title: title,
+      body: body,
+      answersCount: answersCount,
+      createdAt: createdAt,
+    );
+  }
 
   factory Question.fromJson(Map<String, dynamic> json) {
     final vehicle = json['vehicle'];
@@ -41,8 +59,8 @@ class Question implements CommunityItem {
       modelId: json['car_model_id'],
       trimId: json['car_trim_id'],
       modelName: json['model_name'],
-      trimName: json['trim_name'],
-      userName: json['user_name'],
+      trimName: json['trim_name']?.toString(),
+      userName: json['user_name']?.toString() ?? '',
       title: json['title'],
       body: json['body'],
       answersCount: json['answers_count'] ?? 0,

@@ -81,14 +81,6 @@ class TrendingTrimListCard extends StatelessWidget {
                                   count: trim.reviewsCount!,
                                 ),
                               ],
-                              if (trim.isFeatured) ...[
-                                const SizedBox(width: 8),
-                                Icon(
-                                  Icons.star_rounded,
-                                  size: 18,
-                                  color: cs.primary,
-                                ),
-                              ],
                             ],
                           ),
 
@@ -113,46 +105,36 @@ class TrendingTrimListCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: tt.labelMedium?.copyWith(
-                              color: cs.secondary,
-                              fontWeight: FontWeight.w800,
+                              color: context.isDarkMode
+                                  ? cs.secondary
+                                  : cs.onSurface.withValues(alpha: .7),
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 6),
-
-                          // Specs row (premium pills, stable height)
-                          SizedBox(
-                            height: 30,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: _specPills(context, trim),
+                          Text(
+                            trim.priceDisplay ?? '—',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: tt.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.isDarkMode
+                                  ? cs.secondary
+                                  : cs.onSurface.withValues(alpha: .7),
                             ),
                           ),
-
                           const SizedBox(height: 10),
                         ],
                       ),
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      trim.priceDisplay ?? '—',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: tt.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: cs.onSurfaceVariant,
-                      ),
-                    ),
-
-                    Icon(
-                      Icons.chevron_right,
-                      size: 20,
-                      color: cs.secondary.withValues(alpha: 0.8),
-                    ),
-                  ],
+                // Specs row (premium pills, stable height)
+                SizedBox(
+                  height: 30,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: _specPills(context, trim),
+                  ),
                 ),
               ],
             ),
@@ -232,7 +214,7 @@ class _ThumbWithRank extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: SizedBox(
         width: 112,
-        height: 112,
+        height: 118,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -308,16 +290,11 @@ class _RatingPill extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsetsDirectional.fromSTEB(8, 6, 8, 6),
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest.withValues(alpha: 0.65),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: cs.outlineVariant),
-      ),
       alignment: Alignment.center,
       child: Row(
         textDirection: TextDirection.ltr,
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
           const SizedBox(width: 4),
@@ -380,7 +357,6 @@ class _SpecPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(999),
-        // border: Border.all(color: cs.outlineVariant),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -1634,6 +1634,36 @@ abstract class AppLocalizations {
   /// **'Description'**
   String get vehicleDetailsDescriptionTitle;
 
+  /// No description provided for @vehicleDetailsWriteReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a review'**
+  String get vehicleDetailsWriteReview;
+
+  /// No description provided for @vehicleDetailsAskQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask question'**
+  String get vehicleDetailsAskQuestion;
+
+  /// No description provided for @yourQuestionsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your questions'**
+  String get yourQuestionsSectionTitle;
+
+  /// No description provided for @yourQuestionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your question'**
+  String get yourQuestionLabel;
+
+  /// No description provided for @yourReviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your review'**
+  String get yourReviewLabel;
+
   /// No description provided for @cityDamascus.
   ///
   /// In en, this message translates to:

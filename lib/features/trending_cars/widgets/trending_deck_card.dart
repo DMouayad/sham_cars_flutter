@@ -10,12 +10,16 @@ class TrendingDeckCard extends StatelessWidget {
     required this.rank,
     required this.onTap,
     required this.height,
+    required this.inHome,
+    this.width,
   });
 
   final CarTrimSummary trim;
   final int rank;
   final VoidCallback onTap;
   final double height;
+  final double? width;
+  final bool inHome;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,7 @@ class TrendingDeckCard extends StatelessWidget {
 
     return SizedBox(
       height: height,
+      width: width,
       child: Material(
         color: cs.surface,
         shape: RoundedRectangleBorder(
@@ -48,7 +53,7 @@ class TrendingDeckCard extends StatelessWidget {
                       colors: [
                         Colors.black.withValues(alpha: 0.15),
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.70),
+                        Colors.black.withValues(alpha: 0.60),
                       ],
                     ),
                   ),
@@ -81,7 +86,7 @@ class TrendingDeckCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.40),
+                      color: Colors.black.withValues(alpha: 0.50),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.12),
@@ -106,10 +111,11 @@ class TrendingDeckCard extends StatelessWidget {
                           trim.displayName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: tt.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                          ),
+                          style: (inHome ? tt.titleMedium : tt.titleLarge)
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
                         ),
                         const SizedBox(height: 6),
 
@@ -158,10 +164,11 @@ class TrendingDeckCard extends StatelessWidget {
                                 trim.priceDisplay ?? '—',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: tt.titleMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                                style: (inHome ? tt.bodySmall : tt.titleMedium)
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                               ),
                             ),
                             const SizedBox(width: 8),

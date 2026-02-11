@@ -1,4 +1,6 @@
+import 'package:get_it/get_it.dart';
 import 'package:sham_cars/api/rest_client.dart';
+import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/reviews/models.dart';
 
@@ -31,7 +33,11 @@ class UserActivityRepository {
       query: {'limit': '$limit', 'skip': '$skip'},
       accessToken: accessToken,
     );
-    return data.map(Question.fromJson).toList();
+    final currentUser = GetIt.I.get<AuthNotifier>().currentUser;
+    return data
+        .map(Question.fromJson)
+        .map((q) => q.copyWith(userName: currentUser?.fullName))
+        .toList();
   }
 
   Future<List<Question>> getMyAnsweredQuestions({

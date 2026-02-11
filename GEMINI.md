@@ -208,7 +208,13 @@ All list endpoints use pagination:
 - `MyQuestionsCubit`: Manages listing of questions asked by the current user.
 - `MyReviewsCubit`: Manages listing of reviews posted by the current user.
 - `TrimCommunityCubit`: Manages community content (reviews/Q&A) for a specific vehicle trim.
-- `TrimCommunityPreviewCubit`: Manages preview data for community content on vehicle detail pages.
+- `TrimCommunityPreviewCubit`: 
+  - Manages preview data for community content on vehicle detail pages.
+  - Loads trim preview (latest reviews/questions).
+  - If authenticated, also fetches user activity (/user/reviews, /user/questions) to derive:
+    - myReview (latest)
+    - myQuestions (list for this trim, sorted latest-first)
+  - Excludes user content from the “other” preview lists.
 - `HotTopicsCubit`: Loads /car-data/hot-topics with take/skip pagination. Local search filters loaded items. Guardrail: avoid loadMore() while searchQuery is non-empty (local search)
 - `ModelQuestionsCubit`: Paginated questions list for a model using car_model_id.
   Reuses QuestionCard + same lazy loading pattern as trim-scoped lists.
@@ -249,6 +255,9 @@ Trim specs are a `Map<String, String>`. UI groups specs into categories using to
 - other
 
 Classification avoids substring bugs (e.g., “acceleration” should not match “ac”).
+
+- VehicleDetails “Questions preview” may show a horizontal carousel of “My questions” above the latest questions list.
+- Trending “Show all” uses an animated PageView deck (scale/opacity/translate effect).
 
 ### Hot Topics UI
 - Home Hot Topics uses HotTopicFeaturedCard (more visual hierarchy; safe in horizontal list)

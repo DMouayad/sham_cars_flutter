@@ -47,7 +47,7 @@ class CommunityReviewCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       review.trimDisplayName ?? (review.trimName ?? '—'),
-                      style: tt.labelMedium?.copyWith(
+                      style: tt.labelLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: cs.primary,
                       ),

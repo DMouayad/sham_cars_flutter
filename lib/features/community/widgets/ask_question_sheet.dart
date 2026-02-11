@@ -150,10 +150,11 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
 
                       TextFormField(
                         controller: _titleController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
+                          enabled: auth.isLoggedIn,
                           labelText: 'عنوان السؤال *',
                           hintText: 'مثال: ما هو أفضل نظام شحن؟',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                         ),
                         validator: (v) {
                           if (v == null || v.trim().isEmpty) {
@@ -168,10 +169,11 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
                       TextFormField(
                         controller: _bodyController,
                         maxLines: 4,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
+                          enabled: auth.isLoggedIn,
                           labelText: 'تفاصيل السؤال *',
                           hintText: 'اشرح سؤالك بالتفصيل...',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           alignLabelWithHint: true,
                         ),
                         validator: (v) {

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:sham_cars/features/auth/auth_notifier.dart';
 import 'package:sham_cars/features/common/data_state.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/features/user_profile/repositories/user_activity_repository.dart';
 import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 
@@ -12,6 +15,7 @@ import 'cubits/trim_community_preview_cubit.dart';
 import 'cubits/similar_trims_cubit.dart';
 import 'models.dart';
 import 'repositories/car_data_repository.dart';
+import 'trim_community_screen.dart';
 import 'widgets/community_preview.dart';
 import 'widgets/specs.dart';
 import 'widgets/similar_trims_section.dart';
@@ -27,12 +31,14 @@ class VehicleDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authNotifier = GetIt.I.get<AuthNotifier>();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) =>
-              TrimCommunityPreviewCubit(context.read<CommunityRepository>())
-                ..load(trimId: trimId),
+          create: (_) => TrimCommunityPreviewCubit(
+            context.read<CommunityRepository>(),
+            context.read<UserActivityRepository>(),
+          )..load(trimId: trimId),
         ),
         BlocProvider(
           create: (_) =>
@@ -237,16 +243,32 @@ class _VehicleDetailsView extends StatelessWidget {
                         ],
                         ReviewsPreview(
                           items: data.reviews,
+                          userReview: data.myReview,
                           onViewAll: () {
                             VehicleCommunityReviewsRoute(
                               vm.trimId,
                               title: vm.displayName,
                             ).push(context);
                           },
+                          onAdd: () => TrimCommunityScreen.showSheet(
+                            context,
+                            trimId: vm.trimId,
+                            trimTitle: vm.displayName,
+                            isQuestion: false,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         QuestionsPreview(
+                          myQuestions: data.myQuestions,
                           items: data.questions,
+                          onAddNew: () {
+                            TrimCommunityScreen.showSheet(
+                              context,
+                              trimTitle: vm.displayName,
+                              trimId: vm.trimId,
+                              isQuestion: true,
+                            );
+                          },
                           onViewAll: () {
                             VehicleCommunityQuestionsRoute(
                               vm.trimId,

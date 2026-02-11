@@ -3,9 +3,10 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 
 class TrendingDeckCardSkeleton extends StatelessWidget {
-  const TrendingDeckCardSkeleton({super.key, required this.height});
+  const TrendingDeckCardSkeleton({super.key, required this.height, this.width});
 
   final double height;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class TrendingDeckCardSkeleton extends StatelessWidget {
       enabled: true,
       child: SizedBox(
         height: height,
+        width: width,
         child: Material(
           color: cs.surface,
           shape: RoundedRectangleBorder(

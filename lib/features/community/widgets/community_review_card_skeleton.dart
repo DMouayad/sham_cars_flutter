@@ -36,7 +36,7 @@ class CommunityReviewCardSkeleton extends StatelessWidget {
               SizedBox(height: 10),
               Bone.text(words: 3), // vehicle line
               SizedBox(height: 8),
-              Bone.multiText(lines: 3), // comment
+              Bone.multiText(lines: 2), // comment
             ],
           ),
         ),

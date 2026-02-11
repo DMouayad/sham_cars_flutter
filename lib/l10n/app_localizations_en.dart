@@ -828,6 +828,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vehicleDetailsDescriptionTitle => 'Description';
 
   @override
+  String get vehicleDetailsWriteReview => 'Write a review';
+
+  @override
+  String get vehicleDetailsAskQuestion => 'Ask question';
+
+  @override
+  String get yourQuestionsSectionTitle => 'Your questions';
+
+  @override
+  String get yourQuestionLabel => 'Your question';
+
+  @override
+  String get yourReviewLabel => 'Your review';
+
+  @override
   String get cityDamascus => 'Damascus';
 
   @override

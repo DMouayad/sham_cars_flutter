@@ -85,18 +85,28 @@ class TrimCommunityScreen extends StatelessWidget {
 
               floatingActionButton: isLoggedIn
                   ? _CommunitySpeedDial(
-                      onAskQuestion: () => _showSheet(
-                        context,
-                        isQuestion: true,
-                        trimId: trimId,
-                        trimTitle: trimTitle,
-                      ),
-                      onAddReview: () => _showSheet(
-                        context,
-                        trimId: trimId,
-                        isQuestion: false,
-                        trimTitle: trimTitle,
-                      ),
+                      onAskQuestion: () async {
+                        final result = await showSheet(
+                          context,
+                          isQuestion: true,
+                          trimId: trimId,
+                          trimTitle: trimTitle,
+                        );
+                        if (result == true && context.mounted) {
+                          context.read<TrimCommunityCubit>().refreshAll();
+                        }
+                      },
+                      onAddReview: () async {
+                        final result = await showSheet(
+                          context,
+                          trimId: trimId,
+                          isQuestion: false,
+                          trimTitle: trimTitle,
+                        );
+                        if (result == true && context.mounted) {
+                          context.read<TrimCommunityCubit>().refreshAll();
+                        }
+                      },
                     )
                   : FloatingActionButton.extended(
                       onPressed: () {
@@ -115,13 +125,13 @@ class TrimCommunityScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _showSheet(
+  static Future<bool?> showSheet(
     BuildContext context, {
     required int trimId,
     required bool isQuestion,
     String? trimTitle,
   }) async {
-    final result = await showModalBottomSheet(
+    return await showModalBottomSheet<bool?>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -137,9 +147,6 @@ class TrimCommunityScreen extends StatelessWidget {
               lockTrim: true,
             ),
     );
-    if (result == true && context.mounted) {
-      context.read<TrimCommunityCubit>().refreshAll();
-    }
   }
 }
 

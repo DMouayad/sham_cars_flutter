@@ -3,6 +3,8 @@ import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/utils/date_time_text.dart';
 
+enum QuestionCardVariant { normal, mine }
+
 class QuestionCard extends StatelessWidget {
   const QuestionCard({
     super.key,
@@ -11,6 +13,8 @@ class QuestionCard extends StatelessWidget {
     this.compact = true,
     this.showContext = true,
     this.showQuestionBadge = true,
+    this.variant = QuestionCardVariant.normal,
+    this.headerLabel,
   });
 
   final Question question;
@@ -19,10 +23,15 @@ class QuestionCard extends StatelessWidget {
   final bool showContext;
   final bool showQuestionBadge;
 
+  final QuestionCardVariant variant;
+  final String? headerLabel;
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+
+    final isMine = variant == QuestionCardVariant.mine;
 
     final hasContext =
         showContext &&
@@ -30,36 +39,64 @@ class QuestionCard extends StatelessWidget {
             (question.trimName?.isNotEmpty ?? false));
 
     return Material(
-      color: cs.surface,
+      color: isMine ? cs.primaryContainer.withValues(alpha: 0.30) : cs.surface,
       shape: RoundedRectangleBorder(
         borderRadius: ThemeConstants.cardRadius,
-        side: BorderSide(color: cs.outlineVariant),
+        side: BorderSide(
+          color: isMine
+              ? cs.primary.withValues(alpha: 0.45)
+              : cs.outlineVariant,
+          width: isMine ? 1.2 : 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(14), // Standardized Padding
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- HEADER: Badge/Icon + Context + Date ---
+              // HEADER
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (showQuestionBadge) ...[
+                  if (isMine && headerLabel != null) ...[
+                    Container(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        10,
+                        6,
+                        10,
+                        6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: cs.surface,
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(color: cs.outlineVariant),
+                      ),
+                      child: Text(
+                        headerLabel!,
+                        style: tt.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: cs.primary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ] else if (showQuestionBadge) ...[
                     Icon(Icons.help_outline, size: 18, color: Colors.green),
                     const SizedBox(width: 6),
                   ],
+
                   if (hasContext)
                     Expanded(
                       child: Text(
                         _contextText(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: tt.labelMedium?.copyWith(
+                        style: tt.labelLarge?.copyWith(
                           color: Colors.green,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     )
@@ -76,7 +113,7 @@ class QuestionCard extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              // --- BODY: Title + Content ---
+              // BODY
               Text(
                 question.title,
                 maxLines: 2,
@@ -98,7 +135,7 @@ class QuestionCard extends StatelessWidget {
 
               const SizedBox(height: 14),
 
-              // --- FOOTER: User + Answers Pill ---
+              // FOOTER
               Row(
                 children: [
                   _AvatarLetter(name: question.userName),

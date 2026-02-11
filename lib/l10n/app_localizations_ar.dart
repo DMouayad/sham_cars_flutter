@@ -825,6 +825,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get vehicleDetailsDescriptionTitle => 'الوصف';
 
   @override
+  String get vehicleDetailsWriteReview => 'كتابة تجربة';
+
+  @override
+  String get vehicleDetailsAskQuestion => 'إضافة سؤال';
+
+  @override
+  String get yourQuestionsSectionTitle => 'أسئلتك';
+
+  @override
+  String get yourQuestionLabel => 'سؤالك';
+
+  @override
+  String get yourReviewLabel => 'تجربتك';
+
+  @override
   String get cityDamascus => 'دمشق';
 
   @override

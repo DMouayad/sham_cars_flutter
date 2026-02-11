@@ -43,6 +43,7 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
 
     return Scaffold(
       endDrawer: const CustomDrawer(),
+
       body: BlocConsumer<QuestionDetailsCubit, QuestionDetailsState>(
         listenWhen: (p, c) =>
             p.submitError != c.submitError && c.submitError != null,
@@ -71,13 +72,14 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
                 backgroundColor: cs.surface.withOpacity(0.90),
                 surfaceTintColor: Colors.transparent,
                 scrolledUnderElevation: 0,
+                leading: const BackButton(),
                 title: Text(
                   q.title,
-                  style: TextTheme.of(context).titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: cs.primary,
-                    height: 1.2,
-                  ),
+                  // style: TextTheme.of(context).titleLarge?.copyWith(
+                  //   fontWeight: FontWeight.w700,
+                  //   color: cs.primary,
+                  //   height: 1.2,
+                  // ),
                 ),
               ),
 

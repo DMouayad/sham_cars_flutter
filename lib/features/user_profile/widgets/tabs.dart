@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/common/paged_state.dart';
 import 'package:sham_cars/features/community/models.dart';
+import 'package:sham_cars/features/community/widgets/community_review_card_skeleton.dart';
 import 'package:sham_cars/features/questions/models.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/reviews/widgets/review_card.dart';
-import 'package:sham_cars/features/reviews/widgets/review_card_skeleton.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/features/user_profile/cubits/my_answered_questions_cubit.dart';
 import 'package:sham_cars/features/user_profile/cubits/my_questions_cubit.dart';
@@ -56,7 +56,7 @@ class _MyReviewsTabState extends State<MyReviewsTab> {
             padding: const EdgeInsets.all(ThemeConstants.p),
             itemCount: 6,
             separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (_, _) => const ReviewCardSkeleton(),
+            itemBuilder: (_, _) => const CommunityReviewCardSkeleton(),
           );
         }
 
@@ -186,7 +186,7 @@ class _MyQuestionsTabState extends State<MyQuestionsTab> {
               return QuestionCard(
                 question: q,
                 showContext: true,
-                onTap: () => QuestionDetailsRoute(q.id).go(context),
+                onTap: () => QuestionDetailsRoute(q.id).push(context),
               );
             },
           ),
@@ -276,7 +276,7 @@ class _MyAnsweredQuestionsTabState extends State<MyAnsweredQuestionsTab> {
               return QuestionCard(
                 question: q,
                 showContext: true,
-                onTap: () => QuestionDetailsRoute(q.id).go(context),
+                onTap: () => QuestionDetailsRoute(q.id).push(context),
               );
             },
           ),

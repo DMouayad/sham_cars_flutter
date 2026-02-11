@@ -3,39 +3,75 @@ import 'package:sham_cars/features/reviews/models.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/utils/date_time_text.dart';
 
+enum ReviewCardVariant { normal, mine }
+
 class ReviewCard extends StatelessWidget {
   const ReviewCard({
     super.key,
     required this.review,
     this.onTap,
     this.compact = false,
+    this.variant = ReviewCardVariant.normal,
+    this.headerLabel,
   });
 
   final Review review;
   final VoidCallback? onTap;
   final bool compact;
 
+  final ReviewCardVariant variant;
+  final String? headerLabel; // e.g. "Your review"
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
+    final isMine = variant == ReviewCardVariant.mine;
+
     final content = Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: cs.surface,
+        color: isMine
+            ? cs.primaryContainer.withValues(alpha: 0.35)
+            : cs.surface,
         borderRadius: ThemeConstants.cardRadius,
-        border: Border.all(color: cs.outlineVariant),
+        border: Border.all(
+          color: isMine
+              ? cs.primary.withValues(alpha: 0.45)
+              : cs.outlineVariant,
+          width: isMine ? 1.2 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: user + rating
+          // optional label row
+          if (headerLabel != null) ...[
+            Row(
+              children: [
+                Icon(
+                  Icons.person_rounded,
+                  size: 16,
+                  color: isMine ? cs.primary : cs.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  headerLabel!,
+                  style: tt.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: isMine ? cs.primary : cs.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+
           Row(
             children: [
               _AvatarLetter(name: review.userName),
               const SizedBox(width: 10),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +86,7 @@ class ReviewCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      _formatDate(context, review.createdAt),
+                      DateTimeText.relativeOrShort(context, review.createdAt),
                       style: tt.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                       ),
@@ -58,16 +94,13 @@ class ReviewCard extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(width: 10),
-
               _RatingPill(rating: review.rating),
             ],
           ),
 
           const SizedBox(height: 10),
 
-          // Comment
           Text(
             review.body,
             maxLines: compact ? 3 : 8,
@@ -89,9 +122,6 @@ class ReviewCard extends StatelessWidget {
       child: content,
     );
   }
-
-  String _formatDate(BuildContext context, DateTime dt) =>
-      DateTimeText.relativeOrShort(context, dt);
 }
 
 class _RatingPill extends StatelessWidget {

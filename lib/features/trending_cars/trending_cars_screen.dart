@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/features/trending_cars/widgets/trending_swipe_deck.dart';
 import 'package:sham_cars/utils/utils.dart';
 
 import 'trending_cars_cubit.dart';
-import 'widgets/trending_deck_card.dart';
 import 'widgets/trending_deck_card_skeleton.dart';
 import 'widgets/trending_trim_list_card.dart';
 import 'widgets/trending_trim_list_card_skeleton.dart';
@@ -104,26 +104,10 @@ class _TrendingCarsScreenState extends State<TrendingCarsScreen> {
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsetsDirectional.only(top: 12),
-                      child: SizedBox(
+                      child: TrendingSwipeDeck(
                         height: deckHeight,
-                        child: PageView.builder(
-                          controller: PageController(viewportFraction: 0.90),
-                          itemCount: items.take(_deckCount).length,
-                          itemBuilder: (context, i) {
-                            final trim = items[i];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                              ),
-                              child: TrendingDeckCard(
-                                trim: trim,
-                                rank: i + 1,
-                                height: deckHeight,
-                                onTap: () => widget.onOpenVehicle(trim.id),
-                              ),
-                            );
-                          },
-                        ),
+                        items: items,
+                        onTap: (trim, i) => widget.onOpenVehicle(trim.id),
                       ),
                     ),
                   ),

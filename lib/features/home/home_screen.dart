@@ -8,8 +8,9 @@ import 'package:sham_cars/features/hot_topics/featured_hot_topic_card.dart';
 import 'package:sham_cars/features/hot_topics/featured_hot_topic_card_skeletopn.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
+import 'package:sham_cars/features/trending_cars/widgets/trending_deck_card_skeleton.dart';
+import 'package:sham_cars/features/trending_cars/widgets/trending_swipe_deck.dart';
 import 'package:sham_cars/features/vehicle/models.dart';
-import 'package:sham_cars/features/vehicle/widgets/trending_trim_card.dart';
 import 'package:sham_cars/features/vehicle/widgets/list_trim_card.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/question_card_skeleton.dart';
@@ -17,7 +18,6 @@ import 'package:sham_cars/features/reviews/widgets/review_card_skeleton.dart';
 
 import 'home_cubit.dart';
 import 'models.dart';
-import 'widgets/trending_trim_card_skeleton.dart';
 import 'widgets/section_header.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -47,7 +47,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const double _trendingCardHeight = 310;
+  static const double _trendingCardHeight = 320;
 
   final _searchController = TextEditingController();
   final _searchFocus = FocusNode();
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
             itemCount: 5,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (_, _) => const TrendingTrimCardSkeleton(
+            itemBuilder: (_, _) => const TrendingDeckCardSkeleton(
               width: 260,
               height: _trendingCardHeight,
             ),
@@ -273,23 +273,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SliverToBoxAdapter(
-          child: SizedBox(
+          child: TrendingSwipeDeck(
+            items: data.trendingTrims,
+            onTap: (trim, index) => widget.onOpenTrim(trim.id, trim),
             height: _trendingCardHeight,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
-              itemCount: data.trendingTrims.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 12),
-              itemBuilder: (_, i) {
-                final trim = data.trendingTrims[i];
-                return TrendingTrimCard(
-                  width: 260,
-                  height: _trendingCardHeight,
-                  trim: trim,
-                  onTap: () => widget.onOpenTrim(trim.id, trim),
-                );
-              },
-            ),
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 24)),

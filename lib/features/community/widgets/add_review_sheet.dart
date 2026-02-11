@@ -195,10 +195,11 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                           // City
                           DropdownButtonFormField<String>(
                             initialValue: _cityCode,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
+                              enabled: auth.isLoggedIn,
                               labelText: 'المدينة (اختياري)',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.location_city),
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.location_city),
                             ),
                             items: _cities
                                 .map(
@@ -215,11 +216,12 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                           // Title
                           TextFormField(
                             controller: _titleController,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
+                              enabled: auth.isLoggedIn,
                               labelText: 'عنوان التجربة (اختياري)',
                               hintText:
                                   'مثال: تجربة رائعة بعد سنة من الاستخدام',
-                              border: OutlineInputBorder(),
+                              border: const OutlineInputBorder(),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -228,7 +230,8 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
                           TextFormField(
                             controller: _bodyController,
                             maxLines: 5,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
+                              enabled: auth.isLoggedIn,
                               labelText: 'تفاصيل التجربة *',
                               hintText: 'اكتب عن تجربتك مع السيارة...',
                               border: OutlineInputBorder(),
