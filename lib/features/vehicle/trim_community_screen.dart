@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:sham_cars/features/auth/auth_notifier.dart';
+import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/reviews/widgets/review_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
@@ -40,8 +41,8 @@ class TrimCommunityScreen extends StatelessWidget {
           animation: authNotifier,
           builder: (context, _) {
             final isLoggedIn = authNotifier.isLoggedIn;
-
             return Scaffold(
+              endDrawer: const CustomDrawer(),
               body: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [

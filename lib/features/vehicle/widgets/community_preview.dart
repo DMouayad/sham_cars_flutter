@@ -95,6 +95,8 @@ class ReviewsPreview extends StatelessWidget {
           addBtnTitle: context.l10n.vehicleDetailsWriteReview,
         ),
         if (userReview != null) ...[
+          const SizedBox(height: 10),
+
           ReviewCard(
             review: userReview!,
             variant: ReviewCardVariant.mine,
@@ -153,13 +155,6 @@ class QuestionsPreview extends StatelessWidget {
         const SizedBox(height: 10),
 
         if (myQuestions.isNotEmpty) ...[
-          // Text(
-          //   context.l10n.yourQuestionsSectionTitle,
-          //   style: Theme.of(
-          //     context,
-          //   ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
-          // ),
-          // const SizedBox(height: 8),
           _MyQuestionsCarousel(items: myQuestions),
           const SizedBox(height: 14),
         ],
