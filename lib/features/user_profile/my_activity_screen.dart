@@ -18,19 +18,31 @@ class MyActivityScreen extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => MyReviewsCubit(repo)..loadInitial()),
-        BlocProvider(create: (_) => MyQuestionsCubit(repo)..loadInitial()),
-        BlocProvider(
-          create: (_) => MyAnsweredQuestionsCubit(repo)..loadInitial(),
-        ),
+        BlocProvider(create: (_) => MyReviewsCubit(repo)),
+        BlocProvider(create: (_) => MyQuestionsCubit(repo)),
+        BlocProvider(create: (_) => MyAnsweredQuestionsCubit(repo)),
       ],
       child: CustomScaffold(body: const _MyActivityView()),
     );
   }
 }
 
-class _MyActivityView extends StatelessWidget {
+class _MyActivityView extends StatefulWidget {
   const _MyActivityView();
+
+  @override
+  State<_MyActivityView> createState() => _MyActivityViewState();
+}
+
+class _MyActivityViewState extends State<_MyActivityView> {
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<MyQuestionsCubit>().refresh();
+    context.read<MyReviewsCubit>().refresh();
+    context.read<MyAnsweredQuestionsCubit>().refresh();
+  }
 
   @override
   Widget build(BuildContext context) {

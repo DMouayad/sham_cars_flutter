@@ -215,6 +215,8 @@ All list endpoints use pagination:
     - myReview (latest)
     - myQuestions (list for this trim, sorted latest-first)
   - Excludes user content from the “other” preview lists.
+  - Preview data is refreshed after posting (UI awaits sheet/screen result and reloads the preview cubit).
+
 - `HotTopicsCubit`: Loads /car-data/hot-topics with take/skip pagination. Local search filters loaded items. Guardrail: avoid loadMore() while searchQuery is non-empty (local search)
 - `ModelQuestionsCubit`: Paginated questions list for a model using car_model_id.
   Reuses QuestionCard + same lazy loading pattern as trim-scoped lists.
