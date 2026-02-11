@@ -65,7 +65,8 @@ class _FaqSheet extends StatelessWidget {
 
                   if (snap.hasError && !loading)
                     Text(snap.error.toString())
-                  else if (!loading && (snap.data?.faq.isEmpty ?? true))
+                  else if (snap.data == null ||
+                      (snap.data?.faq.isEmpty ?? true))
                     Text(context.l10n.supportFaqEmpty)
                   else ...[
                     for (final item in snap.data!.faq)

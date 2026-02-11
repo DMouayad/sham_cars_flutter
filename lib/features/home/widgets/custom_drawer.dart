@@ -58,6 +58,8 @@ class CustomDrawer extends StatelessWidget {
                   rootNavigator: true,
                 ).context;
                 Navigator.pop(context);
+                await Future.delayed(Duration(milliseconds: 150));
+                // ignore: use_build_context_synchronously
                 await SupportOverlays.showFaq(rootCtx);
               },
             ),
@@ -72,6 +74,9 @@ class CustomDrawer extends StatelessWidget {
                   rootNavigator: true,
                 ).context;
                 Navigator.pop(context);
+
+                await Future.delayed(Duration(milliseconds: 150));
+                // ignore: use_build_context_synchronously
                 await SupportOverlays.showContact(rootCtx);
               },
             ),
