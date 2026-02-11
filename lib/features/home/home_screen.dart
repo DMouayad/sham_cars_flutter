@@ -47,7 +47,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const double _trendingCardHeight = 320;
+  static const double _trendingCardHeight = 350;
 
   final _searchController = TextEditingController();
   final _searchFocus = FocusNode();
@@ -275,6 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SliverToBoxAdapter(
           child: TrendingSwipeDeck(
             items: data.trendingTrims,
+            inHome: true,
             onTap: (trim, index) => widget.onOpenTrim(trim.id, trim),
             height: _trendingCardHeight,
           ),

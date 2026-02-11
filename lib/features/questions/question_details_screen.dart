@@ -41,140 +41,132 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      endDrawer: const CustomDrawer(),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        endDrawer: const CustomDrawer(),
+        body: BlocConsumer<QuestionDetailsCubit, QuestionDetailsState>(
+          listenWhen: (p, c) =>
+              p.submitError != c.submitError && c.submitError != null,
+          listener: (context, state) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.submitError!)));
+          },
+          builder: (context, state) {
+            if (state.isLoading && state.question == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-      body: BlocConsumer<QuestionDetailsCubit, QuestionDetailsState>(
-        listenWhen: (p, c) =>
-            p.submitError != c.submitError && c.submitError != null,
-        listener: (context, state) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.submitError!)));
-        },
-        builder: (context, state) {
-          if (state.isLoading && state.question == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
+            if (state.error != null && state.question == null) {
+              return _ErrorView(
+                message: state.error.toString(),
+                onRetry: () => context.read<QuestionDetailsCubit>().refresh(),
+              );
+            }
 
-          if (state.error != null && state.question == null) {
-            return _ErrorView(
-              message: state.error.toString(),
-              onRetry: () => context.read<QuestionDetailsCubit>().refresh(),
-            );
-          }
-
-          final q = state.question!;
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                pinned: true,
-                backgroundColor: cs.surface.withOpacity(0.90),
-                surfaceTintColor: Colors.transparent,
-                scrolledUnderElevation: 0,
-                leading: const BackButton(),
-                title: Text(
-                  q.title,
-                  // style: TextTheme.of(context).titleLarge?.copyWith(
-                  //   fontWeight: FontWeight.w700,
-                  //   color: cs.primary,
-                  //   height: 1.2,
-                  // ),
-                ),
-              ),
-
-              SliverPadding(
-                padding: const EdgeInsets.all(ThemeConstants.p),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    _RelatedVehicleCard(question: q),
-                    const SizedBox(height: 12),
-                    _QuestionCard(question: q),
-
-                    const SizedBox(height: 16),
-                    _SectionTitle(title: 'الإجابات (${q.answers.length})'),
-                    const SizedBox(height: 10),
-
-                    if (q.answers.isEmpty)
-                      _EmptyBox(text: 'لا توجد إجابات بعد. كن أول من يجيب.')
-                    else
-                      ...q.answers.map(
-                        (a) => Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: _AnswerCard(answer: a),
-                        ),
-                      ),
-
-                    const SizedBox(height: 90), // space for composer
-                  ]),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-
-      bottomNavigationBar:
-          BlocBuilder<QuestionDetailsCubit, QuestionDetailsState>(
-            builder: (context, state) {
-              if (state.question == null) return const SizedBox.shrink();
-
-              return SafeArea(
-                top: false,
-                child: Container(
-                  padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
-                  decoration: BoxDecoration(
-                    color: cs.surface,
-                    border: Border(top: BorderSide(color: cs.outlineVariant)),
+            final q = state.question!;
+            return SafeArea(
+              maintainBottomViewPadding: true,
+              top: false,
+              child: CustomScrollView(
+                reverse: false,
+                slivers: [
+                  SliverAppBar(
+                    pinned: true,
+                    backgroundColor: cs.surface.withOpacity(0.90),
+                    surfaceTintColor: Colors.transparent,
+                    scrolledUnderElevation: 0,
+                    leading: const BackButton(),
+                    title: Text(q.title),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _answerController,
-                          minLines: 1,
-                          maxLines: 4,
-                          decoration: InputDecoration(
-                            hintText: 'اكتب إجابة...',
-                            isDense: true,
-                            filled: true,
-                            fillColor: cs.surfaceContainerHighest,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(999),
-                              borderSide: BorderSide.none,
+                  PinnedHeaderSliver(child: _RelatedVehicleCard(question: q)),
+                  SliverPadding(
+                    padding: const EdgeInsets.all(ThemeConstants.p),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        _QuestionCard(question: q),
+
+                        const SizedBox(height: 16),
+                        _SectionTitle(title: 'الإجابات (${q.answers.length})'),
+                        const SizedBox(height: 10),
+
+                        if (q.answers.isEmpty)
+                          _EmptyBox(text: 'لا توجد إجابات بعد. كن أول من يجيب.')
+                        else
+                          ...q.answers.map(
+                            (a) => Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: _AnswerCard(answer: a),
                             ),
                           ),
+                        const SizedBox(height: 70),
+                      ]),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+
+        bottomSheet: BlocBuilder<QuestionDetailsCubit, QuestionDetailsState>(
+          builder: (context, state) {
+            if (state.question == null) return const SizedBox.shrink();
+
+            return Container(
+              padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
+              decoration: BoxDecoration(
+                color: cs.surface,
+                border: Border(top: BorderSide(color: cs.outlineVariant)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _answerController,
+                      minLines: 1,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        hintText: 'اكتب إجابة...',
+                        isDense: true,
+                        filled: true,
+                        fillColor: cs.surfaceContainerHighest,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(999),
+                          borderSide: BorderSide.none,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      IconButton(
-                        onPressed: state.isSubmitting
-                            ? null
-                            : () async {
-                                final text = _answerController.text.trim();
-                                if (text.isEmpty) return;
-
-                                final ok = await context
-                                    .read<QuestionDetailsCubit>()
-                                    .submitAnswer(body: text);
-                                if (ok) _answerController.clear();
-                              },
-                        icon: state.isSubmitting
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.send),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: state.isSubmitting
+                        ? null
+                        : () async {
+                            final text = _answerController.text.trim();
+                            if (text.isEmpty) return;
+
+                            final ok = await context
+                                .read<QuestionDetailsCubit>()
+                                .submitAnswer(body: text);
+                            if (ok) _answerController.clear();
+                          },
+                    icon: state.isSubmitting
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.send),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -197,9 +189,9 @@ class _RelatedVehicleCard extends StatelessWidget {
     ].join(' • ');
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.p),
       decoration: BoxDecoration(
-        color: cs.surfaceContainerHighest,
+        color: cs.surface,
         borderRadius: ThemeConstants.cardRadius,
       ),
       child: Row(

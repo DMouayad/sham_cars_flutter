@@ -26,165 +26,175 @@ class TrendingDeckCard extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    return SizedBox(
-      height: height,
-      width: width,
-      child: Material(
-        color: cs.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: ThemeConstants.cardRadius,
-          side: BorderSide(color: cs.outlineVariant),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              _TrimImage(imageUrl: trim.imageUrl),
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: SizedBox(
+        height: height,
+        width: width,
+        child: Material(
+          color: cs.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: ThemeConstants.cardRadius,
+            side: BorderSide(color: cs.outlineVariant),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                _TrimImage(imageUrl: trim.imageUrl),
 
-              // Dark gradient for readability
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.15),
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.60),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Rank badge
-              PositionedDirectional(
-                start: 12,
-                top: 12,
-                child: _RankBadge(rank: rank),
-              ),
-              if (trim.avgRating != null && (trim.reviewsCount ?? 0) > 0)
-                PositionedDirectional(
-                  end: 12,
-                  top: 12,
-                  child: RatingPill(
-                    rating: trim.avgRating!,
-                    count: trim.reviewsCount!,
-                  ),
-                ),
-
-              // Bottom overlay content
-              PositionedDirectional(
-                start: 0,
-                end: 0,
-                bottom: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
+                // Dark gradient for readability
+                Positioned.fill(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.50),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.12),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.15),
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.60),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          trim.makeName.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: tt.labelSmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.85),
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.7,
-                          ),
+                  ),
+                ),
+
+                // Rank badge
+                PositionedDirectional(
+                  start: 12,
+                  top: 12,
+                  child: _RankBadge(rank: rank),
+                ),
+                if (trim.avgRating != null && (trim.reviewsCount ?? 0) > 0)
+                  PositionedDirectional(
+                    end: 12,
+                    top: 12,
+                    child: RatingPill(
+                      rating: trim.avgRating!,
+                      count: trim.reviewsCount!,
+                    ),
+                  ),
+
+                // Bottom overlay content
+                PositionedDirectional(
+                  start: 0,
+                  end: 0,
+                  bottom: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.12),
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          trim.displayName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: (inHome ? tt.titleMedium : tt.titleLarge)
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                              ),
-                        ),
-                        const SizedBox(height: 6),
-
-                        // Meta row (body type + years) — uses fields you already have
-                        Text(
-                          _metaText(trim),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: tt.bodySmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.80),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        // Spec chips (limited set for clarity)
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            if (trim.range.isNotEmpty)
-                              _GlassChip(
-                                icon: Icons.route,
-                                label: trim.range.display,
-                              ),
-                            if (trim.batteryCapacity.isNotEmpty)
-                              _GlassChip(
-                                icon: Icons.battery_charging_full,
-                                label: trim.batteryCapacity.display,
-                              ),
-                            if (trim.acceleration.isNotEmpty)
-                              _GlassChip(
-                                icon: Icons.speed,
-                                label: trim.acceleration.display,
-                              ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                trim.priceDisplay ?? '—',
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                trim.makeName.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: (inHome ? tt.bodySmall : tt.titleMedium)
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w900,
+                                style: tt.labelSmall?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.7,
+                                ),
+                              ),
+                              Text(
+                                _metaText(trim),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: tt.bodySmall?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.80),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            trim.displayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: (inHome ? tt.titleMedium : tt.titleLarge)
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                          const SizedBox(height: 6),
+
+                          // Spec chips (limited set for clarity)
+                          SizedBox(
+                            height: 35,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                spacing: 4,
+                                children: [
+                                  if (trim.range.isNotEmpty)
+                                    _GlassChip(
+                                      icon: Icons.route,
+                                      label: trim.range.display,
                                     ),
+                                  if (trim.batteryCapacity.isNotEmpty)
+                                    _GlassChip(
+                                      icon: Icons.battery_charging_full,
+                                      label: trim.batteryCapacity.display,
+                                    ),
+                                  if (trim.acceleration.isNotEmpty)
+                                    _GlassChip(
+                                      icon: Icons.speed,
+                                      label: trim.acceleration.display,
+                                    ),
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              Icons.chevron_right_rounded,
-                              color: Colors.white.withValues(alpha: 0.85),
-                              size: 22,
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  trim.priceDisplay ?? '—',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style:
+                                      (inHome ? tt.bodySmall : tt.titleMedium)
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                color: Colors.white.withValues(alpha: 0.85),
+                                size: 22,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

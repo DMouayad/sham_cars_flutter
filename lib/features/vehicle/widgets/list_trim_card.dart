@@ -97,14 +97,14 @@ class TrimListCard extends StatelessWidget {
                   if (trim.priceDisplay case final price?)
                     Text(
                       price,
-                      style: tt.labelLarge?.copyWith(
+                      style: tt.labelSmall?.copyWith(
                         fontWeight: FontWeight.w900,
                       ),
                     )
                   else
                     Text(
                       '—',
-                      style: tt.labelLarge?.copyWith(
+                      style: tt.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                       ),
                     ),
@@ -163,35 +163,40 @@ class _SpecsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Wrap(
-      spacing: 8,
-      runSpacing: 6,
-      children: [
-        if (trim.range.isNotEmpty)
-          _SpecChip(
-            icon: Icons.route,
-            text: trim.range.display,
-            color: Colors.green,
-          ),
-        if (trim.acceleration.isNotEmpty)
-          _SpecChip(
-            icon: Icons.speed,
-            text: trim.acceleration.display,
-            color: Colors.orange,
-          ),
-        if (trim.batteryCapacity.isNotEmpty)
-          _SpecChip(
-            icon: Icons.battery_charging_full,
-            text: trim.batteryCapacity.display,
-            color: Colors.blue,
-          ),
-        if (trim.bodyType.isNotEmpty)
-          _SpecChip(
-            icon: Icons.directions_car_outlined,
-            text: trim.bodyType,
-            color: cs.primary,
-          ),
-      ],
+    return SizedBox(
+      height: 30,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          spacing: 8,
+          children: [
+            if (trim.range.isNotEmpty)
+              _SpecChip(
+                icon: Icons.route,
+                text: trim.range.display,
+                color: Colors.green,
+              ),
+            if (trim.acceleration.isNotEmpty)
+              _SpecChip(
+                icon: Icons.speed,
+                text: trim.acceleration.display,
+                color: Colors.orange,
+              ),
+            if (trim.batteryCapacity.isNotEmpty)
+              _SpecChip(
+                icon: Icons.battery_charging_full,
+                text: trim.batteryCapacity.display,
+                color: Colors.blue,
+              ),
+            if (trim.bodyType.isNotEmpty)
+              _SpecChip(
+                icon: Icons.directions_car_outlined,
+                text: trim.bodyType,
+                color: cs.primary,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

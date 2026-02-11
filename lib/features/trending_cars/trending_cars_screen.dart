@@ -106,6 +106,7 @@ class _TrendingCarsScreenState extends State<TrendingCarsScreen> {
                       padding: const EdgeInsetsDirectional.only(top: 12),
                       child: TrendingSwipeDeck(
                         height: deckHeight,
+                        inHome: false,
                         items: items,
                         onTap: (trim, i) => widget.onOpenVehicle(trim.id),
                       ),

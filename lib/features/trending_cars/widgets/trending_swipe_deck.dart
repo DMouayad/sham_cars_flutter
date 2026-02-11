@@ -9,12 +9,13 @@ class TrendingSwipeDeck extends StatefulWidget {
     required this.items,
     required this.height,
     required this.onTap,
+    required this.inHome,
   });
 
   final List<CarTrimSummary> items;
   final double height;
   final void Function(CarTrimSummary trim, int rank) onTap;
-
+  final bool inHome;
   @override
   State<TrendingSwipeDeck> createState() => _TrendingSwipeDeckState();
 }
@@ -25,7 +26,7 @@ class _TrendingSwipeDeckState extends State<TrendingSwipeDeck> {
   @override
   void initState() {
     super.initState();
-    _controller = PageController(viewportFraction: 0.90);
+    _controller = PageController(viewportFraction: 0.85);
   }
 
   @override
@@ -66,9 +67,9 @@ class _TrendingSwipeDeckState extends State<TrendingSwipeDeck> {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
+              padding: const EdgeInsetsDirectional.only(end: 6),
               child: TrendingDeckCard(
-                inHome: false,
+                inHome: widget.inHome,
                 trim: trim,
                 rank: rank,
                 height: widget.height,

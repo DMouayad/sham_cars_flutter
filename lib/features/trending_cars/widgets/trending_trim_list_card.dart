@@ -20,123 +20,126 @@ class TrendingTrimListCard extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    return Material(
-      color: cs.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: ThemeConstants.cardRadius,
-        side: BorderSide(color: cs.outlineVariant),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: AlignmentDirectional.topStart,
-              end: AlignmentDirectional.bottomEnd,
-              colors: [
-                context.isDarkMode
-                    ? cs.primary.withValues(alpha: .08)
-                    : cs.secondary.withValues(alpha: .20),
-                cs.surface,
-              ],
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Material(
+        color: cs.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: ThemeConstants.cardRadius,
+          side: BorderSide(color: cs.outlineVariant),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
+                colors: [
+                  context.isDarkMode
+                      ? cs.primary.withValues(alpha: .08)
+                      : cs.secondary.withValues(alpha: .20),
+                  cs.surface,
+                ],
+              ),
             ),
-          ),
-          child: Container(
-            constraints: BoxConstraints(minHeight: 160),
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              spacing: 6,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _ThumbWithRank(rank: rank, imageUrl: trim.imageUrl),
-                    const SizedBox(width: 12),
+            child: Container(
+              constraints: BoxConstraints(minHeight: 160),
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                spacing: 6,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _ThumbWithRank(rank: rank, imageUrl: trim.imageUrl),
+                      const SizedBox(width: 12),
 
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Make + rating pill (top line)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  trim.makeName.toUpperCase(),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: tt.labelSmall?.copyWith(
-                                    color: cs.primary,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 0.8,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Make + rating pill (top line)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    trim.makeName.toUpperCase(),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: tt.labelSmall?.copyWith(
+                                      color: cs.primary,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.8,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              if (_hasRating(trim)) ...[
-                                const SizedBox(width: 8),
-                                _RatingPill(
-                                  rating: trim.avgRating!,
-                                  count: trim.reviewsCount!,
-                                ),
+                                if (_hasRating(trim)) ...[
+                                  const SizedBox(width: 8),
+                                  _RatingPill(
+                                    rating: trim.avgRating!,
+                                    count: trim.reviewsCount!,
+                                  ),
+                                ],
                               ],
-                            ],
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // Model
-                          Text(
-                            trim.displayName,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: tt.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              height: 1.05,
                             ),
-                          ),
 
-                          const SizedBox(height: 6),
+                            const SizedBox(height: 8),
 
-                          //  meta
-                          Text(
-                            _metaLine(trim),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: tt.labelMedium?.copyWith(
-                              color: context.isDarkMode
-                                  ? cs.secondary
-                                  : cs.onSurface.withValues(alpha: .7),
-                              fontWeight: FontWeight.bold,
+                            // Model
+                            Text(
+                              trim.displayName,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: tt.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                height: 1.05,
+                              ),
                             ),
-                          ),
-                          Text(
-                            trim.priceDisplay ?? '—',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: tt.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: context.isDarkMode
-                                  ? cs.secondary
-                                  : cs.onSurface.withValues(alpha: .7),
+
+                            const SizedBox(height: 6),
+
+                            //  meta
+                            Text(
+                              _metaLine(trim),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: tt.labelMedium?.copyWith(
+                                color: context.isDarkMode
+                                    ? cs.secondary
+                                    : cs.onSurface.withValues(alpha: .7),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                        ],
+                            Text(
+                              trim.priceDisplay ?? '—',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: tt.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.isDarkMode
+                                    ? cs.secondary
+                                    : cs.onSurface.withValues(alpha: .7),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                // Specs row (premium pills, stable height)
-                SizedBox(
-                  height: 30,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: _specPills(context, trim),
+                    ],
                   ),
-                ),
-              ],
+                  // Specs row (premium pills, stable height)
+                  SizedBox(
+                    height: 30,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: _specPills(context, trim),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

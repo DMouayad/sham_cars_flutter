@@ -35,7 +35,12 @@ class HotTopicFeaturedCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: AlignmentDirectional.topStart,
               end: AlignmentDirectional.bottomEnd,
-              colors: [cs.surfaceContainer.withValues(alpha: 0.75), cs.surface],
+              colors: [
+                context.isDarkMode
+                    ? cs.primaryContainer.withValues(alpha: 0.45)
+                    : cs.secondary.withValues(alpha: 0.4),
+                cs.surface,
+              ],
             ),
           ),
           child: Stack(

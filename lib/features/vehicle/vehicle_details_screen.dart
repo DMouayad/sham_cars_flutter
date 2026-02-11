@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 import 'package:sham_cars/features/common/data_state.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
@@ -122,38 +121,41 @@ class VehicleDetailsScreen extends StatelessWidget {
 
       child: Scaffold(
         endDrawer: const CustomDrawer(),
-        body: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
-          builder: (context, state) {
-            // Build a single VM for both states (summary while loading, trim when loaded)
-            final vm = switch (state) {
-              DataLoaded(:final data) => _VehicleVm.fromTrim(data),
-              _ =>
-                trimSummary != null
-                    ? _VehicleVm.fromSummary(trimSummary!)
-                    : null,
-            };
-            if (vm == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        body: SafeArea(
+          top: false,
+          child: BlocBuilder<CarTrimCubit, DataState<CarTrim>>(
+            builder: (context, state) {
+              // Build a single VM for both states (summary while loading, trim when loaded)
+              final vm = switch (state) {
+                DataLoaded(:final data) => _VehicleVm.fromTrim(data),
+                _ =>
+                  trimSummary != null
+                      ? _VehicleVm.fromSummary(trimSummary!)
+                      : null,
+              };
+              if (vm == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            return switch (state) {
-              DataInitial() || DataLoading() => _VehicleDetailsView(
-                vm: vm,
-                loadingMore: true,
-                onRetry: null,
-              ),
-              DataError() => _VehicleDetailsView(
-                vm: vm,
-                loadingMore: false,
-                onRetry: () => context.read<CarTrimCubit>().load(trimId),
-              ),
-              DataLoaded(:final data) => _VehicleDetailsView(
-                vm: _VehicleVm.fromTrim(data),
-                loadingMore: false,
-                onRetry: null,
-              ),
-            };
-          },
+              return switch (state) {
+                DataInitial() || DataLoading() => _VehicleDetailsView(
+                  vm: vm,
+                  loadingMore: true,
+                  onRetry: null,
+                ),
+                DataError() => _VehicleDetailsView(
+                  vm: vm,
+                  loadingMore: false,
+                  onRetry: () => context.read<CarTrimCubit>().load(trimId),
+                ),
+                DataLoaded(:final data) => _VehicleDetailsView(
+                  vm: _VehicleVm.fromTrim(data),
+                  loadingMore: false,
+                  onRetry: null,
+                ),
+              };
+            },
+          ),
         ),
       ),
     );

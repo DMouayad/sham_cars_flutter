@@ -88,170 +88,186 @@ class _AskQuestionSheetState extends State<AskQuestionSheet> {
 
     return BlocProvider(
       create: (_) => CommunityActionsCubit(context.read()),
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: ThemeConstants.p,
-          right: ThemeConstants.p,
-          top: ThemeConstants.p,
-          bottom: MediaQuery.of(context).viewInsets.bottom + ThemeConstants.p,
-        ),
-        child: Form(
-          key: _formKey,
-          child: ListenableBuilder(
-            listenable: GetIt.I.get<AuthNotifier>(),
-            builder: (context, _) {
-              final auth = GetIt.I.get<AuthNotifier>();
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: ThemeConstants.p,
+            right: ThemeConstants.p,
+            top: ThemeConstants.p,
+            bottom: MediaQuery.of(context).viewInsets.bottom + ThemeConstants.p,
+          ),
+          child: Form(
+            key: _formKey,
+            child: ListenableBuilder(
+              listenable: GetIt.I.get<AuthNotifier>(),
+              builder: (context, _) {
+                final auth = GetIt.I.get<AuthNotifier>();
 
-              return BlocBuilder<CommunityActionsCubit, CommunityActionsState>(
-                builder: (context, actionState) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            context.l10n.sheetAskQuestionTitle,
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.close),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      if (!auth.isLoggedIn) ...[
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: cs.errorContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: cs.onErrorContainer,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  context.l10n.authRequiredToPostQuestion,
-                                  style: TextStyle(color: cs.onErrorContainer),
-                                ),
-                              ),
-                            ],
-                          ),
+                return BlocBuilder<
+                  CommunityActionsCubit,
+                  CommunityActionsState
+                >(
+                  builder: (context, actionState) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              context.l10n.sheetAskQuestionTitle,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: const Icon(Icons.close),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
-                      ],
 
-                      _TrimField(
-                        title: _trimTitle,
-                        locked: widget.lockTrim,
-                        onPick: _pickTrim,
-                      ),
-                      const SizedBox(height: 12),
-
-                      TextFormField(
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          enabled: auth.isLoggedIn,
-                          labelText: context.l10n.fieldQuestionTitleLabel,
-                          hintText: context.l10n.fieldQuestionTitleHint,
-                          border: const OutlineInputBorder(),
-                        ),
-                        validator: (v) {
-                                                    if (v == null || v.trim().isEmpty) {
-                                                      return context.l10n.validationQuestionTitleRequired;
-                                                    }
-                                                    if (v.trim().length < 10) {
-                                                      return context.l10n.validationQuestionTitleTooShort;
-                                                    }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-
-                      TextFormField(
-                        controller: _bodyController,
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                          enabled: auth.isLoggedIn,
-                          labelText: context.l10n.fieldQuestionBodyLabel,
-                          hintText: context.l10n.fieldQuestionBodyHint,
-                          border: const OutlineInputBorder(),
-                          alignLabelWithHint: true,
-                        ),
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return context.l10n.validationQuestionBodyRequired;
-                          }
-                          if (v.trim().length < 20) {
-                            return context.l10n.validationQuestionBodyTooShort;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 10),
-
-                      if (actionState.submitError != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Text(
-                            actionState.submitError!,
-                            style: TextStyle(color: cs.error),
-                          ),
-                        ),
-
-                      FilledButton(
-                        onPressed:
-                            (!auth.isLoggedIn || actionState.isSubmitting)
-                            ? null
-                            : () async {
-                                if (!_formKey.currentState!.validate()) return;
-                                if (_trimId == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        context.l10n.validationSelectTrim,
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                final ok = await context
-                                    .read<CommunityActionsCubit>()
-                                    .submitQuestion(
-                                      carTrimId: _trimId!,
-                                      title: _titleController.text.trim(),
-                                      body: _bodyController.text.trim(),
-                                    );
-
-                                if (ok && context.mounted) {
-                                  Navigator.pop(context, true);
-                                }
-                              },
-                        child: actionState.isSubmitting
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                        if (!auth.isLoggedIn) ...[
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: cs.errorContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  color: cs.onErrorContainer,
                                 ),
-                              )
-                            : Text(context.l10n.buttonPublishQuestion),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    context.l10n.authRequiredToPostQuestion,
+                                    style: TextStyle(
+                                      color: cs.onErrorContainer,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+
+                        _TrimField(
+                          title: _trimTitle,
+                          locked: widget.lockTrim,
+                          onPick: _pickTrim,
+                        ),
+                        const SizedBox(height: 12),
+
+                        TextFormField(
+                          controller: _titleController,
+                          decoration: InputDecoration(
+                            enabled: auth.isLoggedIn,
+                            labelText: context.l10n.fieldQuestionTitleLabel,
+                            hintText: context.l10n.fieldQuestionTitleHint,
+                            border: const OutlineInputBorder(),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return context
+                                  .l10n
+                                  .validationQuestionTitleRequired;
+                            }
+                            if (v.trim().length < 10) {
+                              return context
+                                  .l10n
+                                  .validationQuestionTitleTooShort;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+
+                        TextFormField(
+                          controller: _bodyController,
+                          maxLines: 4,
+                          decoration: InputDecoration(
+                            enabled: auth.isLoggedIn,
+                            labelText: context.l10n.fieldQuestionBodyLabel,
+                            hintText: context.l10n.fieldQuestionBodyHint,
+                            border: const OutlineInputBorder(),
+                            alignLabelWithHint: true,
+                          ),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return context
+                                  .l10n
+                                  .validationQuestionBodyRequired;
+                            }
+                            if (v.trim().length < 20) {
+                              return context
+                                  .l10n
+                                  .validationQuestionBodyTooShort;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        if (actionState.submitError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              actionState.submitError!,
+                              style: TextStyle(color: cs.error),
+                            ),
+                          ),
+
+                        FilledButton(
+                          onPressed:
+                              (!auth.isLoggedIn || actionState.isSubmitting)
+                              ? null
+                              : () async {
+                                  if (!_formKey.currentState!.validate())
+                                    return;
+                                  if (_trimId == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          context.l10n.validationSelectTrim,
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  final ok = await context
+                                      .read<CommunityActionsCubit>()
+                                      .submitQuestion(
+                                        carTrimId: _trimId!,
+                                        title: _titleController.text.trim(),
+                                        body: _bodyController.text.trim(),
+                                      );
+
+                                  if (ok && context.mounted) {
+                                    Navigator.pop(context, true);
+                                  }
+                                },
+                          child: actionState.isSubmitting
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(context.l10n.buttonPublishQuestion),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ),
       ),

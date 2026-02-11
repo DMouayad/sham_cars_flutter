@@ -97,241 +97,244 @@ class _AddReviewSheetState extends State<AddReviewSheet> {
 
     return BlocProvider(
       create: (_) => CommunityActionsCubit(context.read()),
-      child: DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (_, scrollController) {
-          return Padding(
-            padding: EdgeInsets.only(
-              left: ThemeConstants.p,
-              right: ThemeConstants.p,
-              top: ThemeConstants.p,
-              bottom:
-                  MediaQuery.of(context).viewInsets.bottom + ThemeConstants.p,
-            ),
-            child: Form(
-              key: _formKey,
-              child: ListenableBuilder(
-                listenable: GetIt.I.get<AuthNotifier>(),
-                builder: (context, _) {
-                  final auth = GetIt.I.get<AuthNotifier>();
+      child: SafeArea(
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (_, scrollController) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: ThemeConstants.p,
+                right: ThemeConstants.p,
+                top: ThemeConstants.p,
+                bottom:
+                    MediaQuery.of(context).viewInsets.bottom + ThemeConstants.p,
+              ),
+              child: Form(
+                key: _formKey,
+                child: ListenableBuilder(
+                  listenable: GetIt.I.get<AuthNotifier>(),
+                  builder: (context, _) {
+                    final auth = GetIt.I.get<AuthNotifier>();
 
-                  return BlocBuilder<
-                    CommunityActionsCubit,
-                    CommunityActionsState
-                  >(
-                    builder: (context, actionState) {
-                      return ListView(
-                        controller: scrollController,
-                        children: [
-                          // Handle
-                          Center(
-                            child: Container(
-                              width: 40,
-                              height: 4,
-                              margin: const EdgeInsets.only(bottom: 16),
-                              decoration: BoxDecoration(
-                                color: cs.outlineVariant,
-                                borderRadius: BorderRadius.circular(2),
+                    return BlocBuilder<
+                      CommunityActionsCubit,
+                      CommunityActionsState
+                    >(
+                      builder: (context, actionState) {
+                        return ListView(
+                          controller: scrollController,
+                          children: [
+                            // Handle
+                            Center(
+                              child: Container(
+                                width: 40,
+                                height: 4,
+                                margin: const EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color: cs.outlineVariant,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
                               ),
                             ),
-                          ),
 
-                          // Header
-                          Text(
-                            l10n.sheetAddReviewTitle,
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            l10n.sheetAddReviewSubtitle,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: cs.onSurfaceVariant),
-                          ),
-                          const SizedBox(height: 20),
+                            // Header
+                            Text(
+                              l10n.sheetAddReviewTitle,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              l10n.sheetAddReviewSubtitle,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: cs.onSurfaceVariant),
+                            ),
+                            const SizedBox(height: 20),
 
-                          // Auth warning
-                          if (!auth.isLoggedIn) ...[
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: cs.errorContainer,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.info_outline,
-                                    color: cs.onErrorContainer,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      l10n.authRequiredToPostReview,
-                                      style: TextStyle(
-                                        color: cs.onErrorContainer,
+                            // Auth warning
+                            if (!auth.isLoggedIn) ...[
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: cs.errorContainer,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: cs.onErrorContainer,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        l10n.authRequiredToPostReview,
+                                        style: TextStyle(
+                                          color: cs.onErrorContainer,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+
+                            // Trim field (locked or pickable)
+                            _TrimField(
+                              title: _trimTitle,
+                              locked: widget.lockTrim,
+                              onPick: _pickTrim,
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Rating
+                            Text(
+                              l10n.fieldReviewRating,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                            const SizedBox(height: 8),
+                            _RatingSelector(
+                              value: _rating,
+                              onChanged: (r) => setState(() => _rating = r),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // City
+                            DropdownButtonFormField<String>(
+                              initialValue: _cityCode,
+                              decoration: InputDecoration(
+                                enabled: auth.isLoggedIn,
+                                labelText: l10n.fieldCityOptional,
+                                border: const OutlineInputBorder(),
+                                prefixIcon: const Icon(Icons.location_city),
+                              ),
+                              items: _cities
+                                  .map(
+                                    (c) => DropdownMenuItem(
+                                      value: c.$1,
+                                      child: Text(c.$2),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (c) => setState(() => _cityCode = c),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Title
+                            TextFormField(
+                              controller: _titleController,
+                              decoration: InputDecoration(
+                                enabled: auth.isLoggedIn,
+                                labelText: l10n.fieldReviewTitleOptional,
+                                hintText: l10n.fieldReviewTitleHint,
+                                border: const OutlineInputBorder(),
                               ),
                             ),
                             const SizedBox(height: 16),
-                          ],
 
-                          // Trim field (locked or pickable)
-                          _TrimField(
-                            title: _trimTitle,
-                            locked: widget.lockTrim,
-                            onPick: _pickTrim,
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Rating
-                          Text(
-                            l10n.fieldReviewRating,
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          _RatingSelector(
-                            value: _rating,
-                            onChanged: (r) => setState(() => _rating = r),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // City
-                          DropdownButtonFormField<String>(
-                            initialValue: _cityCode,
-                            decoration: InputDecoration(
-                              enabled: auth.isLoggedIn,
-                              labelText: l10n.fieldCityOptional,
-                              border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.location_city),
-                            ),
-                            items: _cities
-                                .map(
-                                  (c) => DropdownMenuItem(
-                                    value: c.$1,
-                                    child: Text(c.$2),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (c) => setState(() => _cityCode = c),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Title
-                          TextFormField(
-                            controller: _titleController,
-                            decoration: InputDecoration(
-                              enabled: auth.isLoggedIn,
-                              labelText: l10n.fieldReviewTitleOptional,
-                              hintText: l10n.fieldReviewTitleHint,
-                              border: const OutlineInputBorder(),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Body
-                          TextFormField(
-                            controller: _bodyController,
-                            maxLines: 5,
-                            decoration: InputDecoration(
-                              enabled: auth.isLoggedIn,
-                              labelText: l10n.fieldReviewBodyRequired,
-                              hintText: l10n.fieldReviewBodyHint,
-                              border: OutlineInputBorder(),
-                              alignLabelWithHint: true,
-                            ),
-                            validator: (v) {
-                              if (v == null || v.trim().isEmpty) {
-                                return l10n.validationReviewBodyRequired;
-                              }
-                              if (v.trim().length < 30) {
-                                return l10n.validationReviewBodyTooShort;
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 12),
-
-                          if (actionState.submitError != null)
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color: cs.errorContainer,
-                                borderRadius: BorderRadius.circular(8),
+                            // Body
+                            TextFormField(
+                              controller: _bodyController,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                enabled: auth.isLoggedIn,
+                                labelText: l10n.fieldReviewBodyRequired,
+                                hintText: l10n.fieldReviewBodyHint,
+                                border: OutlineInputBorder(),
+                                alignLabelWithHint: true,
                               ),
-                              child: Text(
-                                actionState.submitError!,
-                                style: TextStyle(color: cs.onErrorContainer),
-                              ),
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) {
+                                  return l10n.validationReviewBodyRequired;
+                                }
+                                if (v.trim().length < 30) {
+                                  return l10n.validationReviewBodyTooShort;
+                                }
+                                return null;
+                              },
                             ),
+                            const SizedBox(height: 12),
 
-                          FilledButton(
-                            onPressed:
-                                (!auth.isLoggedIn || actionState.isSubmitting)
-                                ? null
-                                : () async {
-                                    if (!_formKey.currentState!.validate()) {
-                                      return;
-                                    }
-                                    if (_trimId == null) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            l10n.validationSelectTrim,
+                            if (actionState.submitError != null)
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                margin: const EdgeInsets.only(bottom: 12),
+                                decoration: BoxDecoration(
+                                  color: cs.errorContainer,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  actionState.submitError!,
+                                  style: TextStyle(color: cs.onErrorContainer),
+                                ),
+                              ),
+
+                            FilledButton(
+                              onPressed:
+                                  (!auth.isLoggedIn || actionState.isSubmitting)
+                                  ? null
+                                  : () async {
+                                      if (!_formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      if (_trimId == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              l10n.validationSelectTrim,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                      return;
-                                    }
-
-                                    final ok = await context
-                                        .read<CommunityActionsCubit>()
-                                        .submitReview(
-                                          carTrimId: _trimId!,
-                                          rating: _rating,
-                                          comment: _bodyController.text.trim(),
-                                          title:
-                                              _titleController.text
-                                                  .trim()
-                                                  .isEmpty
-                                              ? null
-                                              : _titleController.text.trim(),
-                                          cityCode: _cityCode,
                                         );
+                                        return;
+                                      }
 
-                                    if (ok && context.mounted) {
-                                      Navigator.pop(context, true);
-                                    }
-                                  },
-                            child: actionState.isSubmitting
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : Text(l10n.buttonPublishReview),
-                          ),
-                          const SizedBox(height: 10),
-                        ],
-                      );
-                    },
-                  );
-                },
+                                      final ok = await context
+                                          .read<CommunityActionsCubit>()
+                                          .submitReview(
+                                            carTrimId: _trimId!,
+                                            rating: _rating,
+                                            comment: _bodyController.text
+                                                .trim(),
+                                            title:
+                                                _titleController.text
+                                                    .trim()
+                                                    .isEmpty
+                                                ? null
+                                                : _titleController.text.trim(),
+                                            cityCode: _cityCode,
+                                          );
+
+                                      if (ok && context.mounted) {
+                                        Navigator.pop(context, true);
+                                      }
+                                    },
+                              child: actionState.isSubmitting
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(l10n.buttonPublishReview),
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
