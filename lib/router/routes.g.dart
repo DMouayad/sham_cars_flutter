@@ -128,7 +128,7 @@ mixin $CommunityRoute on GoRouteData {
 }
 
 RouteBase get $loginRoute => GoRouteData.$route(
-  path: '/profile/login',
+  path: '/login',
   name: 'login',
   factory: $LoginRoute._fromState,
 );
@@ -141,7 +141,7 @@ mixin $LoginRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location(
-    '/profile/login',
+    '/login',
     queryParams: {
       if (_self.redirectTo != null) 'redirect-to': _self.redirectTo,
     },
@@ -162,7 +162,7 @@ mixin $LoginRoute on GoRouteData {
 }
 
 RouteBase get $signupRoute => GoRouteData.$route(
-  path: '/profile/signup',
+  path: '/signup',
   name: 'signup',
   factory: $SignupRoute._fromState,
 );
@@ -175,7 +175,7 @@ mixin $SignupRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location(
-    '/profile/signup',
+    '/signup',
     queryParams: {
       if (_self.redirectTo != null) 'redirect-to': _self.redirectTo,
     },
@@ -281,7 +281,7 @@ mixin $OtpPasswordResetRoute on GoRouteData {
 }
 
 RouteBase get $accountVerificationRoute => GoRouteData.$route(
-  path: '/profile/emaill-verification',
+  path: '/emaill-verification',
   name: 'email_verification',
   factory: $AccountVerificationRoute._fromState,
 );
@@ -293,7 +293,7 @@ mixin $AccountVerificationRoute on GoRouteData {
   AccountVerificationRoute get _self => this as AccountVerificationRoute;
 
   @override
-  String get location => GoRouteData.$location('/profile/emaill-verification');
+  String get location => GoRouteData.$location('/emaill-verification');
 
   @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);

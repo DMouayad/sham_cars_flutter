@@ -37,11 +37,11 @@ part 'routes.g.dart';
 final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 class RoutePath {
-  static const emailVerification = '/profile/emaill-verification';
+  static const emailVerification = '/emaill-verification';
   static const home = '/home';
   static const profile = '/profile';
-  static const login = '/profile/login';
-  static const signup = '/profile/signup';
+  static const login = '/login';
+  static const signup = '/signup';
   static const forgotPassword = '/forgot-password';
   static const resetPassword = '/reset-password';
   static const otpPasswordReset = '/otp-password-reset';
