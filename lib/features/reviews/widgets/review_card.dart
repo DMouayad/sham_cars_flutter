@@ -134,13 +134,14 @@ class _RatingPill extends StatelessWidget {
     final clamped = rating.clamp(1, 5);
 
     return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
+      padding: const EdgeInsetsDirectional.fromSTEB(10, 4, 10, 4),
       decoration: BoxDecoration(
         color: cs.primaryContainer,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(Icons.star_rounded, size: 16, color: Colors.amber),
           const SizedBox(width: 4),
@@ -148,6 +149,7 @@ class _RatingPill extends StatelessWidget {
             '$clamped/5',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.w900,
+              height: 1.5,
               color: cs.onPrimaryContainer,
             ),
           ),

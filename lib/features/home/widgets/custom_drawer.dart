@@ -52,13 +52,13 @@ class CustomDrawer extends StatelessWidget {
               leading: const Icon(Icons.help_outline_rounded),
               style: ListTileStyle.drawer,
               title: Text(context.l10n.supportFaqSectionTitle),
-              onTap: () {
+              onTap: () async {
                 final rootCtx = Navigator.of(
                   context,
                   rootNavigator: true,
                 ).context;
                 Navigator.pop(context);
-                Future.microtask(() => SupportOverlays.showFaq(rootCtx));
+                await SupportOverlays.showFaq(rootCtx);
               },
             ),
 
@@ -66,13 +66,13 @@ class CustomDrawer extends StatelessWidget {
               leading: const Icon(Icons.support_agent_outlined),
               style: ListTileStyle.drawer,
               title: Text(context.l10n.supportContactSectionTitle),
-              onTap: () {
+              onTap: () async {
                 final rootCtx = Navigator.of(
                   context,
                   rootNavigator: true,
                 ).context;
                 Navigator.pop(context);
-                Future.microtask(() => SupportOverlays.showContact(rootCtx));
+                await SupportOverlays.showContact(rootCtx);
               },
             ),
 

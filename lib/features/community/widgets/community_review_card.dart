@@ -132,10 +132,8 @@ class _HeaderRatingBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine color intensity based on rating if desired,
-    // or stick to static Amber for consistency.
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.fromLTRB(6, 4, 6, 0),
       decoration: BoxDecoration(
         color: Colors.amber.withOpacity(0.15),
         borderRadius: BorderRadius.circular(6),
@@ -143,13 +141,14 @@ class _HeaderRatingBadge extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             rating.toString(),
+            maxLines: 1,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w900,
               color: Colors.orange[900],
-              height: 1, // Fix alignment
             ),
           ),
           const SizedBox(width: 2),

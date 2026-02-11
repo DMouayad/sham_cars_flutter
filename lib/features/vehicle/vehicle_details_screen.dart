@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:sham_cars/features/auth/auth_notifier.dart';
+
+
 import 'package:sham_cars/features/common/data_state.dart';
 import 'package:sham_cars/features/community/community_repository.dart';
 import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
