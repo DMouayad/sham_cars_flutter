@@ -170,7 +170,7 @@ All list endpoints use pagination:
 ### Key screens
 - **HomeScreen**: discover vehicles + latest community
 - **VehiclesListScreen**: search/filter/pagination (future polish)
-- **VehicleDetailsScreen**: sliver header (pinned title), grouped specs, previews for reviews/questions
+- **VehicleDetailsScreen**: sliver header (pinned title), grouped specs, "Also Liked" recommendations, previews for reviews/questions
 - **TrimCommunityScreen**: Tabs (Reviews / Q&A), lazy loading, speed dial for posting
 - **CommunityScreen**: Global feed of questions+reviews (filters + search + lazy loading)
 - **QuestionDetailsScreen**: question + answers + link to related trim (vehicle details)
@@ -230,6 +230,7 @@ All list endpoints use pagination:
   - paginated fetch via getTrendingCars(take/skip)
   - used by TrendingCarsScreen for deck (top 5) + ranked list (rest)
   - list-only pagination (loadMore() triggered by vertical scroll)
+- `AlsoLikedTrimsCubit`: Paginated "Also Liked" trims list, used on VehicleDetailsScreen for collaborative recommendations.
 
 ### Write/actions cubit (shared)
 - `CommunityActionsCubit`

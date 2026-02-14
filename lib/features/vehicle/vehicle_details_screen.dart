@@ -9,6 +9,9 @@ import 'package:sham_cars/features/user_profile/repositories/user_activity_repos
 import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 
+import 'package:sham_cars/features/vehicle/cubits/also_liked_trims_cubit.dart';
+import 'package:sham_cars/features/vehicle/widgets/also_liked_trims_section.dart';
+
 import 'cubits/car_trim_cubit.dart';
 import 'cubits/trim_community_preview_cubit.dart';
 import 'cubits/similar_trims_cubit.dart';
@@ -18,6 +21,7 @@ import 'trim_community_screen.dart';
 import 'widgets/community_preview.dart';
 import 'widgets/specs.dart';
 import 'widgets/similar_trims_section.dart';
+import 'widgets/specs_skeleton.dart';
 
 /// View-model to keep UI simple (summary and full trim share same UI)
 class _VehicleVm {
@@ -115,6 +119,11 @@ class VehicleDetailsScreen extends StatelessWidget {
         BlocProvider(
           create: (_) =>
               SimilarTrimsCubit(context.read<CarDataRepository>())
+                ..load(trimId),
+        ),
+        BlocProvider(
+          create: (_) =>
+              AlsoLikedTrimsCubit(context.read<CarDataRepository>())
                 ..load(trimId),
         ),
       ],
@@ -221,6 +230,19 @@ class _VehicleDetailsView extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
+              _SectionTitle(title: context.l10n.vehicleDetailsSpecsTitle),
+              const SizedBox(height: 10),
+              if (loadingMore)
+                const GroupedSpecsSkeleton()
+              else if (vm.specs.isNotEmpty)
+                GroupedSpecs(specs: vm.specs),
+
+              const SizedBox(height: 20),
+
+              const AlsoLikedTrimsSection(),
+
+              const SizedBox(height: 20),
+
               BlocBuilder<
                 TrimCommunityPreviewCubit,
                 DataState<TrimCommunityPreview>
@@ -234,14 +256,6 @@ class _VehicleDetailsView extends StatelessWidget {
                     DataLoaded(:final data) => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (vm.specs.isNotEmpty) ...[
-                          _SectionTitle(
-                            title: context.l10n.vehicleDetailsSpecsTitle,
-                          ),
-                          const SizedBox(height: 10),
-                          GroupedSpecs(specs: vm.specs),
-                          const SizedBox(height: 20),
-                        ],
                         ReviewsPreview(
                           items: data.reviews,
                           userReview: data.myReview,

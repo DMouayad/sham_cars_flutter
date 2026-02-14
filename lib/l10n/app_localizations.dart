@@ -1619,7 +1619,7 @@ abstract class AppLocalizations {
   /// No description provided for @vehicleDetailsAlsoLikedTitle.
   ///
   /// In en, this message translates to:
-  /// **'People also liked'**
+  /// **'People who liked this car also liked'**
   String get vehicleDetailsAlsoLikedTitle;
 
   /// No description provided for @vehicleDetailsSpecsTitle.

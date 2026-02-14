@@ -819,7 +819,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vehicleDetailsSimilarTitle => 'Similar cars';
 
   @override
-  String get vehicleDetailsAlsoLikedTitle => 'People also liked';
+  String get vehicleDetailsAlsoLikedTitle =>
+      'People who liked this car also liked';
 
   @override
   String get vehicleDetailsSpecsTitle => 'Specifications';

@@ -816,7 +816,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get vehicleDetailsSimilarTitle => 'سيارات مشابهة';
 
   @override
-  String get vehicleDetailsAlsoLikedTitle => 'قد تعجبك أيضاً';
+  String get vehicleDetailsAlsoLikedTitle => 'أعجب المستخدمين أيضاً';
 
   @override
   String get vehicleDetailsSpecsTitle => 'المواصفات';
