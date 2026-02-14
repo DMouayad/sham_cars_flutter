@@ -10,12 +10,13 @@ class UserActivityRepository {
 
   Future<List<Review>> getMyReviews({
     required String accessToken,
+    int? trimId,
     int limit = 10,
     int skip = 0,
   }) async {
     final data = await _client.requestList(
       HttpMethod.get,
-      '/user/reviews',
+      '/user/reviews${trimId != null ? '/$trimId' : ''}',
       query: {'limit': '$limit', 'skip': '$skip'},
       accessToken: accessToken,
     );
@@ -24,12 +25,13 @@ class UserActivityRepository {
 
   Future<List<Question>> getMyQuestions({
     required String accessToken,
+    int? trimId,
     int limit = 10,
     int skip = 0,
   }) async {
     final data = await _client.requestList(
       HttpMethod.get,
-      '/user/questions',
+      '/user/questions${trimId != null ? '/$trimId' : ''}',
       query: {'limit': '$limit', 'skip': '$skip'},
       accessToken: accessToken,
     );

@@ -252,6 +252,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 // Content
                 if (items.isEmpty)
                   SliverFillRemaining(
+                    hasScrollBody: false,
                     child: _EmptyState(
                       isSearching: state.searchQuery.isNotEmpty,
                       filter: _filter,

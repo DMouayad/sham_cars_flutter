@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sham_cars/api/connectivity_notifier.dart';
 import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/router/routes.dart';
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/app_name.dart';
+import 'package:sham_cars/widgets/no_internet_banner.dart';
 
 class CustomScaffold extends StatelessWidget {
   const CustomScaffold({
@@ -38,11 +40,26 @@ class CustomScaffold extends StatelessWidget {
           child: const SizedBox(width: 130, child: AppName()),
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: bodyPadding ?? const EdgeInsets.all(12),
-          child: body,
-        ),
+      body: Column(
+        children: [
+          ValueListenableBuilder<bool>(
+            valueListenable: internetAccessNotifier,
+            builder: (context, hasInternet, child) {
+              return Visibility(
+                visible: !hasInternet,
+                child: const NoInternetBanner(),
+              );
+            },
+          ),
+          Expanded(
+            child: SafeArea(
+              child: Padding(
+                padding: bodyPadding ?? const EdgeInsets.all(12),
+                child: body,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

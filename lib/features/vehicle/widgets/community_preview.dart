@@ -155,7 +155,17 @@ class QuestionsPreview extends StatelessWidget {
         const SizedBox(height: 10),
 
         if (myQuestions.isNotEmpty) ...[
-          _MyQuestionsCarousel(items: myQuestions),
+          myQuestions.length > 1
+              ? _MyQuestionsCarousel(items: myQuestions)
+              : QuestionCard(
+                  question: myQuestions.first,
+                  showContext: false,
+                  compact: true,
+                  variant: QuestionCardVariant.mine,
+                  headerLabel: context.l10n.yourQuestionLabel,
+                  onTap: () =>
+                      QuestionDetailsRoute(myQuestions.first.id).push(context),
+                ),
           const SizedBox(height: 14),
         ],
 
@@ -203,7 +213,7 @@ class _MyQuestionsCarouselState extends State<_MyQuestionsCarousel> {
   @override
   Widget build(BuildContext context) {
     // IMPORTANT: PageView needs a bounded height
-    const height = 180.0;
+    const height = 190.0;
 
     return Column(
       children: [

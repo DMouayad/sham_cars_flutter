@@ -4,6 +4,7 @@ import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/router/routes.dart';
+import 'package:sham_cars/utils/utils.dart';
 
 import 'models.dart';
 import 'question_details_cubit.dart';
@@ -40,6 +41,7 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return SafeArea(
       top: false,
@@ -89,11 +91,15 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
                         _QuestionCard(question: q),
 
                         const SizedBox(height: 16),
-                        _SectionTitle(title: 'الإجابات (${q.answers.length})'),
+                        _SectionTitle(
+                          title: l10n.questionDetailsAnswersCount(
+                            q.answers.length,
+                          ),
+                        ),
                         const SizedBox(height: 10),
 
                         if (q.answers.isEmpty)
-                          _EmptyBox(text: 'لا توجد إجابات بعد. كن أول من يجيب.')
+                          _EmptyBox(text: l10n.questionDetailsNoAnswers)
                         else
                           ...q.answers.map(
                             (a) => Padding(
@@ -129,7 +135,7 @@ class _QuestionDetailsViewState extends State<_QuestionDetailsView> {
                       minLines: 1,
                       maxLines: 4,
                       decoration: InputDecoration(
-                        hintText: 'اكتب إجابة...',
+                        hintText: l10n.questionDetailsAnswerHint,
                         isDense: true,
                         filled: true,
                         fillColor: cs.surfaceContainerHighest,
@@ -178,6 +184,7 @@ class _RelatedVehicleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     final trimId = question.trimId; // from new API doc
     final modelName = (question.modelName ?? '').trim();
@@ -200,7 +207,7 @@ class _RelatedVehicleCard extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              title.isEmpty ? 'مرتبطة بسيارة' : title,
+              title.isEmpty ? l10n.questionDetailsRelatedToCar : title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(
@@ -213,7 +220,7 @@ class _RelatedVehicleCard extends StatelessWidget {
             onPressed: trimId == null
                 ? null
                 : () => VehicleDetailsRoute(id: trimId).push(context),
-            child: const Text('عرض السيارة'),
+            child: Text(l10n.questionDetailsViewCar),
           ),
         ],
       ),
@@ -399,6 +406,7 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -407,7 +415,7 @@ class _ErrorView extends StatelessWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: cs.error),
             const SizedBox(height: 12),
-            Text('حدث خطأ', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.error, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Text(
               message,
@@ -418,7 +426,7 @@ class _ErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('إعادة المحاولة'),
+              label: Text(l10n.commonRetry),
             ),
           ],
         ),

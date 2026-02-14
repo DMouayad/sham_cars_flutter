@@ -182,6 +182,12 @@ All list endpoints use pagination:
   - Top swipe deck (PageView) showing top 5 trending trims (hero-style cards)
   - Vertical ranked list (TrimListCard-style) for remaining trims
   - Pagination applies to the ranked list (scroll-based loadMore())
+
+### Core Layout Scaffolds
+- The application uses two main custom scaffold widgets to ensure a consistent look and feel:
+  - **`ScaffoldWithNavBar`**: Used for the main shell routes (`/home`, `/vehicles`, `/community`). It includes the `BottomNavigationBar`.
+  - **`CustomScaffold`**: A general-purpose scaffold used for most other screens that require a standard `AppBar` and consistent layout.
+- Global UI elements, like the "No Internet" banner, are implemented within these two widgets to ensure they appear on all relevant screens.
 ---
 
 ## 6) Flutter state management (Cubits)
@@ -286,6 +292,13 @@ Classification avoids substring bugs (e.g., “acceleration” should not match 
   and Skeletons:
   - TrendingDeckCardSkeleton
   - TrendingTrimListCardSkeleton
+
+### Global Error Handling
+
+#### No Internet Banner
+- A global banner is displayed at the top of the screen, below the `AppBar`, whenever a network error (`SocketException` or `http.ClientException`) is detected by the `RestClient`.
+- This is handled by a global `ValueNotifier` (`internetAccessNotifier` in `lib/api/connectivity_notifier.dart`).
+- The banner UI is implemented in `ScaffoldWithNavBar` and `CustomScaffold` to ensure consistency across all screens.
 ---
 
 ## 8) Localization (Flutter)

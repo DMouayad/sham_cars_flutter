@@ -306,8 +306,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeEmailToVerify => 'go back to change it';
 
   @override
-  String get noInternetConnection =>
-      'You are not connected! Please check your internet connection and try again.';
+  String get noInternetConnection => 'No internet connection';
 
   @override
   String get cannotConnectToServer =>
@@ -1052,4 +1051,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String timeMinutesAgo(int minutes) {
     return '${minutes}m ago';
   }
+
+  @override
+  String questionDetailsAnswersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Answers',
+      one: '1 Answer',
+      zero: 'No answers yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get questionDetailsNoAnswers =>
+      'No answers yet. Be the first to answer.';
+
+  @override
+  String get questionDetailsAnswerHint => 'Write an answer...';
+
+  @override
+  String get questionDetailsRelatedToCar => 'Related to a car';
+
+  @override
+  String get questionDetailsViewCar => 'View Car';
 }

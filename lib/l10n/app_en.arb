@@ -266,7 +266,7 @@
         "description": "The label of a text button for changing the phone number in verification screen",
         "context": "PhoneVerificationScreen"
     },
-    "noInternetConnection": "You are not connected! Please check your internet connection and try again.",
+    "noInternetConnection": "No internet connection",
     "@noInternetConnection": {
         "description": "The message of `AppError.noInternetConnection`"
     },
@@ -709,5 +709,15 @@
     "placeholders": {
       "minutes": { "type": "int" }
     }
-  }
+  },
+  "questionDetailsAnswersCount": "{count, plural, =0 {No answers yet} one {1 Answer} other {{count} Answers}}",
+  "@questionDetailsAnswersCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "questionDetailsNoAnswers": "No answers yet. Be the first to answer.",
+  "questionDetailsAnswerHint": "Write an answer...",
+  "questionDetailsRelatedToCar": "Related to a car",
+  "questionDetailsViewCar": "View Car"
 }

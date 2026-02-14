@@ -308,8 +308,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changeEmailToVerify => 'العودة لتعديله';
 
   @override
-  String get noInternetConnection =>
-      'أنت غير متصل بالانترنت!\nيرجى التحقق من اتصالك بالانترنت والمحاولة مجدداً';
+  String get noInternetConnection => 'لا يوجد اتصال بالإنترنت';
 
   @override
   String get cannotConnectToServer =>
@@ -1046,4 +1045,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String timeMinutesAgo(int minutes) {
     return 'منذ $minutes د';
   }
+
+  @override
+  String questionDetailsAnswersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إجابة',
+      many: '$count إجابة',
+      few: '$count إجابات',
+      two: 'إجابتان',
+      one: 'إجابة واحدة',
+      zero: 'لا توجد إجابات بعد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get questionDetailsNoAnswers => 'لا توجد إجابات بعد. كن أول من يجيب.';
+
+  @override
+  String get questionDetailsAnswerHint => 'اكتب إجابة...';
+
+  @override
+  String get questionDetailsRelatedToCar => 'مرتبطة بسيارة';
+
+  @override
+  String get questionDetailsViewCar => 'عرض السيارة';
 }

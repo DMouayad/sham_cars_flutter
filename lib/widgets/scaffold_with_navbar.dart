@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:sham_cars/api/connectivity_notifier.dart';
 import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/router/routes.dart';
 
 import 'package:sham_cars/utils/utils.dart';
 import 'package:sham_cars/widgets/app_name.dart';
+import 'package:sham_cars/widgets/no_internet_banner.dart';
 
 const navigationShellIndex = (explore: 0, vehicles: 1, community: 2);
 
@@ -49,7 +51,17 @@ class ScaffoldWithNavBar extends StatelessWidget {
         ],
         centerTitle: true,
       ),
-      body: navigationShell, // The current active branch's content
+      body: ValueListenableBuilder<bool>(
+        valueListenable: internetAccessNotifier,
+        builder: (context, hasInternet, _) {
+          return Column(
+            children: [
+              if (!hasInternet) const NoInternetBanner(),
+              Expanded(child: navigationShell),
+            ],
+          );
+        },
+      ),
       drawer: const CustomDrawer(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

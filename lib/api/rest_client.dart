@@ -3,6 +3,7 @@ import "dart:convert";
 import "dart:developer";
 import "dart:io";
 
+import "package:sham_cars/api/connectivity_notifier.dart";
 import "package:sham_cars/api/config.dart";
 import "package:sham_cars/utils/utils.dart";
 import "package:http/http.dart" as http;
@@ -23,6 +24,22 @@ class RestClient {
   static Future<R> runCached<R>(Future<R> Function() body) {
     final Cache cache = Zone.current[#_restClientCache] ?? {};
     return runZoned(body, zoneValues: {#_restClientCache: cache});
+  }
+
+  Future<http.Response> _sendRequest(http.Request request) async {
+    try {
+      final response = await httpClient
+          .send(request)
+          .then(http.Response.fromStream);
+      internetAccessNotifier.value = true;
+      return response;
+    } on SocketException {
+      internetAccessNotifier.value = false;
+      rethrow;
+    } on http.ClientException {
+      internetAccessNotifier.value = false;
+      rethrow;
+    }
   }
 
   Future<JsonObject> request(
@@ -50,9 +67,7 @@ class RestClient {
 
       log("$method $uri", name: 'Request');
 
-      final response = await httpClient
-          .send(request)
-          .then(http.Response.fromStream);
+      final response = await _sendRequest(request);
       return _handleResponse(response);
     });
   }
@@ -78,9 +93,7 @@ class RestClient {
 
       log("$method $uri", name: 'Request');
 
-      final response = await httpClient
-          .send(request)
-          .then(http.Response.fromStream);
+      final response = await _sendRequest(request);
       final responseBody = await response.json();
 
       _checkForErrors(responseBody, response);

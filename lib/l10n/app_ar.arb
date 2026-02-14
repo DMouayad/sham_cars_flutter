@@ -119,7 +119,7 @@
     "wrongEmailToVerify": "البريد الإلكتروني ليس صحيحاً؟",
     "changeEmailToVerify": "العودة لتعديله",
     "cannotConnectToServer": "لا يمكن الاتصال بالخادم، الرجاء المحاولة مجدداً",
-    "noInternetConnection": "أنت غير متصل بالانترنت!\nيرجى التحقق من اتصالك بالانترنت والمحاولة مجدداً",
+    "noInternetConnection": "لا يوجد اتصال بالإنترنت",
     "unauthorized": "صلاحيات الوصول غير كافية",
     "unauthenticated": "عذراً لم نتمكن من التحقق من هويتك، من فضلك قم بتسجيل الدخول مرة أخرى",
     "accountAlreadyExist": "أنت مُسجّل مسبقاً! تأكد من البيانات المدخلة أو قم بإعادة تعيين كلمة المرور",
@@ -384,5 +384,15 @@
     "placeholders": {
       "minutes": { "type": "int" }
     }
-  }
+  },
+  "questionDetailsAnswersCount": "{count, plural, =0 {لا توجد إجابات بعد} one {إجابة واحدة} two {إجابتان} few {{count} إجابات} many {{count} إجابة} other {{count} إجابة}}",
+  "@questionDetailsAnswersCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "questionDetailsNoAnswers": "لا توجد إجابات بعد. كن أول من يجيب.",
+  "questionDetailsAnswerHint": "اكتب إجابة...",
+  "questionDetailsRelatedToCar": "مرتبطة بسيارة",
+  "questionDetailsViewCar": "عرض السيارة"
 }

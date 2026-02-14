@@ -54,7 +54,6 @@ class TrimCommunityPreviewCubit extends Cubit<DataState<TrimCommunityPreview>> {
 
   int? _trimId;
   static const int _previewTake = 4;
-  static const int _myLimit = 50;
 
   Future<void> load({required int trimId}) async {
     emit(const DataLoading());
@@ -78,11 +77,16 @@ class TrimCommunityPreviewCubit extends Cubit<DataState<TrimCommunityPreview>> {
         final token = await GetIt.I<ITokensRepository>().get();
         if (token != null) {
           final myResults = await Future.wait([
-            _findMyLatestReviewForTrim(trimId, token),
-            _findMyQuestionsForTrim(trimId, token),
+            _activityRepo.getMyReviews(accessToken: token, trimId: trimId),
+            _activityRepo.getMyQuestions(accessToken: token, trimId: trimId),
           ]);
-          myReview = myResults[0] as Review?;
+          myReview = (myResults[0] as List<Review>).firstOrNull;
           myQuestions = myResults[1] as List<Question>;
+          myQuestions.sort((a, b) {
+            final adt = a.createdAt;
+            final bdt = b.createdAt;
+            return bdt.compareTo(adt);
+          });
         }
       } catch (e, st) {
         // Don't fail the whole section; just log for debugging
@@ -127,60 +131,60 @@ class TrimCommunityPreviewCubit extends Cubit<DataState<TrimCommunityPreview>> {
     }
   }
 
-  Future<Review?> _findMyLatestReviewForTrim(int trimId, String token) async {
-    Review? latest;
+  // Future<Review?> _findMyLatestReviewForTrim(int trimId, String token) async {
+  //   Review? latest;
 
-    final items = await _activityRepo.getMyReviews(
-      accessToken: token,
-      limit: _myLimit,
-      skip: 0,
-    );
+  //   final items = await _activityRepo.getMyReviews(
+  //     accessToken: token,
+  //     limit: _myLimit,
+  //     skip: 0,
+  //   );
 
-    for (final r in items) {
-      // IMPORTANT: confirm the field name you have in Review model:
-      // trimId vs carTrimId. If it's wrong, this will never match.
-      if (r.trimId == trimId) {
-        final rDt = r.createdAt;
-        final latestDt = latest?.createdAt;
+  //   for (final r in items) {
+  //     // IMPORTANT: confirm the field name you have in Review model:
+  //     // trimId vs carTrimId. If it's wrong, this will never match.
+  //     if (r.trimId == trimId) {
+  //       final rDt = r.createdAt;
+  //       final latestDt = latest?.createdAt;
 
-        if (latest == null) {
-          latest = r;
-        } else if (latestDt != null && rDt.isAfter(latestDt)) {
-          latest = r;
-        } else if (latestDt == null) {
-          latest = r;
-        }
-      }
-    }
+  //       if (latest == null) {
+  //         latest = r;
+  //       } else if (latestDt != null && rDt.isAfter(latestDt)) {
+  //         latest = r;
+  //       } else if (latestDt == null) {
+  //         latest = r;
+  //       }
+  //     }
+  //   }
 
-    return latest;
-  }
+  //   return latest;
+  // }
 
-  Future<List<Question>> _findMyQuestionsForTrim(
-    int trimId,
-    String token,
-  ) async {
-    final matches = <Question>[];
+  // Future<List<Question>> _findMyQuestionsForTrim(
+  //   int trimId,
+  //   String token,
+  // ) async {
+  //   final matches = <Question>[];
 
-    final items = await _activityRepo.getMyQuestions(
-      accessToken: token,
-      limit: _myLimit,
-      skip: 0,
-    );
+  //   final items = await _activityRepo.getMyQuestions(
+  //     accessToken: token,
+  //     limit: _myLimit,
+  //     skip: 0,
+  //   );
 
-    for (final q in items) {
-      if (q.trimId == trimId || q.modelId == trimId) matches.add(q);
-    }
+  //   for (final q in items) {
+  //     if (q.trimId == trimId || q.modelId == trimId) matches.add(q);
+  //   }
 
-    // Latest first (safe even if createdAt is nullable)
-    matches.sort((a, b) {
-      final adt = a.createdAt;
-      final bdt = b.createdAt;
-      return bdt.compareTo(adt);
-    });
+  //   // Latest first (safe even if createdAt is nullable)
+  //   matches.sort((a, b) {
+  //     final adt = a.createdAt;
+  //     final bdt = b.createdAt;
+  //     return bdt.compareTo(adt);
+  //   });
 
-    return matches;
-  }
+  //   return matches;
+  // }
 
   @override
   Future<void> close() {

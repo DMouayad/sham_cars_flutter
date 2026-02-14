@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/features/questions/widgets/question_card.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/router/routes.dart';
@@ -56,6 +57,7 @@ class _ModelQuestionsScreenState extends State<ModelQuestionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: const CustomDrawer(),
       appBar: AppBar(title: Text(widget.title)),
       body: BlocBuilder<ModelQuestionsCubit, ModelQuestionsState>(
         builder: (context, state) {

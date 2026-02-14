@@ -108,6 +108,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider(
+      lazy: true,
       create: (context) => HomeCubit(context.read())..load(),
       child: HomeScreen(
         onOpenTrim: (id, [summary]) =>

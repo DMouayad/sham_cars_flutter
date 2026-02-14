@@ -683,7 +683,7 @@ abstract class AppLocalizations {
   /// The message of `AppError.noInternetConnection`
   ///
   /// In en, this message translates to:
-  /// **'You are not connected! Please check your internet connection and try again.'**
+  /// **'No internet connection'**
   String get noInternetConnection;
 
   /// The message of `AppError.cannotConnectToServer`
@@ -2059,6 +2059,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{minutes}m ago'**
   String timeMinutesAgo(int minutes);
+
+  /// No description provided for @questionDetailsAnswersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0 {No answers yet} one {1 Answer} other {{count} Answers}}'**
+  String questionDetailsAnswersCount(int count);
+
+  /// No description provided for @questionDetailsNoAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'No answers yet. Be the first to answer.'**
+  String get questionDetailsNoAnswers;
+
+  /// No description provided for @questionDetailsAnswerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write an answer...'**
+  String get questionDetailsAnswerHint;
+
+  /// No description provided for @questionDetailsRelatedToCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Related to a car'**
+  String get questionDetailsRelatedToCar;
+
+  /// No description provided for @questionDetailsViewCar.
+  ///
+  /// In en, this message translates to:
+  /// **'View Car'**
+  String get questionDetailsViewCar;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sham_cars/features/home/models.dart';
+import 'package:sham_cars/features/home/widgets/custom_drawer.dart';
 import 'package:sham_cars/features/home/widgets/hot_topic_card_skeleton.dart';
 import 'package:sham_cars/features/theme/constants.dart';
 import 'package:sham_cars/utils/utils.dart';
@@ -21,6 +22,7 @@ class HotTopicsScreen extends StatelessWidget {
     final l10n = context.l10n;
 
     return Scaffold(
+      endDrawer: const CustomDrawer(),
       appBar: AppBar(title: Text(l10n.commonHotTopics)),
       body: BlocBuilder<HotTopicsCubit, HotTopicsState>(
         builder: (context, state) {

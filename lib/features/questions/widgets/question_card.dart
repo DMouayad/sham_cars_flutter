@@ -112,8 +112,6 @@ class QuestionCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 10),
-
               // BODY
               Text(
                 question.title,
@@ -121,8 +119,6 @@ class QuestionCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w900),
               ),
-
-              const SizedBox(height: 6),
 
               Text(
                 question.body,
@@ -133,8 +129,6 @@ class QuestionCard extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-
-              const SizedBox(height: 14),
 
               // FOOTER
               Row(
