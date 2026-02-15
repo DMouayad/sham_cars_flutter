@@ -57,6 +57,5 @@ class MyTextTheme {
   TextStyle get bodySmall => TextStyle(
     fontSize: context.textTheme.bodySmall?.fontSize,
     color: AppTheme.secondaryTextColor,
-    fontFamily: AppTheme.kFontFamily,
   );
 }

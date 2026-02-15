@@ -14,7 +14,6 @@ dependencies:
     hydrated_bloc: ^10.0.0
     path_provider: ^2.1.4
     equatable: ^2.0.5
-    faker: ^2.2.0
     logger: ^2.4.0
     go_router: ^17.0.0
     flutter_svg: ^2.2.0
@@ -48,14 +47,3 @@ flutter:
     generate: true
     assets:
         - assets/images/
-
-    fonts:
-        - family: almarai
-          fonts:
-              - asset: assets/fonts/Almarai-Regular.ttf
-              - asset: assets/fonts/Almarai-Bold.ttf
-                weight: 700
-        - family: inter
-          fonts:
-              - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
-                weight: 700

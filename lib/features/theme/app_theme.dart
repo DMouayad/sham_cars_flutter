@@ -4,8 +4,6 @@ import 'package:flutter/services.dart';
 import 'colors.dart';
 
 class AppTheme {
-  static const kFontFamily = 'almarai';
-
   /// ---------------------------------------------------------------------------
   /// 1️⃣  Color constants (hex)
   /// ---------------------------------------------------------------------------
